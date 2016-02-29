@@ -1,15 +1,18 @@
 {
 "type": "",
-"title": "Document Title",
-"second_title":"Subtitle",
-"lang": "english",
-"company": "MyCompany",
-"year":"2015",
+"title": "",
+"second_title":"",
+"lang": "russian",
+"company": "restream",
+"year":"2016",
 "title_page": "true",
 "toc": "true",
 "tof": "",
 "alt_doc_type": "",
 "template": "basic",
-"version": "1",
-"date":"true"
+"version": "auto",
+"date":"true",
+"git_project":"",
+"git_branch":"master",
+"git_private_token":""
 }
