@@ -13,7 +13,7 @@ import gitlab
 
 include_pattern = re.compile('{{(?P<git_group>git:)?(?P<path_group>.[^:]+)(:(?P<start_head>.[^-#]+)(-(?P<end_head>.[^-#]+))?(#(?P<level>[0-6]))?)?}}')
 
-git_url_prefix = "gitlab.com"
+git_url_prefix = "git.restr.im"
 git_path = ""
 
 
@@ -54,9 +54,13 @@ def git_recursive_search(git_tree, file_name):
     for git_dir in git_dir_list:
         if len(git_tree) == 0:
             new_path = git_dir
+            print 'new_path1 = ' + new_path
         else:
             new_path = git_tree + '/' + git_dir
-        return git_recursive_search(new_path, file_name)
+            print 'new_path2 = ' + new_path
+        result = git_recursive_search(new_path, file_name)
+        if result:
+            return result
 
 
 def content_by_heading(include_file_name, heading):
@@ -224,7 +228,7 @@ def process_file(main_file_name):
                         try:
                             new_str = process_file('changed_file.md')
                         except:
-                            new_str = process_file(git_temp)
+                            new_str = process_file('git_temp.md')
                         str_list.extend(new_str)
                 else:
                     if git_unabled == 0:
@@ -242,8 +246,10 @@ def process_file(main_file_name):
                                 str_list.extend(new_str)
                     if git_unabled == 1:
                         git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
-                        include_file_name = include_file_name[1:]
+                        include_file_name = include_file_name[1:]  
                         git_path = git_recursive_search(git_path, include_file_name) + '/' + include_file_name
+                        if git_path[0] == '/':
+                            git_path = git_path[1:]
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
                         git_temp = open('git_temp.md', 'w')
                         for line in str_from_git:
@@ -294,10 +300,6 @@ def remove_staging_files():
 
 if __name__ == "__main__":
     git_project, git_branch, git_private_token = git_ref_from_config()
-    response = requests.get('https://'+git_url_prefix+'/api/v3/projects/'+git_project+"?private_token="+git_private_token)
-    response_object = json.loads(response.content)
-    project_id = str(response_object['id'])
-    git_project = project_id
     str_list =  process_file('output.md')
     write_lines_to_file(str_list)
     #pdf_from_md('output_new.md')
