@@ -10,6 +10,7 @@ from subprocess import call
 import requests
 import json
 import gitlab
+import base64
 
 include_pattern = re.compile('{{(?P<git_group>git:)?(?P<path_group>.[^:]+)(:(?P<start_head>.[^-#]+)(-(?P<end_head>.[^-#]+))?(#(?P<level>[0-6]))?)?}}')
 
@@ -54,13 +55,31 @@ def git_recursive_search(git_tree, file_name):
     for git_dir in git_dir_list:
         if len(git_tree) == 0:
             new_path = git_dir
-            print 'new_path1 = ' + new_path
         else:
             new_path = git_tree + '/' + git_dir
-            print 'new_path2 = ' + new_path
         result = git_recursive_search(new_path, file_name)
         if result:
             return result
+
+def get_pic_from_git(file_str):
+    """
+    recursively finds a picture in gitlab project and downloads it into /scripts/staging
+    :param temp_file_str: git temporary file as string
+    :param git_path: path to picture in git repo
+    :param file_name: picture name  
+    """
+    git_path = ""
+    git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
+    pic_pattern = re.compile('!\[.*[^\]]\]\((?P<pic_name>.*[^\)])\)')
+    found = pic_pattern.findall(file_str)
+    for pic in found:
+        pic_name = pic
+        git_path = git_recursive_search(git_path, pic_name) + '/' + pic_name
+        image = git.getfile(git_project, git_path, git_branch)
+        content = image['content']
+        img = open('scripts/staging/' + pic_name, "wb")
+        img.write(content.decode('base64'))
+        img.close()
 
 
 def content_by_heading(include_file_name, heading):
@@ -220,6 +239,10 @@ def process_file(main_file_name):
                         git_path = include_file_name
                         git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
+                        try:
+                            get_pic_from_git(str_from_git)
+                        except:
+                            pass
                         git_temp = open('git_temp.md', 'w')
                         for line in str_from_git:
                             git_temp.write(str(line))
@@ -251,6 +274,10 @@ def process_file(main_file_name):
                         if git_path[0] == '/':
                             git_path = git_path[1:]
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
+                        try:
+                            get_pic_from_git(str_from_git)
+                        except:
+                            pass
                         git_temp = open('git_temp.md', 'w')
                         for line in str_from_git:
                             git_temp.write(line)
