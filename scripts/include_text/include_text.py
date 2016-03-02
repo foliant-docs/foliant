@@ -68,16 +68,15 @@ def get_pic_from_git(file_str):
     :param git_path: path to picture in git repo
     :param file_name: picture name  
     """
-    git_path = ""
     git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
     pic_pattern = re.compile('!\[.*[^\]]\]\((?P<pic_name>.*[^\)])\)')
     found = pic_pattern.findall(file_str)
     for pic in found:
-        pic_name = pic
-        git_path = git_recursive_search(git_path, pic_name) + '/' + pic_name
+        git_path = ""
+        git_path = git_recursive_search(git_path, pic) + '/' + pic
         image = git.getfile(git_project, git_path, git_branch)
         content = image['content']
-        img = open('scripts/staging/' + pic_name, "wb")
+        img = open('scripts/staging/' + pic, "wb")
         img.write(content.decode('base64'))
         img.close()
 
