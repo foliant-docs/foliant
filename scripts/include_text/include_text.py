@@ -3,18 +3,16 @@ This module is for processing included content in md-files
 """
 # -*- coding: utf-8 -*
 
+import json
 import os
-import sys
 import re
 from subprocess import call
-import requests
-import json
 import gitlab
-import base64
 
-include_pattern = re.compile('{{(?P<git_group>git:)?(?P<path_group>.[^:]+)(:(?P<start_head>.[^-#]+)(-(?P<end_head>.[^-#]+))?(#(?P<level>[0-6]))?)?}}')
+include_pattern = re.compile(
+    r'{{(?P<git_group>git:)?(?P<path_group>.[^:]+)(:(?P<start_head>.[^-#]+)(-(?P<end_head>.[^-#]+))?(#(?P<level>[0-6]))?)?}}')
 
-git_url_prefix = "git.restr.im"
+git_url_prefix = "gitlab.com"
 git_path = ""
 
 
@@ -32,8 +30,26 @@ def git_ref_from_config():
     git_branch = config['git_branch']
     git_private_token = config['git_private_token']
     if len(git_private_token) == 0:
-        git_private_token = raw_input('Input Gitlab private token to continue\nYou can find it in Gitlab GUI -> Profile Settings -> Account\n')
+        git_private_token = raw_input(
+            'Input Gitlab private token to continue\nYou can find it in Gitlab GUI -> Profile Settings -> Account\n')
     return git_project, git_branch, git_private_token
+
+
+def file_to_str_lst(file_name):
+    if type(file_name) == list:
+        return file_name
+    try:
+        f = open(file_name, 'r')
+        file_as_str_lst = f.readlines()
+        f.close()
+    except:
+        new_list = []
+        file_as_str_lst = file_name.split('\n\n')
+        for line in file_as_str_lst:
+            line += '\n\n'
+            new_list.append(line)
+        file_as_str_lst = new_list
+    return file_as_str_lst
 
 
 def git_recursive_search(git_tree, file_name):
@@ -41,7 +57,7 @@ def git_recursive_search(git_tree, file_name):
     recursively finds needed file in gitlab project
     :param git_tree: a tree of git repo
     :param file_name: file to be found
-    :return: path to the needed file in gitlab project   
+    :return: path to the needed file in gitlab project
     """
     git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
     git_dir_list = []
@@ -61,15 +77,23 @@ def git_recursive_search(git_tree, file_name):
         if result:
             return result
 
+
 def get_pic_from_git(file_str):
     """
     recursively finds a picture in gitlab project and downloads it into /scripts/staging
     :param temp_file_str: git temporary file as string
     :param git_path: path to picture in git repo
-    :param file_name: picture name  
+    :param file_name: picture name
     """
     git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
     pic_pattern = re.compile('!\[.*[^\]]\]\((?P<pic_name>.*[^\)])\)')
+    if type(file_str) == list:
+        temp_str = ''
+        for line in file_str:
+            temp_str += line
+
+        file_str = temp_str
+
     found = pic_pattern.findall(file_str)
     for pic in found:
         git_path = ""
@@ -89,18 +113,17 @@ def content_by_heading(include_file_name, heading):
     :return: list of strings
     """
     needed_content = []
-    heading = heading + '\n'
+    heading += '\n'
     heading_found = 0
-    f1 = open(include_file_name, 'r')
-    f = f1.readlines()
+    f = file_to_str_lst(include_file_name)
     for line in f:
         if heading_found == 0:
             if heading in line:
                 heading_found = 1
         if heading_found == 1:
             needed_content.append(line)
-    f1.close()
     return needed_content
+
 
 def content_between_headings(include_file_name, h1, h2):
     """
@@ -116,8 +139,7 @@ def content_between_headings(include_file_name, h1, h2):
     h2 = h2 + '\n'
     heading_start = 0
     heading_end = 0
-    f1 = open(include_file_name, 'r')
-    f = f1.readlines()
+    f = file_to_str_lst(include_file_name)
     for line in f:
         if h1 in line:
             heading_start = 1
@@ -125,8 +147,8 @@ def content_between_headings(include_file_name, h1, h2):
             break
         if heading_start == 1:
             needed_content.append(line)
-    f1.close()
     return needed_content
+
 
 def set_heading_level(list_of_str, needed_level):
     """
@@ -164,6 +186,7 @@ def set_heading_level(list_of_str, needed_level):
         changed_headings.append(line)
     return changed_headings
 
+
 def process_headings(start_heading, end_heading, include_level, include_file_test):
     """
     processes headings of the included file if needed and writes changed content into a new file
@@ -175,21 +198,23 @@ def process_headings(start_heading, end_heading, include_level, include_file_tes
     new_list_of_str = []
     if start_heading and not end_heading and not include_level:
         new_list_of_str = content_by_heading(include_file_test, start_heading)
+
     if start_heading and end_heading and not include_level:
         new_list_of_str = content_between_headings(include_file_test, start_heading, end_heading)
+
     if start_heading and not end_heading and include_level:
         list_of_str = content_by_heading(include_file_test, start_heading)
         new_list_of_str = set_heading_level(list_of_str, include_level)
+
     if start_heading and end_heading and include_level:
         list_of_str = content_between_headings(include_file_test, start_heading, end_heading)
         new_list_of_str = set_heading_level(list_of_str, include_level)
-    if len(new_list_of_str) > 0:
-        changed = open('changed_file.md', 'w')
-        for line in new_list_of_str:
-            changed.write(line)
-        changed.close()
 
-def process_file(main_file_name):
+    if len(new_list_of_str) > 0:
+        return new_list_of_str
+
+
+def process_file(file_name):
     """
     finds included content by include_pattern and processes it depending on the match found
     :param main_file_name: name of file with possibly included content
@@ -198,15 +223,14 @@ def process_file(main_file_name):
     global git_path
     git_unabled = 0
     str_list = []
-    start_heading = None
-    end_heading = None
-    include_level = None
-    f1 = open(main_file_name, 'r')
-    f = f1.readlines()
+    f = file_to_str_lst(file_name)
     for line in f:
+        start_heading = None
+        end_heading = None
+        include_level = None
         found = include_pattern.search(line)
         if found:
-            change_needed = found.group(0) #the whole string with {{}}
+            change_needed = found.group(0)  # the whole string with {{}}
             if found.group('git_group'):
                 git_unabled = 1
             if found.group('start_head'):
@@ -222,75 +246,74 @@ def process_file(main_file_name):
                 else:
                     pass
                 if '*' not in include_file_name:
-                    #non-recursive search
+                    # non-recursive search
                     include_file_test = include_file_name
                     if git_unabled == 0:
-                        #local search
+                        # local search
                         if os.path.isfile(include_file_test):
-                            process_headings(start_heading, end_heading, include_level, include_file_test)
+                            changed = process_headings(start_heading, end_heading, include_level, include_file_test)
                         try:
-                            new_str = process_file('changed_file.md')
+                            new_str = process_file(changed)
                         except:
                             new_str = process_file(include_file_test)
                         str_list.extend(new_str)
                     if git_unabled == 1:
-                        #git-repo search
+                        # git-repo search
                         git_path = include_file_name
                         git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
+                        changed = process_headings(start_heading, end_heading, include_level, str_from_git)
                         try:
-                            get_pic_from_git(str_from_git)
+                            get_pic_from_git(changed)
                         except:
                             pass
-                        git_temp = open('git_temp.md', 'w')
-                        for line in str_from_git:
-                            git_temp.write(str(line))
-                        git_temp.close()
-                        process_headings(start_heading, end_heading, include_level, 'git_temp.md')
                         try:
-                            new_str = process_file('changed_file.md')
+                            new_str = process_file(changed)
                         except:
-                            new_str = process_file('git_temp.md')
+                            new_str = process_file(str_from_git)
                         str_list.extend(new_str)
                 else:
                     if git_unabled == 0:
-                        #recursive local search
+                        # recursive local search
                         include_file_name = include_file_name[1:]
                         walk_dir = os.getcwd()
                         for root, subdirs, files in os.walk(walk_dir):
                             include_file_test = os.path.join(root, include_file_name)
                             if os.path.isfile(include_file_test):
-                                process_headings(start_heading, end_heading, include_level, include_file_test)
+                                changed = process_headings(start_heading, end_heading, include_level, include_file_test)
                                 try:
-                                    new_str = process_file('changed_file.md')
+                                    new_str = process_file(changed)
                                 except:
                                     new_str = process_file(include_file_test)
                                 str_list.extend(new_str)
                     if git_unabled == 1:
                         git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
-                        include_file_name = include_file_name[1:]  
-                        git_path = git_recursive_search(git_path, include_file_name) + '/' + include_file_name
+                        include_file_name = include_file_name[1:]
+                        file_location = git_recursive_search(git_path, include_file_name)
+                        if not file_location:
+                            continue
+                        git_path = file_location + '/' + include_file_name
                         if git_path[0] == '/':
                             git_path = git_path[1:]
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
+                        changed = process_headings(start_heading, end_heading, include_level, str_from_git)
                         try:
-                            get_pic_from_git(str_from_git)
+                            get_pic_from_git(changed)
                         except:
                             pass
-                        git_temp = open('git_temp.md', 'w')
-                        for line in str_from_git:
-                            git_temp.write(line)
-                        git_temp.close()
-                        process_headings(start_heading, end_heading, include_level, 'git_temp.md')
                         try:
-                            new_str = process_file('changed_file.md')
+                            new_str = process_file(changed)
                         except:
-                            new_str = process_file('git_temp.md')
+                            new_str = process_file(str_from_git)
                         str_list.extend(new_str)
         else:
             str_list.append(line)
-    str_list.append('\n')
+
+    if not str_list[len(str_list) - 1].endswith('\n\n'):
+        str_list.append('\n')
+
     return str_list
+
 
 def write_lines_to_file(str_list):
     """
@@ -302,6 +325,7 @@ def write_lines_to_file(str_list):
         new_md.write(str(line))
     new_md.close()
 
+
 def pdf_from_md(file_name):
     """
     calls pandoc to convert md into pdf - function for debugging the module
@@ -309,16 +333,17 @@ def pdf_from_md(file_name):
     """
     call(['pandoc', file_name, '-s', '-o', 'output.pdf', '--latex-engine=xelatex'])
 
+
 def remove_staging_files():
     """
     removes staging files in the working directory
     """
-    #os.rename('output_new.md', 'output.md')
+    # os.rename('output_new.md', 'output.md')
     try:
         os.remove('git_temp.md')
     except:
         pass
-    #os.remove('output_new.md')
+    # os.remove('output_new.md')
     try:
         os.remove('changed_file.md')
     except:
@@ -326,7 +351,7 @@ def remove_staging_files():
 
 if __name__ == "__main__":
     git_project, git_branch, git_private_token = git_ref_from_config()
-    str_list =  process_file('output.md')
+    str_list = process_file('output.md')
     write_lines_to_file(str_list)
-    #pdf_from_md('output_new.md')
-    remove_staging_files()
+    # pdf_from_md('output_new.md')
+    # remove_staging_files()
