@@ -41,7 +41,11 @@ case $input_variable in
         find "$here"/scripts/staging -iname '*.eps' -exec mogrify -format png -transparent white -density 200 {} +;
         python assembler.py "$here" "$input_variable"
         wait
+        cd "$here"/scripts;
+		mv title.docx "$here"/scripts/staging;
+		mv add_title.applescript "$here"/scripts/staging;
         cd "$here"/scripts/staging;
+        	osascript add_title.applescript;
 		mv output.docx "$here";
 		rm -r "$here"/scripts/staging;
         ;;
