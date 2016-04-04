@@ -3,8 +3,8 @@
 "title": "",
 "second_title":"",
 "lang": "russian",
-"company": "restream",
-"year":"2016",
+"company": "",
+"year":"2015",
 "title_page": "true",
 "toc": "true",
 "tof": "",
@@ -13,6 +13,9 @@
 "version": "auto",
 "date":"true",
 "git_project":"",
-"git_branch":"master",
-"git_private_token":""
+"git_branch":"",
+"git_private_token":"",
+"email_login":"",
+"email_pass":"",
+"email_destination":""
 }

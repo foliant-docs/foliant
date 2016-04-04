@@ -1,6 +1,6 @@
 set x to 0
 
-set doc1 to "title.docx"
+set doc1 to "atitle.docx"
 set doc2 to "output.docx"
 
 tell application "Finder"

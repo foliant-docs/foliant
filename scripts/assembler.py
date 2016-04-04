@@ -7,7 +7,15 @@ import datetime
 import subprocess
 import re
 import fileinput
+import shutil
+import include_text as inc
+import my_mail
+import gitlab
+
 #TODO: Open all shell sessions via subprocess
+
+git_url_prefix = "gitlab.com"
+git_path = ""
 
 reload(sys)
 # sys.setdefaultencoding('cp1251')
@@ -42,6 +50,8 @@ def combine_files(fileList, fn):
                         combine(''.join(section.keys()))
                         recursive_handle(section)
                     elif isinstance(section, str):
+                        if section.startswith('git:'):
+                            section = section[4:]
                         combine(section)
 
         def combine(section):
@@ -53,7 +63,52 @@ def combine_files(fileList, fn):
                     print section
                     output.write(open(file).read().decode('utf-8')+'\n'+'\n')
 
-        recursive_handle(contents)
+        def chapter_from_git(contents):
+            git_pattern = re.compile("git:(?P<file_name>.*)")
+            for chapter in contents['chapters']:
+                found = git_pattern.match(chapter)
+                if found:
+                    if not os.path.exists(os.path.join(current_path,'sources')):
+                        os.makedirs(os.path.join(current_path,'sources'))
+                    file_name = found.group('file_name') + '.md'
+                    c = open('config.json')
+                    config = json.load(c)
+                    c.close()
+                    git_project = config['git_project']
+                    if '/' in git_project:
+                        git_project = git_project.replace('/', '%2F')
+                    git_branch = config['git_branch']
+                    git_private_token = config['git_private_token']
+
+                    git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
+                    str_from_git = git.getrawfile(git_project, git_branch, file_name)
+
+                    f = open(current_path + '/sources/' + file_name , 'w')
+                    f.write(str(str_from_git))
+                    f.close()
+
+                    shutil.copy(current_path + '/sources/' + file_name, current_path + "/scripts/staging")
+
+                    pic_pattern = re.compile('!\[.*[^\]]\]\((?P<pic_name>.*[^\)])\)')
+
+                    found_pic = pic_pattern.findall(str_from_git)
+                    for pic in found_pic:
+                        git_path = pic
+                        image = git.getfile(git_project, git_path, git_branch)
+                        content = image['content']
+                        img = open(current_path + '/scripts/staging/' + pic, "wb")
+                        img.write(content.decode('base64'))
+                        img.close()
+                        img = open(current_path + '/sources/' + pic, "wb")
+                        img.write(content.decode('base64'))
+                        img.close()
+
+        try:
+            chapter_from_git(contents)
+        except:
+            pass
+    fileList = dir_list(search_dir, True, 'md')
+    recursive_handle(contents)
     output.close()
     main.close()
 
@@ -63,11 +118,18 @@ def config_handler():
     config = json.load(config_data)
     config_data.close()
     send_to_pandoc = dict()
+
     variable_string = ""
 
     for key in config:
         #TODO: Remove strict naming
-        if key == "lang":
+        if key == "git_project":
+            continue
+        elif key == "git_private_token":
+            continue
+        elif key == "git_branch":
+            continue
+        elif key == "lang":
             if config[key] == "russian":
                 send_to_pandoc["russian"] = "true"
             if config[key] == "english":
@@ -155,15 +217,24 @@ def get_version_counter():
     return version_counter
 
 current_path = sys.argv[1]
-#current_path = os.path.dirname(__file__)
 user_input = sys.argv[2]
 search_dir = os.path.join(current_path,'sources')
 fn = "output.md"
 combine_files(dir_list(search_dir, True, 'md'), fn)
-pandoc_params, template = config_handler()
-# TODO: Automatic seqdiag generation
-run_pandoc(user_input, pandoc_params, template)
 
+try:
+    str_list = inc.process_file(current_path + '/scripts/staging/' + fn)
+    inc.write_lines_to_file(str_list)
+except:
+    pass
+pandoc_params, template = config_handler()
+run_pandoc(user_input, pandoc_params, template)
+login, passw, dest, title = my_mail.email_fields_from_config()
+if len(login) > 0:
+    output = current_path + '/scripts/staging/output.pdf'
+    my_mail.send_email(login, passw, dest, title, output)
+
+#TODO: Automatic seqdiag generation
 #TODO: pipeline of handlers
 #TODO: regexps for smooth typography
 #TODO: regexps for trailing spaces

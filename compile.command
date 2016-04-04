@@ -7,9 +7,18 @@ cd "$here" || exit 1
 wait
 cd scripts
 mkdir "$here"/scripts/staging
+mkdir "$here"/sources
 
 wait
 # TODO: recursive search with python
+cp "$here"/sources/*.png /"$here"/scripts/staging
+cp "$here"/sources/*.eps /"$here"/scripts/staging
+cp "$here"/sources/*.tex /"$here"/scripts/staging
+cp "$here"/sources/*.gif /"$here"/scripts/staging
+cp "$here"/sources/*.jpg /"$here"/scripts/staging
+cp "$here"/sources/*.bst /"$here"/scripts/staging
+cp "$here"/sources/*.bib /"$here"/scripts/staging
+cp "$here"/sources/*.csl /"$here"/scripts/staging
 cp "$here"/sources/**/*.png /"$here"/scripts/staging
 cp "$here"/sources/**/**/*.png /"$here"/scripts/staging
 cp "$here"/sources/**/*.eps /"$here"/scripts/staging
@@ -29,6 +38,7 @@ echo "Choose output format: pdf (p), docx (d), tex (t), md (m) or gdrive update 
 read input_variable
 echo "\n"
 date +"%T"
+echo "$here"
 
 case $input_variable in
     p ) python assembler.py "$here" "$input_variable"
@@ -42,8 +52,9 @@ case $input_variable in
         python assembler.py "$here" "$input_variable"
         wait
         cd "$here"/scripts;
-		mv title.docx "$here"/scripts/staging;
-		mv add_title.applescript "$here"/scripts/staging;
+		cp atitle.docx "$here"/scripts/staging;
+		cp add_title.applescript "$here"/scripts/staging;
+        wait
         cd "$here"/scripts/staging;
         	osascript add_title.applescript;
 		mv output.docx "$here";

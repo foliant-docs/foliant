@@ -4,10 +4,13 @@ This module is for processing included content in md-files
 # -*- coding: utf-8 -*
 
 import json
+import sys
 import os
 import re
 from subprocess import call
 import gitlab
+
+current_path = sys.argv[1]
 
 include_pattern = re.compile(
     r'{{(?P<git_group>git:)?(?P<path_group>.[^:]+)(:(?P<start_head>.[^-#]+)(-(?P<end_head>.[^-#]+))?(#(?P<level>[0-6]))?)?}}')
@@ -29,26 +32,25 @@ def git_ref_from_config():
         git_project = git_project.replace('/', '%2F')
     git_branch = config['git_branch']
     git_private_token = config['git_private_token']
-    if len(git_private_token) == 0:
-        git_private_token = raw_input(
-            'Input Gitlab private token to continue\nYou can find it in Gitlab GUI -> Profile Settings -> Account\n')
     return git_project, git_branch, git_private_token
 
+git_project, git_branch, git_private_token = git_ref_from_config()
 
 def file_to_str_lst(file_name):
     if type(file_name) == list:
         return file_name
-    try:
-        f = open(file_name, 'r')
-        file_as_str_lst = f.readlines()
-        f.close()
-    except:
-        new_list = []
-        file_as_str_lst = file_name.split('\n\n')
-        for line in file_as_str_lst:
-            line += '\n\n'
-            new_list.append(line)
-        file_as_str_lst = new_list
+    else:
+        try:
+            f = open(file_name, 'r')
+            file_as_str_lst = f.readlines()
+            f.close()
+        except:
+            new_list = []
+            file_as_str_lst = file_name.split('\n\n')
+            for line in file_as_str_lst:
+                line += '\n\n'
+                new_list.append(line)
+            file_as_str_lst = new_list
     return file_as_str_lst
 
 
@@ -100,7 +102,7 @@ def get_pic_from_git(file_str):
         git_path = git_recursive_search(git_path, pic) + '/' + pic
         image = git.getfile(git_project, git_path, git_branch)
         content = image['content']
-        img = open('scripts/staging/' + pic, "wb")
+        img = open(current_path + '/scripts/staging/' + pic, "wb") #maybe error
         img.write(content.decode('base64'))
         img.close()
 
@@ -263,10 +265,10 @@ def process_file(file_name):
                         git = gitlab.Gitlab(git_url_prefix, token=git_private_token)
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
                         changed = process_headings(start_heading, end_heading, include_level, str_from_git)
-                        try:
+                        if changed:
                             get_pic_from_git(changed)
-                        except:
-                            pass
+                        else:
+                            get_pic_from_git(str_from_git)
                         try:
                             new_str = process_file(changed)
                         except:
@@ -297,10 +299,10 @@ def process_file(file_name):
                             git_path = git_path[1:]
                         str_from_git = git.getrawfile(git_project, git_branch, git_path)
                         changed = process_headings(start_heading, end_heading, include_level, str_from_git)
-                        try:
+                        if changed:
                             get_pic_from_git(changed)
-                        except:
-                            pass
+                        else:
+                            get_pic_from_git(str_from_git)
                         try:
                             new_str = process_file(changed)
                         except:
@@ -320,7 +322,7 @@ def write_lines_to_file(str_list):
     writes the processed lines into the final md-file
     :param str_list: list of already processed strings
     """
-    new_md = open('output_new.md', 'w')
+    new_md = open(current_path + r'/scripts/staging/output.md', 'w')
     for line in str_list:
         new_md.write(str(line))
     new_md.close()
@@ -334,24 +336,8 @@ def pdf_from_md(file_name):
     call(['pandoc', file_name, '-s', '-o', 'output.pdf', '--latex-engine=xelatex'])
 
 
-def remove_staging_files():
-    """
-    removes staging files in the working directory
-    """
-    # os.rename('output_new.md', 'output.md')
-    try:
-        os.remove('git_temp.md')
-    except:
-        pass
-    # os.remove('output_new.md')
-    try:
-        os.remove('changed_file.md')
-    except:
-        pass
-
 if __name__ == "__main__":
     git_project, git_branch, git_private_token = git_ref_from_config()
     str_list = process_file('output.md')
     write_lines_to_file(str_list)
-    # pdf_from_md('output_new.md')
-    # remove_staging_files()
+    #pdf_from_md('output.md')
