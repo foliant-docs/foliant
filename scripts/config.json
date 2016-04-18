@@ -1,10 +1,10 @@
 {
 "type": "",
-"title": "",
-"second_title":"",
+"title": "Программа и методика испытаний",
+"second_title":"Приложение Интерактивное ТВ для мобильных устройств под управлением iOS",
 "lang": "russian",
-"company": "",
-"year":"2015",
+"company": "restream",
+"year":"2016",
 "title_page": "true",
 "toc": "true",
 "tof": "",
@@ -15,7 +15,5 @@
 "git_project":"",
 "git_branch":"",
 "git_private_token":"",
-"email_login":"",
-"email_pass":"",
 "email_destination":""
 }

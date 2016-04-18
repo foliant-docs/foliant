@@ -11,6 +11,9 @@ import shutil
 import include_text as inc
 import my_mail
 import gitlab
+import string
+import glob
+from time import gmtime, strftime
 
 #TODO: Open all shell sessions via subprocess
 
@@ -162,12 +165,15 @@ def config_handler():
                 send_to_pandoc[key] = "true"
         elif key == "template":
             template=config[key]
+        elif key == "title":
+            final_file=config[key].replace (" ", "_")
+            send_to_pandoc[key] = config[key]
         else:
             send_to_pandoc[key] = config[key]
 
     for key in send_to_pandoc:
         variable_string = "--variable {0}=\"{1}\" {2}".format(key, send_to_pandoc[key], variable_string).strip()
-    return variable_string, template
+    return variable_string, template, final_file
 
 def replace_text(file,search_exp,replace_exp):
     for line in fileinput.input(file, inplace=1):
@@ -180,6 +186,9 @@ def replace_text_re(file,search_exp,replace_exp):
         line = re.sub(search_exp, r'{0}'.format(replace_exp), line)
         sys.stdout.write(line)
 
+def latex_preprocessor(output_file):
+    replace_text_re(output_file, '<!-- Latex: (.*) -->', '\\1')
+
 def docx_preprocessor(output_file):
     replace_text(output_file,'.eps','.png')
     replace_text_re(output_file, '<!-- DOCX: (.*) -->', '\\1')
@@ -190,13 +199,19 @@ def run_pandoc(file_type, variable_string, template):
     #TODO: Bilatex references handling
     output_file = os.path.join(os.path.join(current_path,'scripts/staging'),fn)
     if file_type == "p":
-        pandoc_launch = "cd {0}/scripts/staging; pandoc -o output.pdf -f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+intraword_underscores+yaml_metadata_block -t latex --template={0}/scripts/template/{2}.tex --no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex {1} output.md;".format(current_path, variable_string, template)
+        latex_preprocessor(output_file)
+        pandoc_launch = "cd {0}/scripts/staging; pandoc -o output.pdf -f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+intraword_underscores+yaml_metadata_block -t latex --template={0}/scripts/template/{2}.tex --no-tex-ligatures --smart --normalize --latex-engine=xelatex {1} output.md;".format(current_path, variable_string, template)
         os.popen(pandoc_launch)
     elif file_type == "d":
+        convert_images = 'echo "Converting images..."; find {0}/scripts/staging -iname "*.eps" -exec mogrify -format png -transparent white -density 200 {1} +;'.format(current_path,'{}')
+        os.popen(convert_images)
         docx_preprocessor(output_file)
         pandoc_launch = 'cd {0}/scripts/staging; pandoc -o output.docx -f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+intraword_underscores+yaml_metadata_block --template={0}/scripts/template/{2}.tex --no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex --reference-docx={0}/scripts/ref.docx --toc --toc-depth=4 {1} output.md;'.format(current_path, variable_string, template)
         os.popen(pandoc_launch)
+        add_docx_title()
     elif file_type == "g":
+        convert_images = 'echo "Converting images..."; find {0}/scripts/staging -iname "*.eps" -exec mogrify -format png -transparent white -density 200 {1} +;'.format(current_path,'{}')
+        os.popen(convert_images)
         version_counter = get_version_counter()
         with open(output_file, 'r') as original: data = original.read()
         with open(output_file, 'w') as modified: modified.write('_Version of the document: ' + version_counter + '.' + datetime.date.today().strftime('%d-%m-%Y') + data)
@@ -206,15 +221,58 @@ def run_pandoc(file_type, variable_string, template):
         pandoc_launch = "cd {0}/scripts/staging; pandoc -o output.docx -f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+yaml_metadata_block --template={0}/scripts/template/{2}.tex --no-tex-ligatures --smart --normalize --latex-engine=xelatex --reference-docx={0}/scripts/ref-simple.docx {1} output.md;".format(current_path, variable_string, template)
         os.popen(pandoc_launch)
     elif file_type == "t":
+        latex_preprocessor(output_file)
         pandoc_launch = "cd {0}/scripts/staging; pandoc -o output.tex -f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+yaml_metadata_block -t latex --template={0}/scripts/template/{2}.tex --no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex {1} output.md;".format(current_path, variable_string, template)
         os.popen(pandoc_launch)
 
 def get_version_counter():
-    #TODO: rework with using config settings
-    cmd_version_counter = "cd {0}; git rev-list --count master".format(current_path)
-    process = subprocess.Popen(cmd_version_counter, stdout=subprocess.PIPE, stderr=None, shell=True)
-    version_counter = '1.' + process.communicate()[0].replace("\n", "")
-    return version_counter
+    cmd_version_counter_first = "cd {0}; git describe --abbrev=0".format(current_path)
+    cmd_version_counter_second = "cd {0}; git rev-list --count master".format(current_path)
+    
+    def cmd_process(value):
+        process = subprocess.Popen(value, stdout=subprocess.PIPE, stderr=None, shell=True).communicate()[0].replace("\n", "")
+        return process
+
+    def version_counter_first():
+        git_message = cmd_process(cmd_version_counter_first)
+        if git_message == '':
+            return '0'
+        else:
+            return ''.join(c for c in git_message if c.isdigit())
+
+    def version_counter_second(): 
+        return cmd_process(cmd_version_counter_second)
+
+    return version_counter_first() + '.' + version_counter_second()
+
+def move_output_file(file_type, file_title, version_counter):
+    if file_type == 'p':
+        file_extension = 'pdf'
+    if (file_type == 'd') or (file_type == 'd'):
+        file_extension = 'docx'
+    if file_type == 't':
+        file_extension = 'tex'
+    if file_type == 'm':
+        file_extension = 'md'
+    file_title = (file_title + '_' + version_counter + '-' + strftime("%d-%m-%Y", gmtime()))
+
+    stage_folder = '{0}/scripts/staging'.format(current_path)
+    old_file = '{0}/scripts/staging/output.{1}'.format(current_path, file_extension)
+    new_file = '{0}/{1}.{2}'.format(current_path, file_title, file_extension)
+    os.rename(old_file, new_file)
+    shutil.rmtree(stage_folder)
+
+def add_docx_title():
+
+    def copy_to_stage(file_name):
+        scripts_path = '{0}/scripts/{1}'.format(current_path, file_name)
+        stage_path = '{0}/scripts/staging/{1}'.format(current_path, file_name)
+        shutil.copyfile(scripts_path, stage_path)
+
+    copy_to_stage('atitle.docx')
+    copy_to_stage('add_title.applescript')
+    applescript_launch = "cd {0}/scripts/staging; osascript add_title.applescript".format(current_path)
+    os.popen(applescript_launch)
 
 current_path = sys.argv[1]
 user_input = sys.argv[2]
@@ -227,9 +285,15 @@ try:
     inc.write_lines_to_file(str_list)
 except:
     pass
-pandoc_params, template = config_handler()
+
+pandoc_params, template, file_title = config_handler()
 run_pandoc(user_input, pandoc_params, template)
+
+version_counter = get_version_counter()
+move_output_file(user_input, file_title, version_counter)
+
 login, passw, dest, title = my_mail.email_fields_from_config()
+
 if len(login) > 0:
     output = current_path + '/scripts/staging/output.pdf'
     my_mail.send_email(login, passw, dest, title, output)

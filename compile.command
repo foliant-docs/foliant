@@ -9,6 +9,8 @@ cd scripts
 mkdir "$here"/scripts/staging
 mkdir "$here"/sources
 
+python testrail.py "$here"
+
 wait
 # TODO: recursive search with python
 cp "$here"/sources/*.png /"$here"/scripts/staging
@@ -40,49 +42,6 @@ echo "\n"
 date +"%T"
 echo "$here"
 
-case $input_variable in
-    p ) python assembler.py "$here" "$input_variable"
-        wait
-        cd "$here"/scripts/staging;
-		mv output.pdf "$here";
-		rm -r "$here"/scripts/staging;
-        ;;
-    d ) echo "Converting images..."
-        find "$here"/scripts/staging -iname '*.eps' -exec mogrify -format png -transparent white -density 200 {} +;
-        python assembler.py "$here" "$input_variable"
-        wait
-        cd "$here"/scripts;
-		cp atitle.docx "$here"/scripts/staging;
-		cp add_title.applescript "$here"/scripts/staging;
-        wait
-        cd "$here"/scripts/staging;
-        	osascript add_title.applescript;
-		mv output.docx "$here";
-		rm -r "$here"/scripts/staging;
-        ;;
-    g ) echo "Converting images..."
-        find "$here"/scripts/staging -iname '*.eps' -exec mogrify -format png -transparent white -density 200 {} +;
-        python assembler.py "$here" "$input_variable"
-        wait
-        cd "$here"/scripts/staging;
-        mv output.docx "$here";
-        rm -r "$here"/scripts/staging;
-        cd "$here"/scripts
-        python "$here"/scripts/gdoc_uploader.py "$here" 
-        ;;
-    m ) python assembler.py "$here" "$input_variable"
-        wait
-        cd "$here"/scripts/staging;
-		mv output.md "$here";
-		wait;
-		rm -r "$here"/scripts/staging;
-        ;;
-    t ) python assembler.py "$here" "$input_variable"
-        wait
-        cd "$here"/scripts/staging;
-		mv output.tex "$here";
-		wait;
-		rm -r "$here"/scripts/staging;
-		;;
-    esac
+python assembler.py "$here" "$input_variable"
+
 exit
