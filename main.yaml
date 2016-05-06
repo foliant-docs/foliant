@@ -1,15 +1,5 @@
 --- # Contents
 chapters:
- - glossary
- - goal
- - object:
-   - version
-   - functions
- - conditions
- - test_cases
- - addendum
+ - Intro
+ - Chapter_1
 ...
-
-
-
-
