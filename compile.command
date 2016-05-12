@@ -8,8 +8,9 @@ wait
 cd scripts
 mkdir "$here"/scripts/staging
 mkdir "$here"/sources
+mkdir "$here"/sources/graphics
 
-python testrail.py "$here"
+python testrail.py "$here" || echo "Testrail is unabled"
 
 wait
 # TODO: recursive search with python
@@ -42,6 +43,6 @@ echo "\n"
 date +"%T"
 echo "$here"
 
-python assembler.py "$here" "$input_variable"
+python main.py "$here" "$input_variable"
 
 exit

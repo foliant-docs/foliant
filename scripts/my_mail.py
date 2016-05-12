@@ -12,6 +12,7 @@ def email_fields_from_config():
     """
     gets email login,pass, destination address and subject(title) from config
     all params are strings
+    :return: tuple of email credentials, addressee email and subject line
     """
     c = open('config.json')
     config = json.load(c)
@@ -27,25 +28,23 @@ def email_fields_from_config():
 
 
 def send_email(login, passw, dest, title, fn):
-	"""
-	sends email with attachment
-	"""
-	msg = MIMEMultipart() 
-	msg['From'] = login
-	msg['To'] = dest
-	msg['Subject'] = title	 
-	body = "С уважением,\nОтдел технической документации"	 
-	msg.attach(MIMEText(body, 'plain'))
-	attachment = open(fn, "rb")
-	part = MIMEBase('application', 'octet-stream')
-	part.set_payload((attachment).read())
-	encoders.encode_base64(part)
-	part.add_header('Content-Disposition', "attachment; filename= %s" % fn)
-	msg.attach(part)
-	server = smtplib.SMTP_SSL('smtp.yandex.ru', port=465) 
-	server.login(login, passw)
-	text = msg.as_string()
-	server.sendmail(login, dest, text)
-	server.quit()
-
-
+    """
+    sends email with attachment ONLY YANDEX smtp
+    """
+    msg = MIMEMultipart()
+    msg['From'] = login
+    msg['To'] = dest
+    msg['Subject'] = title
+    body = "С уважением,\nОтдел технической документации"
+    msg.attach(MIMEText(body, 'plain'))
+    attachment = open(fn, "rb")
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= %s" % fn)
+    msg.attach(part)
+    server = smtplib.SMTP_SSL('smtp.yandex.ru', port=465)
+    server.login(login, passw)
+    text = msg.as_string()
+    server.sendmail(login, dest, text)
+    server.quit()
