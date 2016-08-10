@@ -23,8 +23,7 @@ setup(
         "PyDrive",
         "PyYAML",
         "requests",
-        "cherrypy",
-        "cliar"
+        "docopt"
     ],
     license="MIT",
     entry_points={

@@ -1,13 +1,27 @@
-import cliar
+"""
+Foliant: Markdown to PDF, Docx, and LaTeX generator powered by Pandoc.
 
-class FoliantCLI(cliar.CLI):
-    @cliar.add_aliases(["make"])
-    def build(self, target, path = "."):
-        print("Target: %s, path: %s" % (target, path))
+Usage:
+  foliant (build | make) <target> [--path=<project-path>]
+  foliant (upload | up) <document> [--secret=<client_secret*.json>]
+  foliant (-h | --help)
+  foliant --version
 
-    @cliar.add_aliases(["up"])
-    def upload(self, doc, secret = ""):
-        print("Docx: %s, secret: %s" % (doc, secret))
+Options:
+  -h --help                         Show this screen.
+  -v --version                      Show version.
+  -p --path=<project-path>          Path to your project [default: .].
+  -s --secret=<client_secret*.json> Path to Google app's client secret file.
+"""
+
+from docopt import docopt
+import foliant.builder, foliant.uploader
 
 def main():
-    FoliantCLI().parse()
+    args = docopt(__doc__, version="Foliant 0.1.0")
+
+    if args["build"] or args["make"]:
+        foliant.builder.build(args["<target>"], args["--path"])
+
+    elif args["upload"] or args["up"]:
+        foliant.uploader.upload(args["<document>"], args["--secret"])
