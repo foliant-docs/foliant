@@ -1,0 +1,15 @@
+{
+  "type": "",
+  "title": "Lorem ipsum",
+  "second_title":"Dolor sit amet",
+  "lang": "english",
+  "company": "restream",
+  "year":"2016",
+  "title_page": "true",
+  "toc": "true",
+  "tof": "true",
+  "alt_doc_type": "",
+  "template": "basic",
+  "version": "1.0",
+  "date":"true"
+}

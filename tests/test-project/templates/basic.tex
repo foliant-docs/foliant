@@ -1,0 +1,601 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap} % для кодировки шрифтов в pdf
+
+\usepackage{epstopdf}
+
+\usepackage{moresize}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % для заголовка
+
+\usepackage[paper=A4,pagesize]{typearea} % для приложения в А3
+\usepackage[left=1.6in,top=1.3in,right=1.2in,bottom=2in, nohead]{geometry}
+
+\setlength{\parindent}{0cm} % убать остступы в начале параграфа
+\setlength{\parskip}{5pt} % расстояние между параграфами
+
+\usepackage{booktabs}
+
+\renewcommand{\baselinestretch}{1.2} % интерлиньяж
+
+\pagenumbering{arabic}
+
+\usepackage{longtable} % таблицы
+
+\usepackage{lastpage}
+
+\usepackage{csquotes} % кавычки
+
+\usepackage{color, framed} % линии на полях
+
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\usepackage[bottom,hang,flushmargin]{footmisc} % сноски
+\interfootnotelinepenalty=100000
+% \renewcommand*\footnoterule{}
+\setlength{\skip\footins}{1.2cm}
+\setlength{\footnotesep}{0.5cm}
+
+\usepackage{ulem}
+\usepackage[colorlinks=true, linkcolor=black, linktoc=all, anchorcolor=black, urlcolor=cyan, pdfborder={0 0 1}, pdfborderstyle={/S/U/W 1}, linkbordercolor=black, urlbordercolor=cyan, unicode=true, linkbordercolor={1 0 0}]{hyperref} % ссылки
+
+%\usepackage{fancyvrb}
+%\usepackage{spverbatim} % потому что листингс не работает с кириллицей (ну и ладно)
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{d6d6d6}
+\definecolor{delim}{RGB}{20,105,176}
+\definecolor{gray}{RGB}{247,247,247}
+\definecolor{default}{RGB}{0,0,0}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\colorlet{numb}{magenta!60!black}
+
+\usepackage{zref-base}
+\usepackage{listings}
+%Не выводить номер строки в однострочных листингах
+\makeatletter
+\newcounter{mylstlisting}
+\newcounter{mylstlines}
+\lst@AddToHook{PreSet}{%
+  \stepcounter{mylstlisting}%
+  \ifnum\mylstlines=1\relax
+    \lstset{numbers=none}
+  \else
+    \lstset{numbers=left}
+  \fi
+  \setcounter{mylstlines}{0}%
+}
+\lst@AddToHook{EveryPar}{%
+  \stepcounter{mylstlines}%
+}
+\lst@AddToHook{ExitVars}{%
+  \begingroup
+    \zref@wrapper@immediate{%
+      \zref@setcurrent{default}{\the\value{mylstlines}}%
+      \zref@labelbyprops{mylstlines\the\value{mylstlisting}}{default}%
+    }%
+  \endgroup
+}
+% \mylstlines print number of lines inside listing caption
+\newcommand*{\mylstlines}{%
+  \zref@extractdefault{mylstlines\the\value{mylstlisting}}{default}{0}%
+}
+\makeatother
+
+\newcommand\JSONnumbervaluestyle{\color{OrangeRed}}
+\newcommand\JSONstringvaluestyle{\color{OrangeRed}}
+
+% switch used as state variable
+\newif\ifcolonfoundonthisline
+
+\makeatletter
+
+
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily\footnotesize,
+  morestring=[b]",
+  moredelim=[s][\color{OrangeRed}]{<}{\ },
+  moredelim=[s][\color{OrangeRed}]{</}{>},
+  moredelim=[l][\color{OrangeRed}]{/>},
+  moredelim=[l][\color{OrangeRed}]{>},
+  morecomment=[s]{<?}{?>},
+  morecomment=[s]{<!--}{-->},
+  commentstyle=\color{gray},
+  stringstyle=\color{RoyalBlue},
+  identifierstyle=\color{RoyalBlue},
+  escapebegin=\begin{russiantext},
+  escapeend=\end{russiantext},
+}
+
+\newenvironment{russiantext}{\color{OrangeRed}}{\ignorespacesafterend}
+
+\lstdefinelanguage{json}{
+   numbers=left,
+   numberstyle=\tiny,
+   stepnumber=1,
+   numbersep=4pt,
+   showstringspaces=false,
+   breaklines=true,
+   escapeinside=ææ,
+}
+
+\lstdefinestyle{json}
+{
+  %basicstyle=\color{maroon},
+  showstringspaces    = false,
+  %keywords            = {false,true},
+  alsoletter          = 0123456789.,
+  morestring          = [s]{"}{"},
+  stringstyle         = \ifcolonfoundonthisline\JSONstringvaluestyle\else\color{RoyalBlue}\fi,
+  MoreSelectCharTable =%
+    \lst@DefSaveDef{`:}\colon@json{\processColon@json},
+  basicstyle          = \ttfamily,
+  keywordstyle        = \ttfamily\bfseries,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=4pt,
+  showstringspaces=false,
+  breaklines=true,
+  escapeinside=@@,
+  escapebegin=\begin{russiantext},
+  escapeend=\end{russiantext},
+}
+
+
+\lstset{
+   upquote=true,
+   language=json,
+   aboveskip=10pt,
+   belowskip=5pt,
+   extendedchars=true,
+   basicstyle=\normalsize\ttfamily,
+   breaklines=true,
+   showtabs=false,
+   backgroundcolor=\color{gray},
+   breakindent=0pt,
+   keepspaces=true,
+   %костыль для кириллицы
+   literate={а}{{\selectfont\char224}}1
+   {б}{{\selectfont\char225}}1
+   {в}{{\selectfont\char226}}1
+   {г}{{\selectfont\char227}}1
+   {д}{{\selectfont\char228}}1
+   {е}{{\selectfont\char229}}1
+   {ё}{{\"e}}1
+   {ж}{{\selectfont\char230}}1
+   {з}{{\selectfont\char231}}1
+   {и}{{\selectfont\char232}}1
+   {й}{{\selectfont\char233}}1
+   {к}{{\selectfont\char234}}1
+   {л}{{\selectfont\char235}}1
+   {м}{{\selectfont\char236}}1
+   {н}{{\selectfont\char237}}1
+   {о}{{\selectfont\char238}}1
+   {п}{{\selectfont\char239}}1
+   {р}{{\selectfont\char240}}1
+   {с}{{\selectfont\char241}}1
+   {т}{{\selectfont\char242}}1
+   {у}{{\selectfont\char243}}1
+   {ф}{{\selectfont\char244}}1
+   {х}{{\selectfont\char245}}1
+   {ц}{{\selectfont\char246}}1
+   {ч}{{\selectfont\char247}}1
+   {ш}{{\selectfont\char248}}1
+   {щ}{{\selectfont\char249}}1
+   {ъ}{{\selectfont\char250}}1
+   {ы}{{\selectfont\char251}}1
+   {ь}{{\selectfont\char252}}1
+   {э}{{\selectfont\char253}}1
+   {ю}{{\selectfont\char254}}1
+   {я}{{\selectfont\char255}}1
+   {А}{{\selectfont\char192}}1
+   {Б}{{\selectfont\char193}}1
+   {В}{{\selectfont\char194}}1
+   {Г}{{\selectfont\char195}}1
+   {Д}{{\selectfont\char196}}1
+   {Е}{{\selectfont\char197}}1
+   {Ё}{{\"E}}1
+   {Ж}{{\selectfont\char198}}1
+   {З}{{\selectfont\char199}}1
+   {И}{{\selectfont\char200}}1
+   {Й}{{\selectfont\char201}}1
+   {К}{{\selectfont\char202}}1
+   {Л}{{\selectfont\char203}}1
+   {М}{{\selectfont\char204}}1
+   {Н}{{\selectfont\char205}}1
+   {О}{{\selectfont\char206}}1
+   {П}{{\selectfont\char207}}1
+   {Р}{{\selectfont\char208}}1
+   {С}{{\selectfont\char209}}1
+   {Т}{{\selectfont\char210}}1
+   {У}{{\selectfont\char211}}1
+   {Ф}{{\selectfont\char212}}1
+   {Х}{{\selectfont\char213}}1
+   {Ц}{{\selectfont\char214}}1
+   {Ч}{{\selectfont\char215}}1
+   {Ш}{{\selectfont\char216}}1
+   {Щ}{{\selectfont\char217}}1
+   {Ъ}{{\selectfont\char218}}1
+   {Ы}{{\selectfont\char219}}1
+   {Ь}{{\selectfont\char220}}1
+   {Э}{{\selectfont\char221}}1
+   {Ю}{{\selectfont\char222}}1
+   {Я}{{\selectfont\char223}}1
+}
+
+% flip the switch if a colon is found in Pmode
+\newcommand\processColon@json{%
+  \colon@json%
+  \ifnum\lst@mode=\lst@Pmode%
+    \global\colonfoundonthislinetrue%
+  \fi
+}
+
+\lst@AddToHook{Output}{%
+  \ifcolonfoundonthisline%
+    \ifnum\lst@mode=\lst@Pmode%
+      \def\lst@thestyle{\JSONnumbervaluestyle}%
+    \fi
+  \fi
+  %override by keyword style if a keyword is detected!
+  \lsthk@DetectKeywords%
+}
+
+% reset the switch at the end of line
+\lst@AddToHook{EOL}%
+  {\global\colonfoundonthislinefalse}
+
+\makeatother
+
+% \lstdefinelanguage{XML}
+% {
+%   morestring=[b]",
+%   morestring=[s]{>}{<},
+%   morecomment=[s]{<?}{?>},
+%   stringstyle=\color{black},
+%   showstringspaces=false,
+%   identifierstyle=\color{OrangeRed},
+%   keywordstyle=\color{RoyalBlue},
+%   morekeywords={xmlns,",type}% list your attributes here
+% }
+
+
+% \makeatletter
+% \def\verbatim{\small\@verbatim \frenchspacing\@vobeyspaces \@xverbatim}
+% \makeatother
+
+% \makeatletter
+% \def\@xobeysp{\mbox{}\space}
+% \def\verbatim@font{\normalfont\ttfamily\raggedright}
+% \makeatother
+
+
+\usepackage{enumitem} % убираем пустую строку перед списком
+\setitemize{noitemsep,topsep=-4.5pt,parsep=-2pt,partopsep=2pt,leftmargin=*}
+\setenumerate{noitemsep,topsep=-4.5pt,parsep=-2pt,partopsep=2pt,leftmargin=*}
+
+\usepackage{textcomp} % меняем буллиты
+\renewcommand{\labelitemi}{\textemdash}
+\renewcommand{\labelitemii}{\textemdash}
+\renewcommand{\labelitemiii}{\textemdash}
+\renewcommand{\labelitemiv}{\textemdash}
+\renewcommand\labelenumi{\theenumi)}
+\renewcommand\labelenumii{\theenumi.\arabic{enumii})}
+\renewcommand\labelenumiii{\theenumi.\arabic{enumii}.\arabic{enumiii})}
+
+
+%\usepackage[skip=-5pt,margin=-30pt,format=hang,indention=-5.5cm,labelfont={small,bf,sc},textfont=small,justification=justified,singlelinecheck=false]{caption}
+\usepackage[labelsep=period, justification=raggedleft, labelfont={small,bf,sc},textfont=small,singlelinecheck=false, skip=15pt]{caption}
+
+\usepackage{graphicx} % вернул в ширину текста
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>1\linewidth
+1\linewidth
+\else\Gin@nat@width\fi}
+\makeatother
+\let\oldincludegraphics\includegraphics % TODO: убрать хак с \, внести его сюда
+\renewcommand\includegraphics[2][]{%
+  \vspace{8mm}
+  \centerline{
+  \oldincludegraphics[width=\maxwidth]{#2}
+  %\centering
+  }
+  %\vspace{-8mm}
+}
+
+%\let\oldincludegraphics\includegraphics
+%\renewcommand\includegraphics[2][]{%
+%  \oldincludegraphics[width=1.2\linewidth]{#2}
+%  \centering
+%}
+
+\usepackage{tocstyle}% добавляем расстояние между номером и названием в оглавлении
+\usetocstyle{allwithdot}
+\settocstylefeature[1]{entryhook}{\bfseries}
+
+\usepackage{amsthm,amsfonts,amsmath,amssymb,amscd} % математика от AMS
+\usepackage[warn]{mathtext}
+
+$if(russian)$
+\usepackage[main=russian, english]{babel}
+$endif$
+$if(english)$
+\usepackage[main=english,russian]{babel}
+$endif$
+
+\let\zz\[\let\zzz\] % лечит баг amsthm
+\usepackage[cm-default]{fontspec} % задаем шрифт документа
+\setromanfont{PT Sans}
+\setmonofont[Mapping=]{Anonymous Pro}
+\newfontfamily\monospace[Mapping=]{Anonymous Pro}
+\defaultfontfeatures{Ligatures=TeX}
+\newfontfamily\headingfont[]{DINPro-Medium}
+\newfontfamily\headingfontlight[]{DINPro}
+%\newfontfamily\headingfont[]{Geometria Medium}
+%\newfontfamily\headingfontreg[]{Geometria}
+
+\let\[\zz\let\]\zzz
+
+
+\makeatletter
+\def\Sbox#1#2{%
+  \setbox\z@\vbox{\hsize\maxdimen%
+  #2\par
+ \global\setbox#1\box\voidb@x
+ \loop
+ \setbox\z@\lastbox
+ \global\setbox#1\hbox{%
+  \ifvoid#1\else\unhbox#1\hfill\break\fi
+  \unhbox\z@
+  \unskip\unskip\unpenalty}%
+  \unskip\unskip\unpenalty
+  \ifnum\lastnodetype=\@ne
+  \repeat
+}}
+%
+\def\ttlh@runin#1#2#3#4#5#6#7#8{%
+  \global\@noskipsectrue
+  \gdef\ttl@makeline##1{##1}%
+  \ttl@changecentercr
+  #1{\ifhmode\ttl@hmode@error\fi
+     \Sbox%\global\sbox
+      \ttl@box{%
+       \ttl@calc\hspace{#6}%
+       \ifttl@label{\strut#2}\ttl@calc\hspace{#3}\fi
+       #4{#8}#5\unskip}}%
+    \gdef\@svsechd{\unhbox\ttl@box}}
+\makeatother
+
+
+\usepackage[explicit]{titlesec}  % выравниваем названия глав и разделов
+
+
+
+\titleformat{name=\chapter,numberless}[display]
+            {\normalfont\Huge\headingfont}% format
+            {\llap{% label
+               \chaptertitlename\thechapter\hskip 9pt}#1}%
+            {0pt}% horizontal sep
+            {}% before
+
+
+\titleformat{\section}
+            {\fontsize{28}{24}\headingfont}%format
+            {\makebox[0pt][r]{%
+                \headingfontlight\thesection\hskip 9pt}}%
+            {0pt}
+            {\makebox[\dimexpr\linewidth][l]{%
+                  \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+            {\raggedright #1}}}
+
+\titleformat{\subsection}%
+            {\fontsize{20}{20}\headingfont}%format
+            {\makebox[0pt][r]{%
+                \headingfontlight\thesubsection\hskip 9pt}}%
+            {0pt}
+            {\makebox[\dimexpr\linewidth][l]{%
+                  \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+            {\raggedright #1}}}
+
+\titleformat{\subsubsection}%
+            {\fontsize{16}{16}\headingfont}%format
+            {\makebox[0pt][r]{%
+                \headingfontlight\thesubsubsection\hskip 9pt}}%
+            {0pt}
+            {\makebox[\dimexpr\linewidth][l]{%
+                  \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+            {\raggedright #1}}}
+
+\titleformat{\paragraph}%
+            {\fontsize{14}{14}\headingfont}%format
+            {\makebox[0pt][r]{%
+                \headingfontlight\theparagraph\hskip 9pt}}%
+            {0pt}
+            {\makebox[\dimexpr\linewidth][l]{%
+                  \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+            {\raggedright #1}}}
+
+\titleformat{\subparagraph}%
+            {\headingfont}%format
+            {\makebox[0pt][r]{%
+                \headingfontlight\thesubparagraph\hskip 9pt}}%
+            {0pt}
+            {\makebox[\dimexpr\linewidth][l]{%
+                  \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+            {\raggedright #1}}}
+
+
+% \titleformat{\subparagraph}%
+%             {\headingfontlight}%format
+%             {\makebox[0pt][r]{%
+%                 \headingfontlight\thesubparagraph\hskip 9pt}}%
+%             {0pt}
+%             {\makebox[\dimexpr\linewidth][l]{%
+%                   \parbox[t]{\dimexpr\textwidth+\marginparwidth+\marginparsep\relax}
+%             {\raggedright\underline{\textbf{#1}}}
+
+$if(russian)$
+\renewcommand{\thesection}{\arabic{section}.} % хак, добавляющий точки к заголовкам
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\thesubsection
+\arabic{subsubsection}.}
+\renewcommand{\theparagraph}{\thesubsubsection\arabic{paragraph}.}
+\renewcommand{\thesubparagraph}{\theparagraph\arabic{subparagraph}.}
+$endif$
+
+\titlespacing*{\chapter}{0pt}{2pt}{0.5em} % отступы заголовков
+\titlespacing*{\section}{0pt}{2em}{1em}
+\titlespacing*{\subsection}{0pt}{1em}{0.1em}
+\titlespacing*{\subsubsection}{0pt}{1em}{0.1em}
+\titlespacing*{\paragraph}{0pt}{1em}{0em}
+\titlespacing*{\subparagraph}{0pt}{1em}{0em}
+
+
+\let\stdsection\section
+\renewcommand\section{\newpage\stdsection} % главы с новой страницы
+
+% \let\stdsubsection\subsection
+% \renewcommand\subsection{\newpage\stdsubsection} % разделы с новой страницы
+
+%\usepackage[final]{microtype} % не работает с xelatex
+
+$if(date)$
+  $if(english)$
+    \usepackage[mmddyyyy]{datetime}
+  $endif$
+  $if(russian)$
+    \usepackage[ddmmyyyy]{datetime}
+  $endif$
+    %\renewcommand{\dateseparator}{.}
+    \renewcommand{\dateseparator}{-} % TODO: для auto отдельно
+$endif$
+
+\usepackage{fancyhdr} % колонтитулы
+\fancyhf{}
+\pagestyle{fancy}
+\fancypagestyle{plain}{%
+\fancyfoot[R]{\footnotesize \thepage}
+  \fancyfoot[L]{\footnotesize \nouppercase{\textit{\rightorleftmark\phantom{.}\textbar\phantom{.}$version$.\today}}}}
+\fancyfoot[R]{\footnotesize \thepage}
+  \fancyfoot[L]{\footnotesize \nouppercase{\textit{\rightorleftmark\phantom{.}\textbar\phantom{.}$version$.\today}}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{80.99991pt}
+%\renewcommand{\subsubsectionmark}[1]{\markright{\thesubsubsection\ #1}}
+\fancypagestyle{titlefooter}{%
+\fancyhf{}
+$if(russian)$
+  $if(restream)$
+      \fancyfoot[L]{\textsc{\fontsize{12}{15}\headingfontlight\nohyphens{\pageref{LastPage} страниц, АО «Рестрим»
+        $if(date)$
+         \\[0.1cm] Версия документа $version$-\today
+        $else$
+        , $year$ год
+        $endif$
+      }}}
+  $endif$
+$endif$
+}
+\makeatletter
+\newcommand{\rightorleftmark}{%
+  \begingroup\protected@edef\x{\rightmark}%
+  \ifx\x\@empty
+    \endgroup\leftmark
+  \else
+    \endgroup\rightmark
+  \fi}
+\makeatother
+
+\setcounter{secnumdepth}{6} % уровень заголовков
+\setcounter{tocdepth}{2} % вывод заголовков всех уровней в оглавление
+
+\usepackage{newunicodechar}
+\newunicodechar{©}{\copyright}
+\newunicodechar{™}{\texttrademark}
+\newunicodechar{®}{\textregistered}
+\newunicodechar{«}{\guillemotleft}
+\newunicodechar{»}{\guillemotright}
+
+\usepackage[protrusion=true]{microtype} % остальные свойства не поддерживаются в XeLaTeX
+
+\usepackage{hyphenat}
+
+\usepackage{float} % чтобы таблицы были на месте
+\restylefloat{table}
+\let\origfigure=\figure % переопределение float-параметра изображений
+\let\endorigfigure=\endfigure
+\renewenvironment{figure}[1][]{%
+  \origfigure[H]
+}{%
+  \endorigfigure
+}
+
+\usepackage{longtable}
+
+\usepackage{changepage}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small} %все таблицы меньшим шрифтом
+
+\usepackage{afterpage}
+
+\usepackage{mdframed}
+
+\usepackage{rotating}
+
+\usepackage{adjustbox}
+
+\mdfdefinestyle{redbar}{%
+linewidth=1pt,
+topline=false,
+rightline=false,
+bottomline=false,
+linecolor=red,
+% innertopmargin=1.2\baselineskip,
+% skipabove={\dimexpr0.5\baselineskip+\topskip\relax},
+% needspace=2\baselineskip,
+leftmargin=-1em
+rightmargin=1em
+}
+
+\usepackage{ragged2e}
+
+%orphan control
+\widowpenalty10000
+\clubpenalty10000
+
+
+\begin{document}
+\righthyphenmin=2
+\lefthyphenmin=2
+\sloppy % плохо для типографики
+
+\begin{titlepage}
+    \includegraphics[scale=0.15]{restream_logo.png}
+    \vspace*{\fill}
+    \vspace{-5cm}
+    $if(second_title)$
+      \textsc{\fontsize{31}{34}\headingfont\RaggedRight\nohyphens{$title$}}\\[0.5cm]
+    $endif$
+    \fontsize{30}{30}\headingfontlight\RaggedRight\nohyphens{$second_title$}\\
+    \vfill
+    \thispagestyle{titlefooter}
+\end{titlepage}
+
+$if(toc)$
+  \tableofcontents
+  \newpage
+$endif$
+$body$
+$if(tof)$
+  \newpage
+  \listoffigures
+$endif$
+\end{document}
