@@ -15,13 +15,16 @@ Options:
 """
 
 from docopt import docopt
-import foliant.builder, foliant.uploader
+import foliant.builder as builder
+import foliant.uploader as uploader
 
 def main():
     args = docopt(__doc__, version="Foliant 0.1.0")
 
     if args["build"] or args["make"]:
-        foliant.builder.build(args["<target>"], args["--path"])
+        output_file = builder.build(args["<target>"], args["--path"])
+        print("Result: %s" % output_file)
 
     elif args["upload"] or args["up"]:
-        foliant.uploader.upload(args["<document>"], args["--secret"])
+        link = uploader.upload(args["<document>"], args["--secret"])
+        print("Link: %s" % link)
