@@ -1,13 +1,13 @@
-import subprocess
+import shlex, subprocess
 
 def get_version():
     git_describe = subprocess.run(
-        "git describe --abbrev=0",
+        shlex.split("git describe --abbrev=0"),
         stdout=subprocess.PIPE
     )
 
     git_revlist = subprocess.run(
-        "git rev-list --count master",
+        shlex.split("git rev-list --count master"),
         stdout=subprocess.PIPE
     )
 

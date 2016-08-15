@@ -1,4 +1,4 @@
-import subprocess
+import shlex, subprocess
 from . import gitutils
 
 PANDOC_PATH = "pandoc"
@@ -41,7 +41,7 @@ def generate_command(params, output_file, src_file, cfg):
 
 def run(command, src_dir):
     print("Baking output... ", end='')
-    subprocess.run(command, cwd=src_dir, check=True)
+    subprocess.run(shlex.split(command), cwd=src_dir, check=True)
     print("Done!")
 
 def to_pdf(src_file, output_file, tmp_path, cfg):
@@ -51,5 +51,22 @@ def to_pdf(src_file, output_file, tmp_path, cfg):
         src_file,
         cfg
     )
+    run(pandoc_command, tmp_path)
 
+def to_docx(src_file, output_file, tmp_path, cfg):
+    pandoc_command = generate_command(
+        '--reference-docx="ref.docx"',
+        output_file,
+        src_file,
+        cfg
+    )
+    run(pandoc_command, tmp_path)
+
+def to_tex(src_file, output_file, tmp_path, cfg):
+    pandoc_command = generate_command(
+        "-t latex",
+        output_file,
+        src_file,
+        cfg
+    )
     run(pandoc_command, tmp_path)

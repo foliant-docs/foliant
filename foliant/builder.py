@@ -54,6 +54,17 @@ def build(target_format, project_dir):
         output_file = output_title + ".pdf"
         pandoc.to_pdf(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
         shutil.copy(str(TMP_DIR/output_file), output_file)
+    elif target_format.startswith('d'):
+        output_file = output_title + ".docx"
+        pandoc.to_docx(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
+        shutil.copy(str(TMP_DIR/output_file), output_file)
+    elif target_format.startswith('t'):
+        output_file = output_title + ".tex"
+        pandoc.to_docx(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
+        shutil.copy(str(TMP_DIR/output_file), output_file)
+    elif target_format.startswith('m'):
+        output_file = output_title + ".md"
+        shutil.copy(str(TMP_DIR/COMBINED_SRC), output_file)
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
 
