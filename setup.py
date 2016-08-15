@@ -23,7 +23,8 @@ setup(
         "PyDrive",
         "PyYAML",
         "requests",
-        "docopt"
+        "docopt",
+        "pathlib2"
     ],
     license="MIT",
     entry_points={
