@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import shlex, subprocess
 from . import gitutils
 
@@ -37,11 +39,11 @@ def generate_command(params, output_file, src_file, cfg):
         else:
             print("Unsupported config key: %s" % key)
 
-    return ' '.join((PANDOC_PATH, *params, src_file))
+    return ' '.join([PANDOC_PATH] + params + [src_file])
 
 def run(command, src_dir):
     print("Baking output... ", end='')
-    subprocess.run(shlex.split(command), cwd=src_dir, check=True)
+    subprocess.check_call(shlex.split(command), cwd=src_dir)
     print("Done!")
 
 def to_pdf(src_file, output_file, tmp_path, cfg):

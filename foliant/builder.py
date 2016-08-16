@@ -1,23 +1,16 @@
-import shutil, json
-from pathlib import Path
+from __future__ import print_function
+
+import os, shutil, json
+from os.path import join
 import yaml
 from . import gitutils, pandoc
 
-TMP_DIR = Path("tmp")
-COMBINED_SRC = "output.md"
-SOURCES_DIR = "sources"
-TEMPLATES_DIR = "templates"
-REFERENCES_DIR = "references"
-IMAGES_DIR = "images"
-CONTENTS_FILE = "main.yaml"
-CONFIG_FILE = "config.json"
-
 def copy_dir_content(src, dest):
-    for child in src.iterdir():
-        if child.is_file():
-            shutil.copy(str(child), str(dest))
-        elif child.is_dir():
-            shutil.copytree(str(child), str(dest/child.name))
+    for child in os.listdir(src):
+        if os.path.isfile(join(src, child)):
+            shutil.copy(join(src, child), dest)
+        elif os.path.isdir(join(src, child)):
+            shutil.copytree(join(src, child), join(dest, child))
 
 def get_title(document_title, version):
     slug = document_title.replace(' ', '_')
@@ -26,46 +19,49 @@ def get_title(document_title, version):
 def collect_source(project_dir, target_dir, src_file):
     print("Collecting source... ", end='')
 
-    with (target_dir/src_file).open('w+') as combined_source:
-        with (project_dir/CONTENTS_FILE).open() as contents_file:
+    with open(join(target_dir, src_file), 'w+') as src:
+        with open(join(project_dir, "main.yaml")) as contents_file:
             for chapter_name in yaml.load(contents_file)["chapters"]:
                 chapter_file = chapter_name + ".md"
-                with (project_dir/SOURCES_DIR/chapter_file).open() as chapter:
-                    combined_source.write(chapter.read() + '\n')
+                with open(join(project_dir, "sources", chapter_file)) as chapter:
+                    src.write(chapter.read() + '\n')
 
-    copy_dir_content(project_dir/SOURCES_DIR/IMAGES_DIR, target_dir)
-    copy_dir_content(project_dir/TEMPLATES_DIR, target_dir)
-    copy_dir_content(project_dir/REFERENCES_DIR, target_dir)
+    copy_dir_content(join(project_dir, "sources", "images"), target_dir)
+    copy_dir_content(join(project_dir, "templates"), target_dir)
+    copy_dir_content(join(project_dir, "references"), target_dir)
 
     print("Done!")
 
 def build(target_format, project_dir):
-    project_dir = Path(project_dir)
+    tmp_dir = "tmp"
+    src_file = "output.md"
 
-    if TMP_DIR.exists(): shutil.rmtree(str(TMP_DIR))
-    TMP_DIR.mkdir(parents=True)
+    if os.path.exists(tmp_dir): shutil.rmtree(tmp_dir)
+    os.makedirs(tmp_dir)
 
-    cfg = json.load((project_dir/"config.json").open())
+    cfg = json.load(open(join(project_dir, "config.json")))
     output_title = get_title(cfg["title"], gitutils.get_version())
 
-    collect_source(project_dir, TMP_DIR, COMBINED_SRC)
+    collect_source(project_dir, tmp_dir, src_file)
 
     if target_format.startswith('p'):
         output_file = output_title + ".pdf"
-        pandoc.to_pdf(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
-        shutil.copy(str(TMP_DIR/output_file), output_file)
+        pandoc.to_pdf(src_file, output_file, tmp_dir, cfg)
+        shutil.copy(join(tmp_dir, output_file), output_file)
     elif target_format.startswith('d'):
         output_file = output_title + ".docx"
-        pandoc.to_docx(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
-        shutil.copy(str(TMP_DIR/output_file), output_file)
+        pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
+        shutil.copy(join(tmp_dir, output_file), output_file)
     elif target_format.startswith('t'):
         output_file = output_title + ".tex"
-        pandoc.to_docx(COMBINED_SRC, output_file, str(TMP_DIR), cfg)
-        shutil.copy(str(TMP_DIR/output_file), output_file)
+        pandoc.to_tex(src_file, output_file, tmp_dir, cfg)
+        shutil.copy(join(tmp_dir, output_file), output_file)
     elif target_format.startswith('m'):
         output_file = output_title + ".md"
-        shutil.copy(str(TMP_DIR/COMBINED_SRC), output_file)
+        shutil.copy(join(tmp_dir, src_file), output_file)
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
+
+    shutil.rmtree(tmp_dir)
 
     return output_file
