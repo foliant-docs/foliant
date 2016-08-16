@@ -3,7 +3,7 @@ from __future__ import print_function
 import os, shutil, json
 from os.path import join
 import yaml
-from . import gitutils, pandoc
+from . import gitutils, pandoc, uploader
 
 def copy_dir_content(src, dest):
     for child in os.listdir(src):
