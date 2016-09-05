@@ -14,28 +14,11 @@ $ pip install foliant
 # Usage
 
 ```
-Usage: foliant (build|upload) OPTIONS ARGUMENTS
-
-build
------
-
-Build PDF, Docx, TeX, or Markdown file from Markdown source. Special target
-"gdrive" is a shortcut for building Docx and uploading it to Google Drive.
-
-Usage: foliant build --target=(pdf|docx|tex|markdown|gdrive) [--path=/project/path]
-
-If no path is specified, the current directory is used.
-
-upload
-------
-
-Upload Docx file to Google Drive. To use the Google Drive API, you need
-a web app OAuth 2.0 client secret from Google API Console. You probably
-don't have to create the app yourself. Instead, you should be provided
-with a client_secrets.json file, which you should put in foliant's
-working directory.
-
-Usage: foliant upload /project/to/yourdocument.docx
+Usage:
+  foliant (build | make) <target> [--path=<project-path>]
+  foliant (upload | up) <document>
+  foliant (-h | --help)
+  foliant --version
 ```
 
 # Project Layout
