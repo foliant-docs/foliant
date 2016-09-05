@@ -59,6 +59,10 @@ def build(target_format, project_dir):
     elif target_format.startswith('m'):
         output_file = output_title + ".md"
         shutil.copy(join(tmp_dir, src_file), output_file)
+    elif target_format.startswith('g'):
+        output_file = output_title + ".docx"
+        pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
+        uploader.upload(output_file)
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
 
