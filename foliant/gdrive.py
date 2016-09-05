@@ -1,7 +1,19 @@
-import pydrive.auth
+import os.path
+import webbrowser
+import pydrive.auth, pydrive.drive
 
-def upload(document, secret):
+def upload(document):
     auth = pydrive.auth.GoogleAuth()
     auth.LocalWebserverAuth()
 
-    return "link"
+    gdrive = pydrive.drive.GoogleDrive(auth)
+
+    gdoc = gdrive.CreateFile({
+            "title": os.path.splitext(os.path.basename(document))[0]
+    })
+    gdoc.SetContentFile(document)
+    gdoc.Upload({"convert": True})
+
+    webbrowser.open(gdoc["alternateLink"])
+
+    return gdoc["alternateLink"]
