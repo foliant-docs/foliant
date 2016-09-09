@@ -1,0 +1,5 @@
+.vscode
+__pycache__
+*.pyc
+tmp
+client_secrets.json
