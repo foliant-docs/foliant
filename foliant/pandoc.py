@@ -46,8 +46,16 @@ def generate_command(params, output_file, src_file, cfg):
 
 def run(command, src_dir):
     print("Baking output... ", end='')
-    subprocess.check_call(shlex.split(command), cwd=src_dir)
-    print("Done!")
+    proc = subprocess.Popen(
+        shlex.split(command),
+        cwd=src_dir,
+        stderr=subprocess.PIPE
+    )
+
+    if proc.returncode:
+        print("Done!")
+    else:
+        quit(proc.stderr.read().decode())
 
 def to_pdf(src_file, output_file, tmp_path, cfg):
     pandoc_command = generate_command(
