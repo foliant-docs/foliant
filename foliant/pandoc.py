@@ -36,6 +36,9 @@ def generate_command(params, output_file, src_file, cfg):
         elif key in ("type", "alt_doc_type"):
             if value:
                 params.append(generate_variable(key, value))
+        elif key == "filters":
+            for filt in value:
+                params.append("-F %s" % filt)
         else:
             print("Unsupported config key: %s" % key)
 

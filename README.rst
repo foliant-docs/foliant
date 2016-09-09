@@ -125,6 +125,7 @@ Config file, mostly for Pandoc.
     "date":"true",                    // Add date to the title page.
     "type": "",                       // Unknown
     "alt_doc_type": "",               // Unknown
+    "filters": ["filter1", "filter2"] // Pandoc filters
   }
 
 For historic reasons, all config values should be strings,
