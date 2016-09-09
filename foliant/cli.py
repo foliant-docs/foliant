@@ -16,9 +16,10 @@ Options:
 from docopt import docopt
 import foliant.builder as builder
 import foliant.uploader as uploader
+import foliant
 
 def main():
-    args = docopt(__doc__, version="Foliant 0.1.0")
+    args = docopt(__doc__, version=foliant.__version__)
 
     if args["build"] or args["make"]:
         output_file = builder.build(args["<target>"], args["--path"])
