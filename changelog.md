@@ -14,3 +14,7 @@ Initial release.
 
 - Pandoc filter support added to configs.
 - Pandoc failures are tracked.
+
+# 0.1.5
+
+- Fixed stdouting of the result document.
