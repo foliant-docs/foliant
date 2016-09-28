@@ -10,14 +10,9 @@ documents from Markdown source.
 Get It
 ******
 
-- Download the compiled binary from this repo's `bin` directory and use it
-  right away.
+.. code-block:: shell
 
-- If you have Nim and Nimble installed, install foliant with Nimble:
-
-  .. code-block:: shell
-
-    $ nimble install foliant
+  $ pip install foliant
 
 
 *****
