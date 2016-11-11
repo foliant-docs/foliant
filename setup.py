@@ -21,7 +21,7 @@ setup(
     description="Markdown-based, Pandoc-powered documentation generator.",
     long_description=readme(),
     classifiers=[
-        "Development Status :: 5 - Production",
+        'Development Status :: 5 - Production/Stable',
         "Environment :: Console",
         "Environment :: Documentation",
         "Intended Audience :: Developers",
