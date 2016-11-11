@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import shlex, subprocess
+import subprocess
 from . import gitutils
 
 PANDOC_PATH = "pandoc"
@@ -48,7 +48,7 @@ def run(command, src_dir):
     print("Baking output... ", end='')
     try:
         proc = subprocess.check_output(
-            shlex.split(command),
+            command,
             cwd=src_dir,
             stderr=subprocess.PIPE
         )
