@@ -13,6 +13,7 @@ Get It
 .. code-block:: shell
 
   $ pip install foliant
+  $ pip install foliant[s2m] # if you need the Swagger converter
 
 
 *****
@@ -22,10 +23,13 @@ Usage
 .. code-block:: shell
 
   $ foliant -h
+  Foliant: Markdown to PDF, Docx, and LaTeX generator powered by Pandoc.
 
   Usage:
     foliant (build | make) <target> [--path=<project-path>]
-    foliant (upload | up) <document>
+    foliant (upload | up) <document> [--secret=<client_secret*.json>]
+    foliant (swagger2markdown | s2m) <swagger-location> [--output=<output-file>]
+      [--template=<jinja2-template>]
     foliant (-h | --help)
     foliant --version
 
@@ -33,6 +37,11 @@ Usage
     -h --help                         Show this screen.
     -v --version                      Show version.
     -p --path=<project-path>          Path to your project [default: .].
+    -s --secret=<client_secret*.json> Path to Google app's client secret file.
+    -o --output=<output-file>         Path to the converted Markdown file
+                                      [default: swagger.md]
+    -t --template=<jinja2-template>   Custom Jinja2 template for the Markdown
+                                      output.
 
 
 ``build``, ``make``
@@ -67,6 +76,28 @@ Upload a Docx file to Google Drive as a Google document:
 
   $ foliant up MyFile.docx
 
+
+``swagger2markdown``, ``s2m``
+=============================
+
+Convert a `Swagger JSON`_ file into Markdown using swagger2markdown_ (which
+is installed as an extra with ``pip install foliant[s2m]``).
+
+If ``--output`` is not specified, the output file is called ``swagger.md``.
+
+Specify ``--template`` to provide a custom Jinja2_ template to customize
+the output. Use the `default template`_ as a reference.
+
+Example:
+
+.. code-block:: shell
+
+  $ foliant s2m http://example.com/api/swagger.json -t templates/swagger.md.j2
+
+.. _Swagger JSON: http://swagger.io/specification/
+.. _swagger2markdown: https://github.com/moigagoo/swagger2markdown
+.. _Jinja2: http://jinja.pocoo.org/
+.. _default template: https://github.com/moigagoo/swagger2markdown/blob/master/swagger.md.j2
 
 **************
 Project Layout
@@ -187,3 +218,45 @@ Foliant looks for ``client_secrets.json`` file in the current directory.
 Client secret file is obtained through Google API Console. You probably don't
 need to obtain it yourself. The person who told you to use Foliant should
 provide you this file as well.
+
+
+**************************
+Embedding seqdiag Diagrams
+**************************
+
+Foliant lets you embed `seqdiag <http://blockdiag.com/en/seqdiag/>`__
+diagrams.
+
+To embed a diagram, put its definition in a fenced code block:
+
+.. code-block:: markdown
+
+  ```seqdiag Optional single-line caption
+  seqdiag {
+  browser  -> webserver [label = "GET /index.html"];
+  browser <-- webserver;
+  browser  -> webserver [label = "POST /blog/comment"];
+              webserver  -> database [label = "INSERT comment"];
+              webserver <-- database;
+  browser <-- webserver;
+  }
+  ```
+
+This is transformed into ``![Optional single-line caption. (diagrams/0.png)``,
+where ``diagrams/0.png`` is an image generated from the diagram definition.
+
+
+Customizing Diagrams
+====================
+
+To use a custom font, create the file ``$HOME/.blockdiagrc`` and define
+the full path to the font (`ref <http://blockdiag.com/en/blockdiag/introduction.html#font-configuration>`__):
+
+.. code-block:: shell
+
+  $ cat $HOME/.blockdiagrc
+  [blockdiag]
+  fontpath = /usr/share/fonts/truetype/ttf-dejavu/DejaVuSerif.ttf
+
+You can define `other params <http://blockdiag.com/en/seqdiag/sphinxcontrib.html#configuration-file-options>`__
+as well (remove ``seqdiag_`` from the beginning of the param name).

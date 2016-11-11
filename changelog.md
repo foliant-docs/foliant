@@ -18,3 +18,9 @@ Initial release.
 # 0.1.5
 
 - Fixed stdouting of the result document.
+
+# 0.1.6
+
+- Add seqdiag support.
+- Add Swagger converter.
+- Switch from flit to pip.
