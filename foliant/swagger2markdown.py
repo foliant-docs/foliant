@@ -1,19 +1,21 @@
+from __future__ import print_function
+
 """Swagger to Markdown converter."""
 
-import shlex, subprocess
+import subprocess
 
 def convert(swagger_location, output_file, template_file):
     """Convert Swagger JSON file to Markdown."""
 
     if template_file:
-        command = "swagger2markdown -i %s -o %s -t %s" % (
+        s2m_command = "swagger2markdown -i %s -o %s -t %s" % (
             swagger_location,
             output_file,
             template_file
         )
 
     else:
-        command = "swagger2markdown -i %s -o %s" % (
+        s2m_command = "swagger2markdown -i %s -o %s" % (
             swagger_location,
             output_file
         )
@@ -22,7 +24,7 @@ def convert(swagger_location, output_file, template_file):
 
     try:
         proc = subprocess.check_output(
-            shlex.split(command),
+            s2m_command,
             stderr=subprocess.PIPE
         )
 
