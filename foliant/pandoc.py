@@ -54,6 +54,7 @@ def run(command, src_dir):
         )
 
         print("Done!")
+
     except subprocess.CalledProcessError as e:
         quit(e.stderr.decode())
 
