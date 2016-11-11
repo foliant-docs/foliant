@@ -3,3 +3,6 @@ __pycache__
 *.pyc
 tmp
 client_secrets.json
+build
+dist
+*.egg-info
