@@ -33,7 +33,12 @@ setup(
     ],
     packages=find_packages(),
     platforms="any",
-    install_requires=["PyDrive>=1.2.1", "PyYAML", "docopt"],
+    install_requires=[
+        "PyDrive>=1.2.1",
+        "PyYAML",
+        "docopt",
+        "swagger2markdown"
+    ],
     entry_points={
         "console_scripts": [
             "foliant=foliant.cli:main"
