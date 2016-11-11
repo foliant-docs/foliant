@@ -24,3 +24,7 @@ Initial release.
 - Add seqdiag support.
 - Add Swagger converter.
 - Switch from flit to pip.
+
+# 0.1.7
+
+- Hotfix: Fix classifier in setup.py.
