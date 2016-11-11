@@ -3,7 +3,7 @@ from __future__ import print_function
 import os, shutil, json
 from os.path import join
 import yaml
-from . import gitutils, pandoc, uploader
+from . import gitutils, pandoc, uploader, seqdiag
 
 def copy_dir_content(src, dest):
     for child in os.listdir(src):
@@ -43,6 +43,8 @@ def build(target_format, project_dir):
     output_title = get_title(cfg["title"], gitutils.get_version())
 
     collect_source(project_dir, tmp_dir, src_file)
+
+    seqdiag.process_diagrams(tmp_dir, src_file)
 
     if target_format.startswith('p'):
         output_file = output_title + ".pdf"
