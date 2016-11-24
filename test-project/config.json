@@ -1,6 +1,7 @@
 {
   "type": "",
   "title": "Lorem ipsum",
+  "file_name": "Dolor_sit_amet",
   "second_title":"Dolor sit amet",
   "lang": "english",
   "company": "restream",
@@ -10,6 +11,6 @@
   "tof": "true",
   "alt_doc_type": "",
   "template": "basic",
-  "version": "1.0",
-  "date":"true"
+  "version": "auto",
+  "date": "true"
 }
