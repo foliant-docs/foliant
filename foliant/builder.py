@@ -2,21 +2,45 @@ from __future__ import print_function
 
 import os, shutil, json
 from os.path import join
+from datetime import date
+
 import yaml
+
 from . import gitutils, pandoc, uploader, seqdiag
 
 def copy_dir_content(src, dest):
+    """Recusrively copy directory content to another directory."""
+
     for child in os.listdir(src):
         if os.path.isfile(join(src, child)):
             shutil.copy(join(src, child), dest)
         elif os.path.isdir(join(src, child)):
             shutil.copytree(join(src, child), join(dest, child))
 
-def get_title(document_title, version):
-    slug = document_title.replace(' ', '_')
-    return '.'.join((slug, version)) if version else slug
+def get_version(cfg):
+    """Extract version from config or generate it from git tag and revcount.
+    Append current date.
+    """
+
+    if cfg["version"] == "auto":
+        version = gitutils.get_version()
+    else:
+        version = cfg["version"]
+
+    if cfg["date"] == "true":
+        return version + "-" + date.today().strftime("%d-%m-%Y")
+
+def get_title(cfg):
+    """Generate file name from config: slugify the title and add version."""
+
+    file_name = cfg.get("file_name", cfg["title"].replace(' ', '_'))
+    return file_name + '_' + get_version(cfg)
 
 def collect_source(project_dir, target_dir, src_file):
+    """Copy .md files, images, templates, and references from the project
+    directory to a temporary directory.
+    """
+
     print("Collecting source... ", end='')
 
     with open(join(target_dir, src_file), 'w+') as src:
@@ -33,14 +57,18 @@ def collect_source(project_dir, target_dir, src_file):
     print("Done!")
 
 def build(target_format, project_dir):
+    """Convert source Markdown to the target format using Pandoc."""
+
     tmp_dir = "tmp"
     src_file = "output.md"
 
-    if os.path.exists(tmp_dir): shutil.rmtree(tmp_dir)
+    if os.path.exists(tmp_dir):
+            shutil.rmtree(tmp_dir)
+
     os.makedirs(tmp_dir)
 
     cfg = json.load(open(join(project_dir, "config.json")))
-    output_title = get_title(cfg["title"], gitutils.get_version())
+    output_title = get_title(cfg)
 
     collect_source(project_dir, tmp_dir, src_file)
 
