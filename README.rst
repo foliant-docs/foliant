@@ -134,6 +134,8 @@ Config file, mostly for Pandoc.
 
   {
     "title": "Lorem ipsum",           // Document title.
+    "file_name": "Dolor_sit_amet",    // Output file name. If not set, slugified
+                                      // `title` is used.
     "second_title": "Dolor sit amet", // Document subtitle.
     "lang": "english",                // Document language, "russian" or "english."
                                       // If not specified, "russian" is used.
@@ -145,10 +147,11 @@ Config file, mostly for Pandoc.
     "toc": "true",                    // Add table of contents or not.
     "tof": "true",                    // Unknown
     "template": "basic",              // LaTeX template to use. Do NOT add ".tex"!
-    "version": "1.0",                 // Document version. If not specified
-                                      // or set to "auto," the version is generated
-                                      // automatically based on git tag and revision number.
-    "date":"true",                    // Add date to the title page.
+    "version": "1.0",                 // Document version. If set to "auto"
+                                      // the version is generated automatically
+                                      // based on git tag and revision number.
+    "date": "true",                   // Add date to the title page and output
+                                      // file name.
     "type": "",                       // Unknown
     "alt_doc_type": "",               // Unknown
     "filters": ["filter1", "filter2"] // Pandoc filters
