@@ -1,3 +1,5 @@
+"""Wrapper around Pandoc. Used by builder."""
+
 from __future__ import print_function
 
 import subprocess
@@ -8,9 +10,13 @@ FROM_PARAMS = "-f markdown_strict+simple_tables+multiline_tables+grid_tables+pip
 LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex"
 
 def generate_variable(key, value):
+    """Generate a ``--variable key=value`` entry."""
+
     return '--variable "%s"="%s"' % (key, value)
 
 def generate_command(params, output_file, src_file, cfg):
+    """Generate the entire Pandoc command with params to invoke."""
+
     params = ["-o " + output_file, FROM_PARAMS, LATEX_PARAMS, params]
 
     for key, value in cfg.items():
@@ -45,6 +51,8 @@ def generate_command(params, output_file, src_file, cfg):
     return ' '.join([PANDOC_PATH] + params + [src_file])
 
 def run(command, src_dir):
+    """Invoke the Pandoc executable with the generated params."""
+
     print("Baking output... ", end='')
     try:
         proc = subprocess.check_output(
@@ -59,6 +67,8 @@ def run(command, src_dir):
         quit(e.stderr.decode())
 
 def to_pdf(src_file, output_file, tmp_path, cfg):
+    """Convert Markdown to PDF via Pandoc."""
+
     pandoc_command = generate_command(
         "-t latex",
         output_file,
@@ -68,6 +78,8 @@ def to_pdf(src_file, output_file, tmp_path, cfg):
     run(pandoc_command, tmp_path)
 
 def to_docx(src_file, output_file, tmp_path, cfg):
+    """Convert Markdown to Docx via Pandoc."""
+
     pandoc_command = generate_command(
         '--reference-docx="ref.docx"',
         output_file,
@@ -77,6 +89,8 @@ def to_docx(src_file, output_file, tmp_path, cfg):
     run(pandoc_command, tmp_path)
 
 def to_tex(src_file, output_file, tmp_path, cfg):
+    """Convert Markdown to TeX via Pandoc."""
+
     pandoc_command = generate_command(
         "-t latex",
         output_file,
