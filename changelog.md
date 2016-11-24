@@ -28,3 +28,10 @@ Initial release.
 # 0.1.7
 
 - Hotfix: Fix classifier in setup.py.
+
+# 0.1.8
+
+- Output file is now named according to the following format:
+  `<title>_<version>-<date>`.
+- You can now specify the output file name explicitly with `file_name` value
+  in `config.json`. If it's not set, the slugified `title` value is used.
