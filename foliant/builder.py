@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+"""Document builder for foliant. Implements "build" subcommand."""
+
 import os, shutil, json
 from os.path import join
 from datetime import date

@@ -1,6 +1,12 @@
+""""Wrapper around a few git commands. Used by builder to determin document
+version.
+"""
+
 import shlex, subprocess
 
 def get_version():
+    """Generate document version based on git tag and number of revisions."""
+
     components = []
 
     try:
@@ -12,6 +18,7 @@ def get_version():
             subprocess.check_output(shlex.split("git rev-list --count master"))
             .strip().decode()
         )
-    except: pass
+    except:
+        pass
 
     return '.'.join(components) if components else None
