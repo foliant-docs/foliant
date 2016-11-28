@@ -45,6 +45,8 @@ def generate_command(params, output_file, src_file, cfg):
         elif key == "filters":
             for filt in value:
                 params.append("-F %s" % filt)
+        elif key == "file_name":
+            pass
         else:
             print("Unsupported config key: %s" % key)
 
