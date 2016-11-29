@@ -263,3 +263,14 @@ the full path to the font (`ref <http://blockdiag.com/en/blockdiag/introduction.
 
 You can define `other params <http://blockdiag.com/en/seqdiag/sphinxcontrib.html#configuration-file-options>`__
 as well (remove ``seqdiag_`` from the beginning of the param name).
+
+
+***************
+Troubleshooting
+***************
+
+LaTeX Error: File `xetex.def' not found.
+========================================
+
+Install graphics.def with MikTeX Package Manager (normally invoked with ``mpm``
+command).
