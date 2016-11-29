@@ -39,3 +39,7 @@ Initial release.
 # 0.1.9
 
 - Fix a false warning about `file_name` config value.
+
+# 0.2.0
+
+- Fix config loading on Windows.
