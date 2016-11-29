@@ -69,7 +69,7 @@ def build(target_format, project_dir):
 
     os.makedirs(tmp_dir)
 
-    cfg = json.load(open(join(project_dir, "config.json")))
+    cfg = json.load(open(join(project_dir, "config.json"), encoding="utf8"))
     output_title = get_title(cfg)
 
     collect_source(project_dir, tmp_dir, src_file)
