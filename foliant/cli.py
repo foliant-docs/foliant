@@ -1,10 +1,11 @@
-"""
-Foliant: Markdown to PDF, Docx, and LaTeX generator powered by Pandoc.
+"""Foliant: Markdown to PDF, Docx, and LaTeX generator powered by Pandoc.
 
 Usage:
   foliant (build | make) <target> [--path=<project-path>]
   foliant (upload | up) <document> [--secret=<client_secret*.json>]
   foliant (swagger2markdown | s2m) <swagger-location> [--output=<output-file>]
+    [--template=<jinja2-template>]
+  foliant (apidoc2markdown | a2m) <apidoc-location> [--output=<output-file>]
     [--template=<jinja2-template>]
   foliant (-h | --help)
   foliant --version
@@ -15,19 +16,20 @@ Options:
   -p --path=<project-path>          Path to your project [default: .].
   -s --secret=<client_secret*.json> Path to Google app's client secret file.
   -o --output=<output-file>         Path to the converted Markdown file
-                                    [default: swagger.md]
+                                    [default: api.md]
   -t --template=<jinja2-template>   Custom Jinja2 template for the Markdown
                                     output.
 """
 
 from docopt import docopt
-import foliant.builder as builder
-import foliant.uploader as uploader
-import foliant.swagger2markdown as swagger2markdown
-import foliant
+from foliant import builder, uploader, swagger2markdown, apidoc2markdown
+from foliant import __version__ as foliant_version
+
 
 def main():
-    args = docopt(__doc__, version=foliant.__version__)
+    """Handles command-line params and runs the respective core function."""
+
+    args = docopt(__doc__, version=foliant_version)
 
     if args["build"] or args["make"]:
         output_file = builder.build(args["<target>"], args["--path"])
@@ -46,6 +48,15 @@ def main():
         output_file = args["--output"]
         config_file = args.get("--template")
         swagger2markdown.convert(swagger_location, output_file, config_file)
+
+        print("---")
+        print("Result: %s" % output_file)
+
+    elif args["apidoc2markdown"] or args["a2m"]:
+        apidoc_location = args["<apidoc-location>"]
+        output_file = args["--output"]
+        config_file = args.get("--template")
+        apidoc2markdown.convert(apidoc_location, output_file, config_file)
 
         print("---")
         print("Result: %s" % output_file)
