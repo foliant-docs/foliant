@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 import foliant
 
+
 def readme():
     try:
-        with open("README.rst") as f:
+        with open("README.rst", encoding="utf8") as f:
             return f.read()
     except IOError:
         pass
-
 
 setup(
     name="foliant",

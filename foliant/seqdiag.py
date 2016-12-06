@@ -18,7 +18,7 @@ def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
     sd_src_path = join(src_dir, sd_dir, sd_src_filename)
     sd_command = "seqdiag -a %s" % sd_src_path
 
-    with open(sd_src_path, 'w') as sd_src_file:
+    with open(sd_src_path, 'w', encoding="utf8") as sd_src_file:
         sd_src_file.writelines(sd_content)
 
     try:
@@ -46,7 +46,7 @@ def process_diagrams(src_dir, src_file):
 
     os.makedirs(join(src_dir, sd_dir))
 
-    with open(src_path) as src:
+    with open(src_path, encoding="utf8") as src:
         for line in (l.rstrip() for l in src):
             if not buffer:
                 if line.startswith("```seqdiag"):
@@ -69,7 +69,7 @@ def process_diagrams(src_dir, src_file):
                     sd_number += 1
                     buffer = []
 
-    with open(src_path, 'w') as src:
+    with open(src_path, 'w', encoding="utf8") as src:
         src.writelines('\n'.join(new_source))
 
     print("Done!")
