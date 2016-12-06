@@ -39,7 +39,8 @@ setup(
         "seqdiag"
     ],
     extras_require={
-        "s2m": ["swagger2markdown"]
+        "s2m": ["swagger2markdown"],
+        "a2m": ["apidoc2markdown"]
     },
     entry_points={
         "console_scripts": [
