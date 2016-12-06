@@ -54,3 +54,7 @@ Initial release.
 # 0.2.2
 
 - Fix non-ASCII-encoded input handling.
+
+# 0.2.3
+
+- Fix those pesky UTF-8 issues for good.
