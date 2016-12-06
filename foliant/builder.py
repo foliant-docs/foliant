@@ -45,11 +45,17 @@ def collect_source(project_dir, target_dir, src_file):
 
     print("Collecting source... ", end='')
 
-    with open(join(target_dir, src_file), 'w+') as src:
-        with open(join(project_dir, "main.yaml")) as contents_file:
+    with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
+        with open(
+            join(project_dir, "main.yaml"),
+            encoding="utf8"
+        ) as contents_file:
             for chapter_name in yaml.load(contents_file)["chapters"]:
                 chapter_file = chapter_name + ".md"
-                with open(join(project_dir, "sources", chapter_file)) as chapter:
+                with open(
+                    join(project_dir, "sources", chapter_file),
+                    encoding="utf8"
+                ) as chapter:
                     src.write(chapter.read() + '\n')
 
     copy_dir_content(join(project_dir, "sources", "images"), target_dir)
@@ -65,7 +71,7 @@ def build(target_format, project_dir):
     src_file = "output.md"
 
     if os.path.exists(tmp_dir):
-            shutil.rmtree(tmp_dir)
+        shutil.rmtree(tmp_dir)
 
     os.makedirs(tmp_dir)
 
