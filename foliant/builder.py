@@ -13,6 +13,9 @@ from . import gitutils, pandoc, uploader, seqdiag
 def copy_dir_content(src, dest):
     """Recusrively copy directory content to another directory."""
 
+    if not os.path.exists(src):
+        return
+
     for child in os.listdir(src):
         if os.path.isfile(join(src, child)):
             shutil.copy(join(src, child), dest)
