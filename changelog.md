@@ -50,3 +50,7 @@ Initial release.
   (via [apidoc2markdown](https://github.com/moigagoo/apidoc2markdown)).
 - Markdown file converted from Swagger or Apidoc is now called `api.md`
   (instead of `swagger.md`).
+
+# 0.2.2
+
+- Fix non-ASCII-encoded input handling.
