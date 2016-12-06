@@ -29,7 +29,7 @@ from foliant import __version__ as foliant_version
 def main():
     """Handles command-line params and runs the respective core function."""
 
-    args = docopt(__doc__, version=foliant_version)
+    args = docopt(__doc__, version="Foliant %s (Python)" % foliant_version)
 
     if args["build"] or args["make"]:
         output_file = builder.build(args["<target>"], args["--path"])
