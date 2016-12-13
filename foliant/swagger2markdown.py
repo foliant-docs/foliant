@@ -25,7 +25,8 @@ def convert(swagger_location, output_file, template_file):
     try:
         proc = subprocess.check_output(
             s2m_command,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
 
         print("Done!")
