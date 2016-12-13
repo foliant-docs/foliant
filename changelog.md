@@ -58,3 +58,7 @@ Initial release.
 # 0.2.3
 
 - Fix those pesky UTF-8 issues for good.
+
+# 0.2.4
+
+- ``$ pip install foliant[all]`` installs all extra requirements.
