@@ -28,7 +28,7 @@ def get_version(cfg):
     """
 
     if cfg["version"] == "auto":
-        version = gitutils.get_version()
+        version = gitutils.get_version() or ""
     else:
         version = cfg["version"]
 
