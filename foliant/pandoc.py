@@ -60,7 +60,8 @@ def run(command, src_dir):
         proc = subprocess.check_output(
             command,
             cwd=src_dir,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
 
         print("Done!")
