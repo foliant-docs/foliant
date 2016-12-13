@@ -2,7 +2,7 @@
 version.
 """
 
-import shlex, subprocess
+import subprocess
 
 def get_version():
     """Generate document version based on git tag and number of revisions."""
@@ -11,12 +11,18 @@ def get_version():
 
     try:
         components.append(
-            subprocess.check_output(shlex.split("git describe --abbrev=0"))
-            .strip().decode()
+            subprocess.check_output(
+                "git describe --abbrev=0",
+                stderr=subprocess.PIPE,
+                shell=True
+            ).strip().decode()
         )
         components.append(
-            subprocess.check_output(shlex.split("git rev-list --count master"))
-            .strip().decode()
+            subprocess.check_output(
+                "git rev-list --count master",
+                stderr=subprocess.PIPE,
+                shell=True
+            ).strip().decode()
         )
     except:
         pass

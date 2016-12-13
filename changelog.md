@@ -62,3 +62,11 @@ Initial release.
 # 0.2.4
 
 - ``$ pip install foliant[all]`` installs all extra requirements.
+
+# 0.2.5
+
+- Fix automatic versioning for non-git-based projects.
+
+# 0.2.5
+
+- Fix shell command execution on Linux.
