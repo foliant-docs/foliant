@@ -5,7 +5,9 @@ RUN apt-get update; apt-get install -y \
     xzdec \
     texlive-latex-base \
     texlive-fonts-recommended \
+    texlive-fonts-extra \
     texlive-generic-recommended \
+    texlive-generic-extra \
     texlive-lang-english \
     texlive-lang-cyrillic \
     latex-xcolor \
@@ -14,7 +16,6 @@ RUN apt-get update; apt-get install -y \
     texlive-bibtex-extra \
     texlive-xetex \
     pandoc; \
-    tlmgr init-usertree; \
     pip install foliant[all]; \
     mkdir -p /usr/src/app
 WORKDIR /usr/src/app
