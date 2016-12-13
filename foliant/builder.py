@@ -27,19 +27,30 @@ def get_version(cfg):
     Append current date.
     """
 
-    if cfg["version"] == "auto":
-        version = gitutils.get_version() or ""
-    else:
-        version = cfg["version"]
+    components = []
+
+    git_version = gitutils.get_version() if cfg["version"] == "auto" else cfg["version"]
+    if git_version:
+        components.append(git_version)
 
     if cfg["date"] == "true":
-        return version + "-" + date.today().strftime("%d-%m-%Y")
+        components.append(date.today().strftime("%d-%m-%Y"))
+
+    return '-'.join(components)
 
 def get_title(cfg):
     """Generate file name from config: slugify the title and add version."""
 
+    components = []
+
     file_name = cfg.get("file_name", cfg["title"].replace(' ', '_'))
-    return file_name + '_' + get_version(cfg)
+    components.append(file_name)
+
+    version = get_version(cfg)
+    if version:
+        components.append(version)
+
+    return '_'.join(components)
 
 def collect_source(project_dir, target_dir, src_file):
     """Copy .md files, images, templates, and references from the project
