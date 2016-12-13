@@ -24,7 +24,8 @@ def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
     try:
         proc = subprocess.check_output(
             sd_command,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
 
     except subprocess.CalledProcessError as e:
