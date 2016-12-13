@@ -67,6 +67,10 @@ Initial release.
 
 - Fix automatic versioning for non-git-based projects.
 
-# 0.2.5
+# 0.2.6
 
 - Fix shell command execution on Linux.
+
+# 0.2.7
+
+- Improve output file naming: get rid of redundant "-" and "_".
