@@ -25,7 +25,8 @@ def convert(apidoc_location, output_file, template_file):
     try:
         proc = subprocess.check_output(
             a2m_command,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
 
         print("Done!")
