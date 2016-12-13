@@ -40,7 +40,8 @@ setup(
     ],
     extras_require={
         "s2m": ["swagger2markdown"],
-        "a2m": ["apidoc2markdown"]
+        "a2m": ["apidoc2markdown"],
+        "all": ["swagger2markdown", "apidoc2markdown"]
     },
     entry_points={
         "console_scripts": [
