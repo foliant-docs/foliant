@@ -17,7 +17,7 @@ RUN apt-get update; apt-get install -y \
     texlive-xetex \
     pandoc; \
     mkdir -p /usr/src/app
-RUN pip3 install foliant[all]>=0.2.7
+RUN pip3 install "foliant[all]>=0.2.7"
 WORKDIR /usr/src/app
 ENTRYPOINT ["foliant"]
 
