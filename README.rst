@@ -86,7 +86,7 @@ is installed as an extra with ``pip install foliant[s2m]``).
 If ``--output`` is not specified, the output file is called ``api.md``.
 
 Specify ``--template`` to provide a custom Jinja2_ template to customize
-the output. Use the `default template`_ as a reference.
+the output. Use the `default Swagger template`_ as a reference.
 
 Example:
 
@@ -97,11 +97,11 @@ Example:
 .. _Swagger JSON: http://swagger.io/specification/
 .. _swagger2markdown: https://github.com/moigagoo/swagger2markdown
 .. _Jinja2: http://jinja.pocoo.org/
-.. _default template: https://github.com/moigagoo/swagger2markdown/blob/master/swagger.md.j2
+.. _default Swagger template: https://github.com/moigagoo/swagger2markdown/blob/master/swagger.md.j2
 
 
 ``apidoc2markdown``, ``a2m``
-=============================
+============================
 
 Convert Apidoc_ files into Markdown using apidoc2markdown_ (which
 is installed as an extra with ``pip install foliant[a2m]``).
@@ -109,7 +109,7 @@ is installed as an extra with ``pip install foliant[a2m]``).
 If ``--output`` is not specified, the output file is called ``api.md``.
 
 Specify ``--template`` to provide a custom Jinja2_ template to customize
-the output. Use the `default template`_ as a reference.
+the output. Use the `default Apidoc template`_ as a reference.
 
 Example:
 
@@ -120,7 +120,7 @@ Example:
 .. _Apidoc: http://apidocjs.com/
 .. _apidoc2markdown: https://github.com/moigagoo/apidoc2markdown
 .. _Jinja2: http://jinja.pocoo.org/
-.. _default template: https://github.com/moigagoo/apidoc2markdown/blob/master/apidoc.md.j2
+.. _default Apidoc template: https://github.com/moigagoo/apidoc2markdown/blob/master/apidoc.md.j2
 
 
 **************
@@ -231,9 +231,9 @@ LaTeX templates used to build PDF, Docx, and TeX files. The template
 to use in build is configured in ``config.json``.
 
 
-************************
+*************************
 Uploading to Google Drive
-************************
+*************************
 
 To upload a Docx file to Google Drive as a Google document, use
 ``foliant upload MyFile.docx`` or `foliant build gdrive`, which is
@@ -293,8 +293,8 @@ as well (remove ``seqdiag_`` from the beginning of the param name).
 Troubleshooting
 ***************
 
-LaTeX Error: File `xetex.def' not found.
-========================================
+LaTeX Error: File \`xetex.def' not found.
+=========================================
 
 Install graphics.def with MikTeX Package Manager (normally invoked with ``mpm``
 command).
