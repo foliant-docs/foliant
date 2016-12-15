@@ -20,5 +20,3 @@ RUN apt-get update; apt-get install -y \
 RUN pip3 install "foliant[all]>=0.2.7"
 WORKDIR /usr/src/app
 ENTRYPOINT ["foliant"]
-
-ONBUILD COPY . /usr/src/app
