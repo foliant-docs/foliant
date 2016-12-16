@@ -6,3 +6,6 @@ RUN apt-get install wget; \
     unzip PTSans.zip -d /usr/share/fonts/truetype/ptsans/; \
     rm PTSans.zip; \
     fc-cache -fv
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
