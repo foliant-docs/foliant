@@ -57,7 +57,7 @@ There are two options:
     #.  In your project directory, create a file called ``docker-compose.yml``
         with the following content:
 
-        .. code-block:: dockerfile
+        .. code-block:: yaml
           :caption: docker-compose.yml
 
           my-foliant-project:
