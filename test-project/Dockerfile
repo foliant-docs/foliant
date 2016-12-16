@@ -1,4 +1,4 @@
-FROM foliant/foliant:latest
+FROM foliant/foliant
 
 RUN apt-get install wget; \
     mkdir -p /usr/share/fonts/truetype/ptsans/; \
