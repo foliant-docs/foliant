@@ -10,10 +10,79 @@ documents from Markdown source.
 Get It
 ******
 
-.. code-block:: shell
+There are two options:
 
-  $ pip install foliant
-  $ pip install foliant[s2m] # if you need the Swagger converter
+- Install Foliant with pip:
+
+  .. code-block:: shell
+
+    $ pip install foliant[all]
+
+  You'll also need to install Pandoc and a LaTeX distrubution:
+
+  - MacTeX for macOS with brew_
+  - MikTeX for Windows with scoop_
+  - TeXLive for Linux[*]_ with whater package manager you have
+
+  Then, use ``foliant`` command as described in Usage_.
+
+  .. _brew: http://brew.sh/
+  .. _scoop: http://scoop.sh/
+  .. _Foliant Dockerfile: https://github.com/foliant-docs/foliant/blob/master/Dockerfile#L5-L16
+  .. [*] Among Linux distrubutions, Foliant was only tested on Ubuntu Xenial.
+    See the full list of packages that must be installed in Ubuntu
+    in the official `Foliant Dockerfile`_.
+
+- Pull the `official Foliant image`_ from Docker Hub and run it in a container:
+
+    #.  In your project directory (see `Project Layout`_), create a file called
+        ``Dockerfile`` with the following content:
+
+        .. code-block:: dockerfile
+          :caption: Dockerfile
+
+          FROM foliant/foliant
+
+          # If necessary, add fonts and install additional packages:
+          # RUN apt-get install wget; \
+          #     wget http://www.paratype.ru/uni/public/PTSans.zip; \
+          #     mkdir -p /usr/share/fonts/truetype/ptsans/; \
+          #     unzip PTSans.zip -d /usr/share/fonts/truetype/ptsans/; \
+          #     rm PTSans.zip; \
+          #     fc-cache -fv
+          RUN mkdir -p /usr/src/app
+
+          WORKDIR /usr/src/app
+
+    #.  In your project directory, create a file called ``docker-compose.yml``
+        with the following content:
+
+        .. code-block:: dockerfile
+          :caption: docker-compose.yml
+
+          my-foliant-project:
+            build: .
+            volumes:
+              - .:/usr/src/app
+
+    #.  Build your project's image and run a container with the same params as
+        the regular ``foliant`` command (see `Usage`_):
+
+        .. code-block:: shell
+          
+          $ docker-compose run --rm my-foliant-project make pdf
+          Collecting source... Done!
+          Drawing diagrams... Done!
+          Baking output... Done!
+          ----
+          Result: Dolor_sit_amet_16-12-2016.pdf
+
+  .. warning::
+  
+    `Uploading to Google Drive`_ currently doesn't work if you run Foliant
+    in a container.
+
+    .. _official Foliant image: https://hub.docker.com/r/foliant/foliant/
 
 
 *****
@@ -296,5 +365,5 @@ Troubleshooting
 LaTeX Error: File \`xetex.def' not found.
 =========================================
 
-Install graphics.def with MikTeX Package Manager (normally invoked with ``mpm``
+Install graphics.def with MikTeX Package Manager (usually invoked with ``mpm``
 command).
