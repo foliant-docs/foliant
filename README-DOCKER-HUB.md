@@ -1,4 +1,9 @@
-[Foliant](https://github.com/foliant-docs/foliant/) is a documentation generator that builds PDF, Docx, and TeX documents from Markdown source.
+**Foliant** is a documentation generator that builds PDF, Docx, and TeX documents from Markdown source.
+
+- [Home](https://github.com/foliant-docs/foliant/)
+- [Issues](https://github.com/foliant-docs/foliant/issues)
+- [User's manual](https://github.com/foliant-docs/foliant/#usage)
+- [Troubleshooting](https://github.com/foliant-docs/foliant/#troubleshooting)
 
 
 # How to Use This Repo
