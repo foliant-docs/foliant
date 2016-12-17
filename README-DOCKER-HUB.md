@@ -29,9 +29,9 @@
 
     ```yaml
     my-foliant-project:
-    build: .
-    volumes:
-        - .:/usr/src/app
+      build: .
+      volumes:
+          - .:/usr/src/app
     ```
 
 3.  Build your project's image and run a container with the same params as the [regular ``foliant`` command](https://github.com/foliant-docs/foliant/#usage).
