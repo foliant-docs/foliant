@@ -69,7 +69,7 @@ There are two options:
         the regular ``foliant`` command (see `Usage`_):
 
         .. code-block:: shell
-          
+
           $ docker-compose run --rm my-foliant-project make pdf
           Collecting source... Done!
           Drawing diagrams... Done!
@@ -78,7 +78,7 @@ There are two options:
           Result: Dolor_sit_amet_16-12-2016.pdf
 
   .. warning::
-  
+
     `Uploading to Google Drive`_ currently doesn't work if you run Foliant
     in a container.
 
@@ -346,12 +346,12 @@ Customizing Diagrams
 ====================
 
 To use a custom font, create the file ``$HOME/.blockdiagrc`` and define
-the full path to the font (`ref <http://blockdiag.com/en/blockdiag/introduction.html#font-configuration>`__):
+the full path to the font (`ref <http://blockdiag.com/en/seqdiag/introduction.html#font-configuration>`__):
 
 .. code-block:: shell
 
   $ cat $HOME/.blockdiagrc
-  [blockdiag]
+  [seqdiag]
   fontpath = /usr/share/fonts/truetype/ttf-dejavu/DejaVuSerif.ttf
 
 You can define `other params <http://blockdiag.com/en/seqdiag/sphinxcontrib.html#configuration-file-options>`__
