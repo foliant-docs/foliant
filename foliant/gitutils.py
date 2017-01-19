@@ -42,11 +42,13 @@ def get_repo(repo_url, target_dir):
 
     if subprocess.run(
         "git clone %s %s" % (repo_url, repo_path),
-        stderr=subprocess.PIPE
+        stderr=subprocess.PIPE,
+        shell=True
     ):
         subprocess.run(
             "git --work-tree %s pull origin master" % repo_path,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            shell=True
         )
 
     print("Done!")
