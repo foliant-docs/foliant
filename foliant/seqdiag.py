@@ -6,6 +6,7 @@ import os
 from os.path import join
 import subprocess
 
+
 def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
     """Extract diagram definition, convert it to image,
     and return the image ref.
@@ -33,6 +34,7 @@ def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
 
     return sd_img_ref
 
+
 def process_diagrams(src_dir, src_file):
     """Find seqdiag code blocks, feed their content to seqdiag tool,
     and replace them with image references.
@@ -45,7 +47,8 @@ def process_diagrams(src_dir, src_file):
     buffer, new_source = [], []
     sd_number = 0
 
-    os.makedirs(join(src_dir, sd_dir))
+    if not os.path.exists(join(src_dir, sd_dir)):
+        os.makedirs(join(src_dir, sd_dir))
 
     with open(src_path, encoding="utf8") as src:
         for line in (l.rstrip() for l in src):
