@@ -7,8 +7,16 @@ import subprocess
 from . import gitutils
 
 PANDOC_PATH = "pandoc"
-FROM_PARAMS = "-f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks"
-LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex"
+
+FROM_PARAMS = "-f markdown_strict+simple_tables+multiline_tables+grid_tables+\
+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+\
+all_symbols_escapable+strikeout+superscript+subscript+\
+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+\
+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+\
+inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks"
+
+LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings \
+--latex-engine=xelatex"
 
 
 def generate_variable(key, value):
