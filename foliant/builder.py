@@ -2,6 +2,7 @@ from __future__ import print_function
 
 """Document builder for foliant. Implements "build" subcommand."""
 
+import sys
 import os, shutil, json
 from os.path import join
 from datetime import date
@@ -62,6 +63,7 @@ def collect_source(project_dir, target_dir, src_file):
     """
 
     print("Collecting source... ", end='')
+    sys.stdout.flush()
 
     with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
         with open(
