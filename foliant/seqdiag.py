@@ -2,6 +2,7 @@ from __future__ import print_function
 
 """Seqdiag processor."""
 
+import sys
 import os
 from os.path import join
 import subprocess
@@ -23,7 +24,7 @@ def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
         sd_src_file.writelines(sd_content)
 
     try:
-        proc = subprocess.check_output(
+        subprocess.check_output(
             sd_command,
             stderr=subprocess.PIPE,
             shell=True
@@ -41,6 +42,7 @@ def process_diagrams(src_dir, src_file):
     """
 
     print("Drawing diagrams... ", end='')
+    sys.stdout.flush()
 
     sd_dir = "diagrams"
     src_path = join(src_dir, src_file)
