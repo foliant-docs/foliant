@@ -49,16 +49,18 @@ def sync_repo(repo_url, target_dir, revision="master"):
         shell=True
     ):
         subprocess.run(
-            "git --work-tree %s remote update origin --prune" % repo_path,
+            "git remote update origin --prune",
+            cwd=repo_path,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True
         )
 
-        subprocess.run(
-            "git --work-tree %s checkout %s" % (repo_path, revision),
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            shell=True
-        )
+    subprocess.run(
+        "git checkout %s" % revision,
+        cwd=repo_path,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        shell=True
+    )
 
     print("Done!")
 
