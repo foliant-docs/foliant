@@ -1,21 +1,54 @@
 import re
+from os.path import join, dirname, abspath
+
+
+def cut_by_headings(content, from_heading, to_heading=None):
+    from_heading_pattern = re.compile(
+        r"^\#+\s*%s$" % from_heading,
+        flags=re.MULTILINE
+    )
+
+    from_heading_line = from_heading_pattern.findall(content)[0]
+
+    result = from_heading_pattern.split(content)[1]
+
+    if to_heading:
+        to_heading_pattern = re.compile(
+            r"^\#+\s*%s" % to_heading,
+            flags=re.MULTILINE
+        )
+
+    else:
+        from_heading_level = from_heading_line.count('#')
+        to_heading_pattern = re.compile(
+            r"^\#{1,%d}\s*.+$" % from_heading_level,
+            flags=re.MULTILINE
+        )
+
+    result = from_heading_line + to_heading_pattern.split(result)[0]
+
+    return result
+
+
+def process_local_include(path, from_heading=None, to_heading=None,
+                          options={}):
+    current_dir = dirname(abspath(__file__))
+
+    with open(join(current_dir, path), encoding="utf8") as incl_file:
+        incl_content = incl_file.read()
+
+        if from_heading or to_heading:
+            incl_content = cut_by_headings(
+                incl_content,
+                from_heading,
+                to_heading
+            )
+
+    return incl_content
 
 
 def process_remote_include(repo, path, from_heading, to_heading, options={}):
-    print("Remote include")
-    print("Repo: %s" % repo)
-    print("Path: %s" % path)
-    print("From heading: %s" % from_heading)
-    print("To_heading: %s" % to_heading)
-    print("Options: %s" % options)
-
-
-def process_local_include(path, from_heading, to_heading, options={}):
-    print("Local include")
-    print("Path: %s" % path)
-    print("From heading: %s" % from_heading)
-    print("To_heading: %s" % to_heading)
-    print("Options: %s" % options)
+    return "Remote"
 
 
 def convert_value(value):
@@ -44,41 +77,44 @@ def extract_options(options_line):
     return options
 
 
+def expand_include(include):
+    if include.group("repo"):
+        return process_remote_include(
+            include.group("repo"),
+            include.group("path"),
+            include.group("from_heading"),
+            include.group("to_heading"),
+            extract_options(include.group("options"))
+        )
+    else:
+        return process_local_include(
+            include.group("path"),
+            include.group("from_heading"),
+            include.group("to_heading"),
+            extract_options(include.group("options"))
+        )
+
+
 def process_includes(content):
-    include_statement = re.compile(
+    include_pattern = re.compile(
         r"\{\{\s*(<(?P<repo>.+)\>)?" +
         r"(?P<path>.+?)(\#(?P<from_heading>.+?)(:(?P<to_heading>.+?))?)?" +
         r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
     )
 
-    for include in re.finditer(include_statement, content):
-        if include.group("repo"):
-            process_remote_include(
-                include.group("repo"),
-                include.group("path"),
-                include.group("from_heading"),
-                include.group("to_heading"),
-                extract_options(include.group("options"))
-            )
-        else:
-            process_local_include(
-                include.group("path"),
-                include.group("from_heading"),
-                include.group("to_heading"),
-                extract_options(include.group("options"))
-            )
-
-    return content
+    return include_pattern.sub(expand_include, content)
 
 
 if __name__ == "__main__":
-    process_includes("""This is a sample that includes an include statement:
+    test_content = """This is a sample that includes an include statement:
 
 {{ <myrepo>/path/to/file.md#heading1:heading2 | nohead, sethead:3 }}
 
 Another one:
 
-{{../path/to/file.md#heading1}}
+{{../test.md#Heading 2:Foo bar}}
 
 Here's some text after it.
-""")
+"""
+
+    print(process_includes(test_content))
