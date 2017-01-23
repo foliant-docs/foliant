@@ -1,8 +1,35 @@
 import re
-from os.path import join, dirname, abspath
+import os.path
 
 
-def cut_by_headings(content, from_heading, to_heading=None):
+def _convert_value(value):
+    try:
+        return int(value)
+    except ValueError:
+        try:
+            return float(value)
+        except ValueError:
+            return value
+
+
+def extract_options(options_line):
+    options = {}
+
+    if not options_line:
+        return options
+
+    for option in (option.strip() for option in options_line.split(',')):
+        option_parts = option.split(':')
+        if len(option_parts) == 1:
+            options[option_parts[0]] = True
+        elif len(option_parts) == 2:
+            options[option_parts[0]] = _convert_value(option_parts[1])
+
+    return options
+
+
+def cut_by_headings(content, from_heading, to_heading=None,
+                    keep_from_heading=True):
     from_heading_pattern = re.compile(
         r"^\#+\s*%s$" % from_heading,
         flags=re.MULTILINE
@@ -28,23 +55,27 @@ def cut_by_headings(content, from_heading, to_heading=None):
             flags=re.MULTILINE
         )
 
-    result = from_heading_line + to_heading_pattern.split(result)[0]
+    result = to_heading_pattern.split(result)[0]
+
+    if keep_from_heading:
+        result = from_heading_line + result
 
     return result
 
 
 def process_local_include(path, from_heading=None, to_heading=None,
                           options={}):
-    current_dir = dirname(abspath(__file__))
+    current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    with open(join(current_dir, path), encoding="utf8") as incl_file:
+    with open(os.path.join(current_dir, path), encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
-        if from_heading or to_heading:
+        if from_heading:
             incl_content = cut_by_headings(
                 incl_content,
                 from_heading,
-                to_heading
+                to_heading,
+                keep_from_heading=not options.get("nohead")
             )
 
     return incl_content
@@ -52,32 +83,6 @@ def process_local_include(path, from_heading=None, to_heading=None,
 
 def process_remote_include(repo, path, from_heading, to_heading, options={}):
     return "Remote"
-
-
-def convert_value(value):
-    try:
-        return int(value)
-    except ValueError:
-        try:
-            return float(value)
-        except ValueError:
-            return value
-
-
-def extract_options(options_line):
-    if not options_line:
-        return None
-
-    options = {}
-
-    for option in (option.strip() for option in options_line.split(',')):
-        option_parts = option.split(':')
-        if len(option_parts) == 1:
-            options[option_parts[0]] = True
-        elif len(option_parts) == 2:
-            options[option_parts[0]] = convert_value(option_parts[1])
-
-    return options
 
 
 def expand_include(include):
@@ -115,7 +120,7 @@ if __name__ == "__main__":
 
 Another one:
 
-{{../test-project/sources/chapter1.md#Cras scelerisque tincidunt }}
+{{../test-project/sources/chapter1.md#Cras scelerisque tincidunt bibendum}}
 
 Here's some text after it.
 """
