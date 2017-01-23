@@ -8,6 +8,9 @@ def cut_by_headings(content, from_heading, to_heading=None):
         flags=re.MULTILINE
     )
 
+    if not from_heading_pattern.findall(content):
+        return ""
+
     from_heading_line = from_heading_pattern.findall(content)[0]
 
     result = from_heading_pattern.split(content)[1]
@@ -112,7 +115,7 @@ if __name__ == "__main__":
 
 Another one:
 
-{{../test.md#Heading 2:Foo bar}}
+{{../test-project/sources/chapter1.md#Cras scelerisque tincidunt }}
 
 Here's some text after it.
 """
