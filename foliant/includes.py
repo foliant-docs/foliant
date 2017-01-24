@@ -2,7 +2,7 @@ import re
 import os.path
 
 
-def _convert_value(value):
+def convert_value(value):
     try:
         return int(value)
     except ValueError:
@@ -23,15 +23,28 @@ def extract_options(options_line):
         if len(option_parts) == 1:
             options[option_parts[0]] = True
         elif len(option_parts) == 2:
-            options[option_parts[0]] = _convert_value(option_parts[1])
+            options[option_parts[0]] = convert_value(option_parts[1])
 
     return options
 
 
-def cut_by_headings(content, from_heading, to_heading=None,
-                    keep_from_heading=True):
+def shift_headings(content, shift):
+    def sub(heading):
+        new_heading_level = len(heading.group("hashes")) + shift
+        return "%s %s" % ('#' * new_heading_level, heading.group("title"))
+
+    heading_pattern = re.compile(
+        r"^(?P<hashes>\#+)\s*(?P<title>.+)$",
+        flags=re.MULTILINE
+    )
+
+    return heading_pattern.sub(sub, content)
+
+
+def process_headings(content, from_heading, to_heading=None,
+                     options={}):
     from_heading_pattern = re.compile(
-        r"^\#+\s*%s$" % from_heading,
+        r"^\#+\s*%s\s*$" % from_heading,
         flags=re.MULTILINE
     )
 
@@ -39,26 +52,33 @@ def cut_by_headings(content, from_heading, to_heading=None,
         return ""
 
     from_heading_line = from_heading_pattern.findall(content)[0]
+    from_heading_level = from_heading_line.count('#')
 
     result = from_heading_pattern.split(content)[1]
 
     if to_heading:
         to_heading_pattern = re.compile(
-            r"^\#+\s*%s" % to_heading,
+            r"^\#+\s*%s\s*$" % to_heading,
             flags=re.MULTILINE
         )
 
     else:
-        from_heading_level = from_heading_line.count('#')
         to_heading_pattern = re.compile(
-            r"^\#{1,%d}\s*.+$" % from_heading_level,
+            r"^\#{1,%d}[^\#]+$" % from_heading_level,
             flags=re.MULTILINE
         )
 
     result = to_heading_pattern.split(result)[0]
 
-    if keep_from_heading:
+    if not options.get("nohead"):
         result = from_heading_line + result
+
+    if options.get("sethead"):
+        if options["sethead"] > 0:
+            result = shift_headings(
+                result,
+                options["sethead"] - from_heading_level
+            )
 
     return result
 
@@ -71,11 +91,11 @@ def process_local_include(path, from_heading=None, to_heading=None,
         incl_content = incl_file.read()
 
         if from_heading:
-            incl_content = cut_by_headings(
+            incl_content = process_headings(
                 incl_content,
                 from_heading,
                 to_heading,
-                keep_from_heading=not options.get("nohead")
+                options
             )
 
     return incl_content
@@ -120,7 +140,7 @@ if __name__ == "__main__":
 
 Another one:
 
-{{../test-project/sources/chapter1.md#Cras scelerisque tincidunt bibendum}}
+{{../test-project/sources/chapter1.md#Cras scelerisque tincidunt bibendum | sethead:2 }}
 
 Here's some text after it.
 """
