@@ -76,7 +76,12 @@ def collect_source(project_dir, target_dir, src_file):
                     join(project_dir, "sources", chapter_file),
                     encoding="utf8"
                 ) as chapter:
-                    src.write(includes.process_includes(chapter.read()))
+                    src.write(
+                        includes.process_includes(
+                            chapter.read(),
+                            join(project_dir, "sources")
+                        )
+                    )
 
     copy_dir_content(join(project_dir, "sources", "images"), target_dir)
     copy_dir_content(join(project_dir, "templates"), target_dir)
