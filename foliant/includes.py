@@ -1,5 +1,6 @@
 import re
 import os.path as ospa
+from io import StringIO
 
 
 def convert_value(value):
@@ -9,7 +10,10 @@ def convert_value(value):
         try:
             return float(value)
         except ValueError:
-            return value
+            try:
+                return bool(value)
+            except ValueError:
+                return value
 
 
 def extract_options(options_line):
@@ -34,53 +38,104 @@ def shift_headings(content, shift):
         return "%s %s" % ('#' * new_heading_level, heading.group("title"))
 
     heading_pattern = re.compile(
-        r"^(?P<hashes>\#+)\s*(?P<title>.+)$",
+        r"^(?P<hashes>\#+)\s*(?P<title>.+)\s*$",
         flags=re.MULTILINE
     )
 
     return heading_pattern.sub(sub, content)
 
 
-def process_headings(content, from_heading, to_heading=None,
-                     options={}):
-    from_heading_pattern = re.compile(
-        r"^\#+\s*%s\s*$" % from_heading,
-        flags=re.MULTILINE
-    )
+def find_top_heading_level(content):
+    heading_pattern = re.compile(r"^\#+[^\#]+?$", flags=re.MULTILINE)
 
-    if not from_heading_pattern.findall(content):
-        return ""
+    result = float("inf")
 
-    from_heading_line = from_heading_pattern.findall(content)[0]
-    from_heading_level = from_heading_line.count('#')
+    for heading in heading_pattern.findall(content):
+        heading_level = heading.count("#")
 
-    result = from_heading_pattern.split(content)[1]
+        if heading_level < result:
+            result = heading_level
 
-    if to_heading:
-        to_heading_pattern = re.compile(
-            r"^\#+\s*%s\s*$" % to_heading,
+    return result if result < float("inf") else 0
+
+
+def adjust_headings(content, from_heading, to_heading=None,
+                    options={}):
+    if from_heading:
+        from_heading_pattern = re.compile(
+            r"^\#+\s*%s\s*$" % from_heading,
             flags=re.MULTILINE
         )
 
-    else:
-        to_heading_pattern = re.compile(
-            r"^\#{1,%d}[^\#]+$" % from_heading_level,
-            flags=re.MULTILINE
-        )
+        if not from_heading_pattern.findall(content):
+            return ""
 
-    result = to_heading_pattern.split(result)[0]
+        from_heading_line = from_heading_pattern.findall(content)[0]
+        from_heading_level = from_heading_line.count('#')
 
-    if not options.get("nohead"):
-        result = from_heading_line + result
+        result = from_heading_pattern.split(content)[1]
 
-    if options.get("sethead"):
-        if options["sethead"] > 0:
-            result = shift_headings(
-                result,
-                options["sethead"] - from_heading_level
+        if to_heading:
+            to_heading_pattern = re.compile(
+                r"^\#+\s*%s\s*$" % to_heading,
+                flags=re.MULTILINE
             )
 
-    return result
+        else:
+            to_heading_pattern = re.compile(
+                r"^\#{1,%d}[^\#]+?$" % from_heading_level,
+                flags=re.MULTILINE
+            )
+
+        result = to_heading_pattern.split(result)[0]
+
+        if not options.get("nohead"):
+            result = from_heading_line + result
+
+        if options.get("sethead"):
+            if options["sethead"] > 0:
+                result = shift_headings(
+                    result,
+                    options["sethead"] - from_heading_level
+                )
+
+        return result
+
+    else:
+        from_heading_pattern = re.compile(r"^\#+[^\#]+?$")
+
+        content_buffer = StringIO(content)
+
+        first_line = content_buffer.readline()
+
+        if from_heading_pattern.fullmatch(first_line):
+            from_heading_line = first_line
+            from_heading_level = from_heading_line.count('#')
+            result = content_buffer.read()
+
+        else:
+            from_heading_line = ''
+            from_heading_level = find_top_heading_level(content)
+            result = content
+
+        if to_heading:
+            to_heading_pattern = re.compile(
+                r"^\#+\s*%s\s*$" % to_heading,
+                flags=re.MULTILINE
+            )
+            result = to_heading_pattern.split(result)[0]
+
+        if not options.get("nohead"):
+            result = from_heading_line + result
+
+        if options.get("sethead"):
+            if options["sethead"] > 0:
+                result = shift_headings(
+                    result,
+                    options["sethead"] - from_heading_level
+                )
+
+        return result
 
 
 def find_image(image_path, lookup_dir):
@@ -109,7 +164,7 @@ def find_image(image_path, lookup_dir):
     return ''
 
 
-def process_images(content, lookup_dir):
+def adjust_images(content, lookup_dir):
     def sub(image):
         image_caption = image.group("caption")
         image_path = image.group("path")
@@ -128,15 +183,14 @@ def process_local_include(path, from_heading=None, to_heading=None,
     with open(ospa.join(sources_dir, path), encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
-        if from_heading:
-            incl_content = process_headings(
-                incl_content,
-                from_heading,
-                to_heading,
-                options
-            )
+        incl_content = adjust_headings(
+            incl_content,
+            from_heading,
+            to_heading,
+            options
+        )
 
-        incl_content = process_images(
+        incl_content = adjust_images(
             incl_content,
             ospa.split(ospa.join(sources_dir, path))[0]
         )
@@ -169,13 +223,13 @@ def expand_include(include, sources_dir):
         )
 
 
-def process_includes(content, sources_dir="."):
+def process_includes(content, sources_dir=".", repos_dir="foliantcache"):
     def sub(include):
         return expand_include(include, sources_dir)
 
     include_pattern = re.compile(
         r"\{\{\s*(<(?P<repo>.+)\>)?" +
-        r"(?P<path>.+?)(\#(?P<from_heading>.+?)(:(?P<to_heading>.+?))?)?" +
+        r"(?P<path>[^\#]+?)(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
         r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
     )
 
@@ -189,7 +243,7 @@ if __name__ == "__main__":
 
 Another one:
 
-{{test-project/sources/chapter1.md }}
+{{test-project/sources/chapter1.md#Aliquam quis accumsan mauris:Nunc dignissim | nohead, sethead:2 }}
 
 Here's some text after it.
 """
