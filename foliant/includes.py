@@ -2,6 +2,11 @@ import re
 import os.path as ospa
 from io import StringIO
 
+import gitutils
+
+
+IMAGE_DIRS = ("", "images", "graphics")
+
 
 def convert_value(value):
     try:
@@ -38,7 +43,7 @@ def shift_headings(content, shift):
         return "%s %s" % ('#' * new_heading_level, heading.group("title"))
 
     heading_pattern = re.compile(
-        r"^(?P<hashes>\#+)\s*(?P<title>.+)\s*$",
+        r"^(?P<hashes>\#+)\s*(?P<title>[^\#]+)\s*$",
         flags=re.MULTILINE
     )
 
@@ -138,28 +143,26 @@ def adjust_headings(content, from_heading, to_heading=None,
         return result
 
 
-def find_image(image_path, lookup_dir):
+def find_image(image_path, start_dir):
+    def is_root(path):
+        return '' in ospa.split(path)
+
     def normabspath(path):
         return ospa.normcase(ospa.abspath(path))
 
     def normalize(path):
         return ospa.normpath('/'.join(path.split(ospa.sep)))
 
-    if ospa.isfile(ospa.join(lookup_dir, image_path)):
-        return normalize(ospa.join(lookup_dir, image_path))
+    level = 0
+    lookup_dir = ospa.join(start_dir, "../" * level)
 
-    else:
-        level = 0
-        current_lookup_dir = lookup_dir
-        next_lookup_dir = ospa.join(lookup_dir, "../" * level, "images")
+    while not is_root(normabspath(lookup_dir)):
+        for image_dir in (ospa.join(lookup_dir, image_dir) for image_dir in IMAGE_DIRS):
+            if ospa.isfile(ospa.join(image_dir, image_path)):
+                return normalize(ospa.join(image_dir, image_path))
 
-        while normabspath(current_lookup_dir) != normabspath(next_lookup_dir):
-            if ospa.isfile(ospa.join(next_lookup_dir, image_path)):
-                return normalize(ospa.join(next_lookup_dir, image_path))
-
-            current_lookup_dir = next_lookup_dir
-            level += 1
-            next_lookup_dir = ospa.join(lookup_dir, "../" * level, "images")
+        level += 1
+        lookup_dir = ospa.join(start_dir, "../" * level)
 
     return ''
 
@@ -198,38 +201,50 @@ def process_local_include(path, from_heading=None, to_heading=None,
     return incl_content
 
 
-def process_remote_include(repo, path, from_heading, to_heading, options={},
-                           sources_dir="."):
-    return "Remote"
+def process_remote_include(repo, revision, path, from_heading, to_heading,
+                           options={}, sources_dir=".",
+                           repos_dir="foliantcache"):
+    repo_path = gitutils.sync_repo(repo, repos_dir, revision)
+
+    return process_local_include(
+        ospa.join(repo_path, path),
+        from_heading,
+        to_heading,
+        options,
+        sources_dir
+    )
 
 
-def expand_include(include, sources_dir):
-    if include.group("repo"):
-        return process_remote_include(
-            include.group("repo"),
-            include.group("path"),
-            include.group("from_heading"),
-            include.group("to_heading"),
-            extract_options(include.group("options")),
-            sources_dir
-        )
-    else:
-        return process_local_include(
-            include.group("path"),
-            include.group("from_heading"),
-            include.group("to_heading"),
-            extract_options(include.group("options")),
-            sources_dir
-        )
+def process_includes(content, sources_dir=".", repos_dir="foliantcache",
+                     cfg={}):
+    def sub(include, sources_dir=sources_dir):
+        if include.group("repo"):
+            repo = include.group("repo")
+            repo_url = cfg.get("git", {}).get(repo) or repo
 
-
-def process_includes(content, sources_dir=".", repos_dir="foliantcache"):
-    def sub(include):
-        return expand_include(include, sources_dir)
+            return process_remote_include(
+                repo_url,
+                include.group("revision") or "master",
+                include.group("path"),
+                include.group("from_heading"),
+                include.group("to_heading"),
+                extract_options(include.group("options")),
+                sources_dir,
+                repos_dir
+            )
+        else:
+            return process_local_include(
+                include.group("path"),
+                include.group("from_heading"),
+                include.group("to_heading"),
+                extract_options(include.group("options")),
+                sources_dir
+            )
 
     include_pattern = re.compile(
-        r"\{\{\s*(<(?P<repo>.+)\>)?" +
-        r"(?P<path>[^\#]+?)(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
+        r"\{\{\s*(<(?P<repo>.+)@(?P<revision>.+)\>)?" +
+        r"(?P<path>[^\#]+?)" +
+        r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
         r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
     )
 
@@ -237,15 +252,14 @@ def process_includes(content, sources_dir=".", repos_dir="foliantcache"):
 
 
 if __name__ == "__main__":
-    test_content = """This is a sample that includes an include statement:
+    test_content = """Local include:
 
-{{ <myrepo>/path/to/file.md#heading1:heading2 | nohead, sethead:3 }}
+{{test-project/sources/chapter1.md#Aliquam quis accumsan mauris:Integer in hendrerit est | nohead, sethead:2 }}
 
-Another one:
+Remote include:
 
-{{test-project/sources/chapter1.md#Aliquam quis accumsan mauris:Nunc dignissim | nohead, sethead:2 }}
+{{ <ds@master>02_old_itv/01_descriptions/03_ui/client_products_android_app_interface_full_description.md }}
 
-Here's some text after it.
 """
 
-    print(process_includes(test_content))
+    print(process_includes(test_content, cfg={"git":{"ds": "git://git.restr.im/docs-itv/doorstopper_itv.git"}}))
