@@ -87,8 +87,11 @@ def find_image(image_path, lookup_dir):
     def normabspath(path):
         return ospa.normcase(ospa.abspath(path))
 
+    def normalize(path):
+        return ospa.normpath('/'.join(path.split(ospa.sep)))
+
     if ospa.isfile(ospa.join(lookup_dir, image_path)):
-        return ospa.join(lookup_dir, image_path)
+        return normalize(ospa.join(lookup_dir, image_path))
 
     else:
         level = 0
@@ -97,7 +100,7 @@ def find_image(image_path, lookup_dir):
 
         while normabspath(current_lookup_dir) != normabspath(next_lookup_dir):
             if ospa.isfile(ospa.join(next_lookup_dir, image_path)):
-                return ospa.join(next_lookup_dir, image_path)
+                return normalize(ospa.join(next_lookup_dir, image_path))
 
             current_lookup_dir = next_lookup_dir
             level += 1
@@ -107,23 +110,13 @@ def find_image(image_path, lookup_dir):
 
 
 def process_images(content, lookup_dir):
-    def normalize_slashes(path):
-        return '/'.join(path.split(ospa.sep))
-
     def sub(image):
         image_caption = image.group("caption")
         image_path = image.group("path")
 
-        if ospa.isfile(ospa.join(lookup_dir, image_path)):
-            adjusted_image_path = ospa.join(lookup_dir, image_path)
+        adjusted_image_path = find_image(image_path, lookup_dir)
 
-        else:
-            adjusted_image_path = find_image(image_path, lookup_dir)
-
-        return "![%s](%s)" % (
-            image_caption,
-            normalize_slashes(adjusted_image_path)
-        )
+        return "![%s](%s)" % (image_caption, adjusted_image_path)
 
     image_pattern = re.compile(r"\!\[(?P<caption>.*)\]\((?P<path>.+)\)")
 
