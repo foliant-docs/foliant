@@ -80,7 +80,7 @@ def collect_source(project_dir, target_dir, src_file):
                         includes.process_includes(
                             chapter.read(),
                             join(project_dir, "sources")
-                        )
+                        ) + "\n"
                     )
 
     copy_dir_content(join(project_dir, "sources", "images"), target_dir)
