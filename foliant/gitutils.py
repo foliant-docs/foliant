@@ -47,7 +47,7 @@ def sync_repo(repo_url, target_dir, revision="master"):
         "git clone %s %s" % (repo_url, repo_path),
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         shell=True
-    ):
+    ).returncode:
         subprocess.run(
             "git remote update origin --prune",
             cwd=repo_path,
@@ -64,10 +64,4 @@ def sync_repo(repo_url, target_dir, revision="master"):
 
     print("Done!")
 
-
-if __name__ == "__main__":
-    sync_repo(
-        "git@git.restr.im:docs-itv/doorstopper_itv.git",
-        "foliantcache",
-        revision="develop"
-    )
+    return repo_path
