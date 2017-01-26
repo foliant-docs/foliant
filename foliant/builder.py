@@ -57,7 +57,7 @@ def get_title(cfg):
     return '_'.join(components)
 
 
-def collect_source(project_dir, target_dir, src_file):
+def collect_source(project_dir, target_dir, src_file, cfg):
     """Copy .md files, images, templates, and references from the project
     directory to a temporary directory.
     """
@@ -79,7 +79,9 @@ def collect_source(project_dir, target_dir, src_file):
                     src.write(
                         includes.process_includes(
                             chapter.read(),
-                            join(project_dir, "sources")
+                            join(project_dir, "sources"),
+                            target_dir,
+                            cfg
                         ) + "\n"
                     )
 
@@ -102,7 +104,7 @@ def build(target_format, project_dir):
     cfg = json.load(open(join(project_dir, "config.json"), encoding="utf8"))
     output_title = get_title(cfg)
 
-    collect_source(project_dir, tmp_dir, src_file)
+    collect_source(project_dir, tmp_dir, src_file, cfg)
 
     seqdiag.process_diagrams(tmp_dir, src_file)
 
