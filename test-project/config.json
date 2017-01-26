@@ -12,5 +12,8 @@
   "alt_doc_type": "",
   "template": "basic",
   "version": "auto",
-  "date": "true"
+  "date": "true",
+  "git": {
+    "foo": "git://example.com/foo/bar.git"
+  }
 }
