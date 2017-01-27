@@ -2,7 +2,7 @@ import re
 import os.path as ospa
 from io import StringIO
 
-import gitutils
+from . import gitutils
 
 
 IMAGE_DIRS = ("", "images", "graphics")
@@ -143,23 +143,28 @@ def adjust_headings(content, from_heading, to_heading=None,
         return result
 
 
-def find_image(image_path, start_dir):
+def find_image(image_path, start_dir, target_dir):
     def is_root(path):
-        return '' in ospa.split(path)
+        return '' in ospa.split(ospa.abspath(path))
 
     def normabspath(path):
         return ospa.normcase(ospa.abspath(path))
 
     def normalize(path):
-        return ospa.normpath('/'.join(path.split(ospa.sep)))
+        return '/'.join(path.split(ospa.sep))
+
+    def adjust(path):
+        return ospa.relpath(path, target_dir)
 
     level = 0
     lookup_dir = ospa.join(start_dir, "../" * level)
 
     while not is_root(normabspath(lookup_dir)):
-        for image_dir in (ospa.join(lookup_dir, image_dir) for image_dir in IMAGE_DIRS):
+        for image_dir in (
+            ospa.join(lookup_dir, image_dir) for image_dir in IMAGE_DIRS
+        ):
             if ospa.isfile(ospa.join(image_dir, image_path)):
-                return normalize(ospa.join(image_dir, image_path))
+                return normalize(adjust(ospa.join(image_dir, image_path)))
 
         level += 1
         lookup_dir = ospa.join(start_dir, "../" * level)
@@ -167,12 +172,12 @@ def find_image(image_path, start_dir):
     return ''
 
 
-def adjust_images(content, lookup_dir):
+def adjust_images(content, lookup_dir, target_dir):
     def sub(image):
         image_caption = image.group("caption")
         image_path = image.group("path")
 
-        adjusted_image_path = find_image(image_path, lookup_dir)
+        adjusted_image_path = find_image(image_path, lookup_dir, target_dir)
 
         return "![%s](%s)" % (image_caption, adjusted_image_path)
 
@@ -181,8 +186,8 @@ def adjust_images(content, lookup_dir):
     return image_pattern.sub(sub, content)
 
 
-def process_local_include(path, from_heading=None, to_heading=None,
-                          options={}, sources_dir="."):
+def process_local_include(path, from_heading, to_heading, options, sources_dir,
+                          target_dir):
     with open(ospa.join(sources_dir, path), encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
@@ -195,28 +200,28 @@ def process_local_include(path, from_heading=None, to_heading=None,
 
         incl_content = adjust_images(
             incl_content,
-            ospa.split(ospa.join(sources_dir, path))[0]
+            ospa.split(ospa.join(sources_dir, path))[0],
+            target_dir
         )
 
     return incl_content
 
 
 def process_remote_include(repo, revision, path, from_heading, to_heading,
-                           options={}, sources_dir=".",
-                           repos_dir="foliantcache"):
-    repo_path = gitutils.sync_repo(repo, repos_dir, revision)
+                           options, sources_dir, target_dir):
+    repo_path = gitutils.sync_repo(repo, target_dir, revision)
 
     return process_local_include(
         ospa.join(repo_path, path),
         from_heading,
         to_heading,
         options,
-        sources_dir
+        sources_dir,
+        target_dir
     )
 
 
-def process_includes(content, sources_dir=".", repos_dir="foliantcache",
-                     cfg={}):
+def process_includes(content, sources_dir, target_dir, cfg):
     def sub(include, sources_dir=sources_dir):
         if include.group("repo"):
             repo = include.group("repo")
@@ -230,7 +235,7 @@ def process_includes(content, sources_dir=".", repos_dir="foliantcache",
                 include.group("to_heading"),
                 extract_options(include.group("options")),
                 sources_dir,
-                repos_dir
+                target_dir
             )
         else:
             return process_local_include(
@@ -238,7 +243,8 @@ def process_includes(content, sources_dir=".", repos_dir="foliantcache",
                 include.group("from_heading"),
                 include.group("to_heading"),
                 extract_options(include.group("options")),
-                sources_dir
+                sources_dir,
+                target_dir
             )
 
     include_pattern = re.compile(
