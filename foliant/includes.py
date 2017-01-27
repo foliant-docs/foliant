@@ -1,3 +1,5 @@
+"""Include processor."""
+
 import re
 import os.path as ospa
 from io import StringIO
@@ -9,6 +11,10 @@ IMAGE_DIRS = ("", "images", "graphics")
 
 
 def convert_value(value):
+    """Attempt to convert a string to integer, float, or boolean. If nothing
+    matches, return the original string.
+    """
+
     try:
         return int(value)
     except ValueError:
@@ -22,6 +28,11 @@ def convert_value(value):
 
 
 def extract_options(options_line):
+    """Extract include options as a dictionary from a raw string.
+
+    Options without values are treated as having boolean ``True`` value.
+    """
+
     options = {}
 
     if not options_line:
@@ -38,6 +49,10 @@ def extract_options(options_line):
 
 
 def shift_headings(content, shift):
+    """Shift all Markdown headings in a string by a given value. The shift can
+    be positive or negative.
+    """
+
     def sub(heading):
         new_heading_level = len(heading.group("hashes")) + shift
         return "%s %s" % ('#' * new_heading_level, heading.group("title"))
@@ -51,6 +66,9 @@ def shift_headings(content, shift):
 
 
 def find_top_heading_level(content):
+    """Find the highest level heading (i.e. having the least '#'s)
+    in a Markdown string."""
+
     heading_pattern = re.compile(r"^\#+[^\#]+?$", flags=re.MULTILINE)
 
     result = float("inf")
@@ -66,6 +84,15 @@ def find_top_heading_level(content):
 
 def adjust_headings(content, from_heading, to_heading=None,
                     options={}):
+    """Cut part of Markdown string between two headings, set heading level,
+    and remove top heading.
+
+    If only the starting heading is defined, cut to the next heading
+    of the same level. If no headings are defined, return the full string.
+
+    Heading shift and top heading elimination are optional.
+    """
+
     if from_heading:
         from_heading_pattern = re.compile(
             r"^\#+\s*%s\s*$" % from_heading,
@@ -144,6 +171,18 @@ def adjust_headings(content, from_heading, to_heading=None,
 
 
 def find_image(image_path, start_dir, target_dir):
+    """Locate an image in the disk based on the path from the image directive
+    and the path to the directory with the document containing the image.
+
+    The function looks for the image first in the document directory and then
+    in all upper-level directories until it finds the image or reaches root.
+    In each location, it checks the directory itself and the subdirectories
+    ``images`` and ``graphics`` (defined in ``IMAGE_DIRS``).
+
+    The result is adjusted relative to the target directory where the final
+    document will be built.
+    """
+
     def normabspath(path):
         return ospa.normcase(ospa.abspath(path))
 
@@ -172,7 +211,15 @@ def find_image(image_path, start_dir, target_dir):
     return ''
 
 
-def adjust_images(content, lookup_dir, target_dir):
+def adjust_image_paths(content, lookup_dir, target_dir):
+    """Locate all images referenced in a string and replace their paths
+    with valid Markdown paths that point to the images relative to the target
+    directory.
+
+    ``lookup_dir`` is the starting point to look for the images—the directory
+    with the document.
+    """
+
     def sub(image):
         image_caption = image.group("caption")
         image_path = image.group("path")
@@ -188,6 +235,11 @@ def adjust_images(content, lookup_dir, target_dir):
 
 def process_local_include(path, from_heading, to_heading, options, sources_dir,
                           target_dir):
+    """Replace a local include statement with the file content. Necessary
+    modifications are applies before returning the content: cut between certain
+    headings, strip the top heading, set heading level.
+    """
+
     with open(ospa.join(sources_dir, path), encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
@@ -198,7 +250,7 @@ def process_local_include(path, from_heading, to_heading, options, sources_dir,
             options
         )
 
-        incl_content = adjust_images(
+        incl_content = adjust_image_paths(
             incl_content,
             ospa.split(ospa.join(sources_dir, path))[0],
             target_dir
@@ -209,6 +261,11 @@ def process_local_include(path, from_heading, to_heading, options, sources_dir,
 
 def process_remote_include(repo, revision, path, from_heading, to_heading,
                            options, sources_dir, target_dir):
+    """Please a remote include statement with the file content. This involves
+    cloning or updating the git repository with the file and processing
+    the include as a regular local one.
+    """
+
     repo_path = gitutils.sync_repo(repo, target_dir, revision)
 
     return process_local_include(
@@ -222,6 +279,8 @@ def process_remote_include(repo, revision, path, from_heading, to_heading,
 
 
 def process_includes(content, sources_dir, target_dir, cfg):
+    """Replace all include statements with the respective file content."""
+
     def sub(include, sources_dir=sources_dir):
         if include.group("repo"):
             repo = include.group("repo")
