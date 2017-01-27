@@ -40,7 +40,7 @@ def sync_repo(repo_url, target_dir, revision="master"):
     repo_name = repo_url.split('/')[-1].split('.')[0]
     repo_path = join(target_dir, repo_name)
 
-    print("Syncing %s at %s..." % (repo_url, revision), end=' ')
+    print("Syncing %s on %s..." % (repo_url, revision), end=' ')
     sys.stdout.flush()
 
     if subprocess.run(
@@ -61,7 +61,5 @@ def sync_repo(repo_url, target_dir, revision="master"):
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         shell=True
     )
-
-    print("Done!")
 
     return repo_path
