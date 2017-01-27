@@ -144,11 +144,11 @@ def adjust_headings(content, from_heading, to_heading=None,
 
 
 def find_image(image_path, start_dir, target_dir):
-    def is_root(path):
-        return '' in ospa.split(ospa.abspath(path))
-
     def normabspath(path):
         return ospa.normcase(ospa.abspath(path))
+
+    def is_root(path):
+        return '' in ospa.split(normabspath(path))
 
     def normalize(path):
         return '/'.join(path.split(ospa.sep))
@@ -159,7 +159,7 @@ def find_image(image_path, start_dir, target_dir):
     level = 0
     lookup_dir = ospa.join(start_dir, "../" * level)
 
-    while not is_root(normabspath(lookup_dir)):
+    while not is_root(lookup_dir):
         for image_dir in (
             ospa.join(lookup_dir, image_dir) for image_dir in IMAGE_DIRS
         ):
@@ -212,7 +212,7 @@ def process_remote_include(repo, revision, path, from_heading, to_heading,
     repo_path = gitutils.sync_repo(repo, target_dir, revision)
 
     return process_local_include(
-        ospa.join(repo_path, path),
+        ospa.relpath(ospa.join(repo_path, path), sources_dir),
         from_heading,
         to_heading,
         options,
@@ -248,24 +248,10 @@ def process_includes(content, sources_dir, target_dir, cfg):
             )
 
     include_pattern = re.compile(
-        r"\{\{\s*(<(?P<repo>.+)@(?P<revision>.+)\>)?" +
+        r"\{\{\s*(<(?P<repo>[^\#]+)(#(?P<revision>[^>]+))?\>)?" +
         r"(?P<path>[^\#]+?)" +
         r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
         r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
     )
 
     return include_pattern.sub(sub, content)
-
-
-if __name__ == "__main__":
-    test_content = """Local include:
-
-{{test-project/sources/chapter1.md#Aliquam quis accumsan mauris:Integer in hendrerit est | nohead, sethead:2 }}
-
-Remote include:
-
-{{ <ds@master>02_old_itv/01_descriptions/03_ui/client_products_android_app_interface_full_description.md }}
-
-"""
-
-    print(process_includes(test_content, cfg={"git":{"ds": "git://git.restr.im/docs-itv/doorstopper_itv.git"}}))
