@@ -58,6 +58,8 @@ def generate_command(params, output_file, src_file, cfg):
                 params.append("-F %s" % filt)
         elif key == "file_name":
             pass
+        elif key == "git":
+            pass
         else:
             print("Unsupported config key: %s" % key)
 
