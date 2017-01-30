@@ -1,1 +1,0 @@
-{{<ds>test-include-project/incl.md}}
