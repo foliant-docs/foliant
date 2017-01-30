@@ -14,6 +14,6 @@
   "version": "auto",
   "date": "true",
   "git": {
-    "foo": "git://example.com/foo/bar.git"
+    "foliant": "git@github.com:foliant-docs/foliant.git"
   }
 }
