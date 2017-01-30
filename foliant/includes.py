@@ -9,6 +9,18 @@ from . import gitutils
 
 IMAGE_DIRS = ("", "images", "graphics")
 
+HEADING_PATTERN = re.compile(
+    r"^(?P<hashes>\#+)\s*(?P<title>[^\#]+)\s*$",
+    flags=re.MULTILINE
+)
+IMAGE_PATTERN = re.compile(r"\!\[(?P<caption>.*)\]\((?P<path>.+)\)")
+INCLUDE_PATTERN = re.compile(
+    r"\{\{\s*(<(?P<repo>[^\#]+)(#(?P<revision>[^>]+))?\>)?" +
+    r"(?P<path>[^\#]+?)" +
+    r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
+    r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
+)
+
 
 def convert_value(value):
     """Attempt to convert a string to integer, float, or boolean. If nothing
@@ -57,23 +69,16 @@ def shift_headings(content, shift):
         new_heading_level = len(heading.group("hashes")) + shift
         return "%s %s" % ('#' * new_heading_level, heading.group("title"))
 
-    heading_pattern = re.compile(
-        r"^(?P<hashes>\#+)\s*(?P<title>[^\#]+)\s*$",
-        flags=re.MULTILINE
-    )
-
-    return heading_pattern.sub(sub, content)
+    return HEADING_PATTERN.sub(sub, content)
 
 
 def find_top_heading_level(content):
     """Find the highest level heading (i.e. having the least '#'s)
     in a Markdown string."""
 
-    heading_pattern = re.compile(r"^\#+[^\#]+?$", flags=re.MULTILINE)
-
     result = float("inf")
 
-    for heading in heading_pattern.findall(content):
+    for heading in HEADING_PATTERN.findall(content):
         heading_level = heading.count("#")
 
         if heading_level < result:
@@ -134,13 +139,11 @@ def adjust_headings(content, from_heading, to_heading=None,
         return result
 
     else:
-        from_heading_pattern = re.compile(r"^\#+[^\#]+?$")
-
         content_buffer = StringIO(content)
 
         first_line = content_buffer.readline()
 
-        if from_heading_pattern.fullmatch(first_line):
+        if HEADING_PATTERN.fullmatch(first_line):
             from_heading_line = first_line
             from_heading_level = from_heading_line.count('#')
             result = content_buffer.read()
@@ -228,9 +231,7 @@ def adjust_image_paths(content, lookup_dir, target_dir):
 
         return "![%s](%s)" % (image_caption, adjusted_image_path)
 
-    image_pattern = re.compile(r"\!\[(?P<caption>.*)\]\((?P<path>.+)\)")
-
-    return image_pattern.sub(sub, content)
+    return IMAGE_PATTERN.sub(sub, content)
 
 
 def process_local_include(path, from_heading, to_heading, options, sources_dir,
@@ -306,11 +307,4 @@ def process_includes(content, sources_dir, target_dir, cfg):
                 target_dir
             )
 
-    include_pattern = re.compile(
-        r"\{\{\s*(<(?P<repo>[^\#]+)(#(?P<revision>[^>]+))?\>)?" +
-        r"(?P<path>[^\#]+?)" +
-        r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
-        r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
-    )
-
-    return include_pattern.sub(sub, content)
+    return INCLUDE_PATTERN.sub(sub, content)
