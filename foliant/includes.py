@@ -15,7 +15,7 @@ HEADING_PATTERN = re.compile(
 )
 IMAGE_PATTERN = re.compile(r"\!\[(?P<caption>.*)\]\((?P<path>.+)\)")
 INCLUDE_PATTERN = re.compile(
-    r"\{\{\s*(<(?P<repo>[^\#]+)(#(?P<revision>[^>]+))?\>)?" +
+    r"\{\{\s*(<(?P<git>[^>]+)>)?" +
     r"(?P<path>[^\#]+?)" +
     r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
     r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
@@ -283,13 +283,17 @@ def process_includes(content, sources_dir, target_dir, cfg):
     """Replace all include statements with the respective file content."""
 
     def sub(include, sources_dir=sources_dir):
-        if include.group("repo"):
-            repo = include.group("repo")
-            repo_url = cfg.get("git", {}).get(repo) or repo
+        if include.group("git"):
+            git = include.group("git")
+            git = cfg.get("git", {}).get(git) or git
+            git = git.split("#")
+
+            repo_url = git[0]
+            revision = git[1] if len(git) > 1 else "master"
 
             return process_remote_include(
                 repo_url,
-                include.group("revision") or "master",
+                revision,
                 include.group("path"),
                 include.group("from_heading"),
                 include.group("to_heading"),
