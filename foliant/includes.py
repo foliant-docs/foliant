@@ -307,4 +307,9 @@ def process_includes(content, sources_dir, target_dir, cfg):
                 target_dir
             )
 
-    return INCLUDE_PATTERN.sub(sub, content)
+    result = INCLUDE_PATTERN.sub(sub, content)
+
+    if INCLUDE_PATTERN.match(result):
+        return process_includes(result, sources_dir, target_dir, cfg)
+    else:
+        return result
