@@ -14,6 +14,6 @@
   "version": "auto",
   "date": "true",
   "git": {
-    "foliant": "git@github.com:foliant-docs/foliant.git"
+    "foliant": "git@github.com:foliant-docs/foliant.git#feature/include"
   }
 }
