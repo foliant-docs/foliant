@@ -47,7 +47,7 @@ def sync_repo(repo_url, target_dir, revision="master"):
         "git clone %s %s" % (repo_url, repo_path),
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         shell=True
-    ).returncode:
+    ).returncode != 0:
         subprocess.run(
             "git remote update origin --prune",
             cwd=repo_path,
