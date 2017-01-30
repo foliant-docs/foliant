@@ -40,9 +40,6 @@ def sync_repo(repo_url, target_dir, revision="master"):
     repo_name = repo_url.split('/')[-1].split('.')[0]
     repo_path = join(target_dir, repo_name)
 
-    print("Syncing %s on %s..." % (repo_url, revision), end=' ')
-    sys.stdout.flush()
-
     if subprocess.run(
         "git clone %s %s" % (repo_url, repo_path),
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
