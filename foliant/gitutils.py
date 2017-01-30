@@ -49,7 +49,7 @@ def sync_repo(repo_url, target_dir, revision="master"):
         shell=True
     ).returncode != 0:
         subprocess.run(
-            "git remote update origin --prune",
+            "git pull",
             cwd=repo_path,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True
