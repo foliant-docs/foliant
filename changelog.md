@@ -78,3 +78,7 @@ Initial release.
 # 0.2.8
 
 - Support super advanced Markdown includes.
+
+# 0.2.9
+
+- Properly handle unresolved include file lookups.
