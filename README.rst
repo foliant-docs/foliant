@@ -300,6 +300,90 @@ LaTeX templates used to build PDF, Docx, and TeX files. The template
 to use in build is configured in ``config.json``.
 
 
+********************************************
+Including External Markdown Files in Sources
+********************************************
+
+Foliant allows to include Markdown sources from external files. The external
+file can be located on the disk or in a remote git repository.
+
+
+Basic Usage
+===========
+
+.. code-block:: markdown
+
+  Here is a local include:
+
+  {{ ../../external.md }}
+
+  Here is an include from git:
+
+  {{ <git@github.com:foliant-docs/foliant.git>path/to/external.md }}
+
+  Repo URL can be provided in https, ssh, or git protocol form.
+
+  If the repo is aliased as "myrepo" in `config.json`:
+
+  {{ <myrepo>path/to/external.md }}
+
+
+Extract Document Part Between Headings
+======================================
+
+It is possible to include only a part of a document between two headings,
+a heading and document end, or document beginning and a heading:
+
+.. code-block:: markdown
+
+  Extract part from the heading "Foo" to the next heading of the same level
+  or the end of the document:
+
+  {{ external.md#Foo }}
+
+  From "Foo" to "Bar" (disregarding their levels):
+
+  {{ external.md#Foo:Bar }}
+
+  From the beginning of the document to "Bar":
+
+  {{ external.md#:Bar }}
+
+  All the same notations work with remote includes:
+
+  {{ <myrepo>external.md#Foo:Bar }}
+
+
+File Lookup
+===========
+
+You can include knowing only its name, without knowing its path. Foliant will
+look for the file recursively in the specified directory: if it's a remote
+include, it's the repos root directory; if it's a local include, it's
+the directory you specify in the path:
+
+.. code-block:: markdown
+
+  `external.md` is in the repository, but we don't know its exact path:
+
+  {{ <myrepo>^external.md }}
+
+  Foliant will look for the file in the repo directory.
+
+  The same syntax works with local includes:
+
+  {{ ../^external.md }}
+
+  In this case, Foliant will go one level up from the directory with
+  the document containing the include and look for `external.md` recursively.
+
+
+Nested Includes
+===============
+
+Included files can contain includes themselves. That's it, move along :-)
+
+
 *************************
 Uploading to Google Drive
 *************************
