@@ -74,3 +74,7 @@ Initial release.
 # 0.2.7
 
 - Improve output file naming: get rid of redundant "-" and "_".
+
+# 0.2.8
+
+- Support super advanced Markdown includes.

@@ -238,20 +238,23 @@ Config file, mostly for Pandoc.
                                       // Shown at the bottom of each page.
     "title_page": "true",             // Add title page or not.
     "toc": "true",                    // Add table of contents or not.
-    "tof": "true",                    // Unknown
+    "tof": "true",                    // Unknown.
     "template": "basic",              // LaTeX template to use. Do NOT add ".tex"!
     "version": "1.0",                 // Document version. If set to "auto"
                                       // the version is generated automatically
                                       // based on git tag and revision number.
     "date": "true",                   // Add date to the title page and output
                                       // file name.
-    "type": "",                       // Unknown
-    "alt_doc_type": "",               // Unknown
-    "filters": ["filter1", "filter2"] // Pandoc filters
+    "type": "",                       // Unknown.
+    "alt_doc_type": "",               // Unknown.
+    "filters": ["filter1", "filter2"] // Pandoc filters.
+    "git": {                          // Git aliases for includes.
+      "foliant": "git@github.com:foliant-docs/foliant.git" // Git alias.
+    }
   }
 
-For historic reasons, all config values should be strings,
-even if they *mean* a number or boolean value.
+For historic reasons, all config values should be strings, even if they
+*mean* a number or boolean value.
 
 
 main.yaml
@@ -298,6 +301,140 @@ templates/
 
 LaTeX templates used to build PDF, Docx, and TeX files. The template
 to use in build is configured in ``config.json``.
+
+
+********************************************
+Including External Markdown Files in Sources
+********************************************
+
+Foliant allows to include Markdown sources from external files. The external
+file can be located on the disk or in a remote git repository.
+
+
+Basic Usage
+===========
+
+Here is a local include:
+
+.. code-block:: markdown
+
+  {{ ../../external.md }}
+
+Here is an include from git:
+
+.. code-block:: markdown
+
+  {{ <git@github.com:foliant-docs/foliant.git>path/to/external.md }}
+
+Repo URL can be provided in https, ssh, or git protocol form.
+
+If the repo is aliased as "myrepo" in `config.json`_:
+
+.. code-block:: markdown
+
+  {{ <myrepo>path/to/external.md }}
+
+You can specify a particular revision:
+
+.. code-block:: markdown
+
+  {{ <myrepo#mybranch>path/to/external.md }}
+
+
+Extract Document Part Between Headings
+======================================
+
+It is possible to include only a part of a document between two headings,
+a heading and document end, or document beginning and a heading:
+
+.. code-block:: markdown
+
+Extract part from the heading "Foo" to the next heading of the same level
+or the end of the document:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo }}
+
+From "Foo" to "Bar" (disregarding their levels):
+
+.. code-block:: markdown
+
+  {{ external.md#Foo:Bar }}
+
+From the beginning of the document to "Bar":
+
+.. code-block:: markdown
+
+  {{ external.md#:Bar }}
+
+All the same notations work with remote includes:
+
+.. code-block:: markdown
+
+  {{ <myrepo>external.md#Foo:Bar }}
+
+
+Heading Options
+===============
+
+You can include the document without the opening heading:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | nohead }}
+
+You can also set the level for the opening heading for the included source:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | sethead(3) }}
+
+The versions can be combined:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | nohead, sethead(3) }}
+
+
+File Lookup
+===========
+
+You can include knowing only its name, without knowing its path. Foliant will
+look for the file recursively in the specified directory: if it's a remote
+include, it's the repos root directory; if it's a local include, it's
+the directory you specify in the path:
+
+``external.md`` is in the repository, but we don't know its exact path:
+
+.. code-block:: markdown
+
+  {{ <myrepo>^external.md }}
+
+Foliant will look for the file in the repo directory.
+
+The same syntax works with local includes:
+
+.. code-block:: markdown
+
+  {{ ../^external.md }}
+
+In this case, Foliant will go one level up from the directory with
+the document containing the include and look for ``external.md`` recursively.
+
+
+Nested Includes
+===============
+
+Included files can contain includes themselves.
+
+
+Include Frenzy!
+===============
+
+.. code-block:: markdown
+
+  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead(3) }}
 
 
 *************************

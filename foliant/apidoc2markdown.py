@@ -2,7 +2,9 @@ from __future__ import print_function
 
 """Apidoc to Markdown converter."""
 
+import sys
 import subprocess
+
 
 def convert(apidoc_location, output_file, template_file):
     """Convert Apidoc JSON files to Markdown."""
@@ -21,6 +23,7 @@ def convert(apidoc_location, output_file, template_file):
         )
 
     print("Baking output... ", end='')
+    sys.stdout.flush()
 
     try:
         proc = subprocess.check_output(
