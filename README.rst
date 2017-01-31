@@ -327,6 +327,10 @@ Basic Usage
 
   {{ <myrepo>path/to/external.md }}
 
+  You can specify a particular revision:
+
+  {{ <myrepo#mybranch>path/to/external.md }}
+
 
 Extract Document Part Between Headings
 ======================================
@@ -352,6 +356,28 @@ a heading and document end, or document beginning and a heading:
   All the same notations work with remote includes:
 
   {{ <myrepo>external.md#Foo:Bar }}
+
+
+Heading Options
+===============
+
+You can include the document without the opening heading:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | nohead }}
+
+You can also set the level for the opening heading for the included source:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | sethead(3) }}
+
+The versions can be combined:
+
+.. code-block:: markdown
+
+  {{ external.md#Foo | nohead, sethead(3) }}
 
 
 File Lookup
@@ -382,6 +408,16 @@ Nested Includes
 ===============
 
 Included files can contain includes themselves. That's it, move along :-)
+
+
+Up to 11
+========
+
+You can freely combine all the features mentioned above:
+
+.. code-block:: markdown
+
+  {{ <myrepo#mybranch>path/to/external.md#From Heading:To Heading | nohead, sethead(3) }}
 
 
 *************************
