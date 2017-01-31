@@ -2,17 +2,28 @@
 
 from __future__ import print_function
 
+import sys
 import subprocess
 from . import gitutils
 
 PANDOC_PATH = "pandoc"
-FROM_PARAMS = "-f markdown_strict+simple_tables+multiline_tables+grid_tables+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+all_symbols_escapable+strikeout+superscript+subscript+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks"
-LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings --latex-engine=xelatex"
+
+FROM_PARAMS = "-f markdown_strict+simple_tables+multiline_tables+grid_tables+\
+pipe_tables+table_captions+fenced_code_blocks+line_blocks+definition_lists+\
+all_symbols_escapable+strikeout+superscript+subscript+\
+lists_without_preceding_blankline+implicit_figures+raw_tex+citations+\
+tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+\
+inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks"
+
+LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings \
+--latex-engine=xelatex"
+
 
 def generate_variable(key, value):
     """Generate a ``--variable key=value`` entry."""
 
     return '--variable "%s"="%s"' % (key, value)
+
 
 def generate_command(params, output_file, src_file, cfg):
     """Generate the entire Pandoc command with params to invoke."""
@@ -47,17 +58,22 @@ def generate_command(params, output_file, src_file, cfg):
                 params.append("-F %s" % filt)
         elif key == "file_name":
             pass
+        elif key == "git":
+            pass
         else:
             print("Unsupported config key: %s" % key)
 
     return ' '.join([PANDOC_PATH] + params + [src_file])
 
+
 def run(command, src_dir):
     """Invoke the Pandoc executable with the generated params."""
 
     print("Baking output... ", end='')
+    sys.stdout.flush()
+
     try:
-        proc = subprocess.check_output(
+        subprocess.check_output(
             command,
             cwd=src_dir,
             stderr=subprocess.PIPE,
@@ -68,6 +84,7 @@ def run(command, src_dir):
 
     except subprocess.CalledProcessError as e:
         quit(e.stderr.decode())
+
 
 def to_pdf(src_file, output_file, tmp_path, cfg):
     """Convert Markdown to PDF via Pandoc."""
@@ -80,6 +97,7 @@ def to_pdf(src_file, output_file, tmp_path, cfg):
     )
     run(pandoc_command, tmp_path)
 
+
 def to_docx(src_file, output_file, tmp_path, cfg):
     """Convert Markdown to Docx via Pandoc."""
 
@@ -90,6 +108,7 @@ def to_docx(src_file, output_file, tmp_path, cfg):
         cfg
     )
     run(pandoc_command, tmp_path)
+
 
 def to_tex(src_file, output_file, tmp_path, cfg):
     """Convert Markdown to TeX via Pandoc."""
