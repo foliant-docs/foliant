@@ -16,7 +16,7 @@ RUN apt-get update; apt-get install -y \
     texlive-xetex
 RUN apt-get install -y pandoc
 RUN apt-get install -y python3 python3-pip
-RUN pip3 install "foliant[all]>=0.2.8"
+RUN pip3 install "foliant[all]>=0.2.9"
 RUN locale-gen en_US.UTF-8
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
