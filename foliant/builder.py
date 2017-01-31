@@ -2,13 +2,15 @@ from __future__ import print_function
 
 """Document builder for foliant. Implements "build" subcommand."""
 
+import sys
 import os, shutil, json
 from os.path import join
 from datetime import date
 
 import yaml
 
-from . import gitutils, pandoc, uploader, seqdiag
+from . import gitutils, pandoc, uploader, seqdiag, includes
+
 
 def copy_dir_content(src, dest):
     """Recusrively copy directory content to another directory."""
@@ -21,6 +23,7 @@ def copy_dir_content(src, dest):
             shutil.copy(join(src, child), dest)
         elif os.path.isdir(join(src, child)):
             shutil.copytree(join(src, child), join(dest, child))
+
 
 def get_version(cfg):
     """Extract version from config or generate it from git tag and revcount.
@@ -38,6 +41,7 @@ def get_version(cfg):
 
     return '-'.join(components)
 
+
 def get_title(cfg):
     """Generate file name from config: slugify the title and add version."""
 
@@ -52,12 +56,14 @@ def get_title(cfg):
 
     return '_'.join(components)
 
-def collect_source(project_dir, target_dir, src_file):
+
+def collect_source(project_dir, target_dir, src_file, cfg):
     """Copy .md files, images, templates, and references from the project
     directory to a temporary directory.
     """
 
     print("Collecting source... ", end='')
+    sys.stdout.flush()
 
     with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
         with open(
@@ -70,7 +76,14 @@ def collect_source(project_dir, target_dir, src_file):
                     join(project_dir, "sources", chapter_file),
                     encoding="utf8"
                 ) as chapter:
-                    src.write(chapter.read() + '\n')
+                    src.write(
+                        includes.process_includes(
+                            chapter.read(),
+                            join(project_dir, "sources"),
+                            target_dir,
+                            cfg
+                        ) + "\n"
+                    )
 
     copy_dir_content(join(project_dir, "sources", "images"), target_dir)
     copy_dir_content(join(project_dir, "templates"), target_dir)
@@ -78,21 +91,20 @@ def collect_source(project_dir, target_dir, src_file):
 
     print("Done!")
 
+
 def build(target_format, project_dir):
     """Convert source Markdown to the target format using Pandoc."""
 
-    tmp_dir = "tmp"
+    tmp_dir = "foliantcache"
     src_file = "output.md"
 
-    if os.path.exists(tmp_dir):
-        shutil.rmtree(tmp_dir)
-
-    os.makedirs(tmp_dir)
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
 
     cfg = json.load(open(join(project_dir, "config.json"), encoding="utf8"))
     output_title = get_title(cfg)
 
-    collect_source(project_dir, tmp_dir, src_file)
+    collect_source(project_dir, tmp_dir, src_file, cfg)
 
     seqdiag.process_diagrams(tmp_dir, src_file)
 
@@ -117,7 +129,5 @@ def build(target_format, project_dir):
         uploader.upload(output_file)
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
-
-    shutil.rmtree(tmp_dir)
 
     return output_file

@@ -12,5 +12,8 @@
   "alt_doc_type": "",
   "template": "basic",
   "version": "auto",
-  "date": "true"
+  "date": "true",
+  "git": {
+    "foliant": "git@github.com:foliant-docs/foliant.git"
+  }
 }
