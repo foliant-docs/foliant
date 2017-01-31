@@ -238,20 +238,23 @@ Config file, mostly for Pandoc.
                                       // Shown at the bottom of each page.
     "title_page": "true",             // Add title page or not.
     "toc": "true",                    // Add table of contents or not.
-    "tof": "true",                    // Unknown
+    "tof": "true",                    // Unknown.
     "template": "basic",              // LaTeX template to use. Do NOT add ".tex"!
     "version": "1.0",                 // Document version. If set to "auto"
                                       // the version is generated automatically
                                       // based on git tag and revision number.
     "date": "true",                   // Add date to the title page and output
                                       // file name.
-    "type": "",                       // Unknown
-    "alt_doc_type": "",               // Unknown
-    "filters": ["filter1", "filter2"] // Pandoc filters
+    "type": "",                       // Unknown.
+    "alt_doc_type": "",               // Unknown.
+    "filters": ["filter1", "filter2"] // Pandoc filters.
+    "git": {                          // Git aliases for includes.
+      "foliant": "git@github.com:foliant-docs/foliant.git" // Git alias.
+    }
   }
 
-For historic reasons, all config values should be strings,
-even if they *mean* a number or boolean value.
+For historic reasons, all config values should be strings, even if they
+*mean* a number or boolean value.
 
 
 main.yaml
