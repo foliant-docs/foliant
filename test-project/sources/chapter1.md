@@ -1,6 +1,6 @@
 # Cras scelerisque tincidunt bibendum
 
-{{ ../../test-include-project/incl.md }}
+{{ ../../^incl.md }}
 
 ```seqdiag
 seqdiag {
@@ -9,6 +9,11 @@ seqdiag {
 ```
 
 ## Aliquam quis accumsan mauris
+
+{{ doesnotexist.md }}
+
+{{ ../../test-include-project/incl.md }}
+
 
 Praesent dictum elit nibh, nec convallis nunc ultrices dictum. Cras ut facilisis arcu. Fusce lobortis a turpis in imperdiet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
 

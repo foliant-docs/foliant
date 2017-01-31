@@ -1,1 +1,1 @@
-{{<foliant#feature/include>test-include-project/incl.md}}
+{{<foliant#feature/include>^incl.md}}
