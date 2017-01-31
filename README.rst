@@ -320,6 +320,15 @@ Here is a local include:
 
   {{ ../../external.md }}
 
+.. note::
+
+  If you use Foliant in a Docker container, local includes pointing outside
+  the project directory will not be resolved because only the project directory
+  is mounted inside the container.
+
+  You can mount the directories with your local included files manually
+  to work around that.
+
 Here is an include from git:
 
 .. code-block:: markdown
@@ -327,6 +336,11 @@ Here is an include from git:
   {{ <git@github.com:foliant-docs/foliant.git>path/to/external.md }}
 
 Repo URL can be provided in https, ssh, or git protocol form.
+
+.. note::
+
+  If you use Foliant in a Docker container, use https protocol. Otherwise,
+  you'll be prompted by git to add the repo host to ``known_hosts``.
 
 If the repo is aliased as "myrepo" in `config.json`_:
 
