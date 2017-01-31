@@ -1,6 +1,7 @@
 """Include processor."""
 
 import re
+import errno
 import os
 import os.path as ospa
 from io import StringIO
@@ -270,10 +271,22 @@ def process_local_include(path, from_heading, to_heading, options, sources_dir,
     incl_file_dir, incl_file_name = ospa.split(incl_file_path)
 
     if incl_file_name.startswith('^'):
-        incl_file_path = find_incl_file(incl_file_name[1:], incl_file_dir)
-        incl_file_dir, incl_file_name = ospa.split(incl_file_path)
+        adjusted_incl_file_path = find_incl_file(
+            incl_file_name[1:],
+            incl_file_dir
+        )
 
-    with open(incl_file_path, encoding="utf8") as incl_file:
+        if not adjusted_incl_file_path:
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), incl_file_path
+            )
+
+        incl_file_dir, incl_file_name = ospa.split(adjusted_incl_file_path)
+
+    else:
+        adjusted_incl_file_path = incl_file_path
+
+    with open(adjusted_incl_file_path, encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
         incl_content = adjust_headings(
