@@ -1,1 +1,1 @@
-{{<foliant#feature/include>^incl.md}}
+{{<foliant#feature/include>^incl.md | nohead}}
