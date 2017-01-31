@@ -311,23 +311,29 @@ file can be located on the disk or in a remote git repository.
 Basic Usage
 ===========
 
-.. code-block:: markdown
+Here is a local include:
 
-  Here is a local include:
+.. code-block:: markdown
 
   {{ ../../external.md }}
 
-  Here is an include from git:
+Here is an include from git:
+
+.. code-block:: markdown
 
   {{ <git@github.com:foliant-docs/foliant.git>path/to/external.md }}
 
-  Repo URL can be provided in https, ssh, or git protocol form.
+Repo URL can be provided in https, ssh, or git protocol form.
 
-  If the repo is aliased as "myrepo" in `config.json`:
+If the repo is aliased as "myrepo" in `config.json`_:
+
+.. code-block:: markdown
 
   {{ <myrepo>path/to/external.md }}
 
-  You can specify a particular revision:
+You can specify a particular revision:
+
+.. code-block:: markdown
 
   {{ <myrepo#mybranch>path/to/external.md }}
 
@@ -340,20 +346,28 @@ a heading and document end, or document beginning and a heading:
 
 .. code-block:: markdown
 
-  Extract part from the heading "Foo" to the next heading of the same level
-  or the end of the document:
+Extract part from the heading "Foo" to the next heading of the same level
+or the end of the document:
+
+.. code-block:: markdown
 
   {{ external.md#Foo }}
 
-  From "Foo" to "Bar" (disregarding their levels):
+From "Foo" to "Bar" (disregarding their levels):
+
+.. code-block:: markdown
 
   {{ external.md#Foo:Bar }}
 
-  From the beginning of the document to "Bar":
+From the beginning of the document to "Bar":
+
+.. code-block:: markdown
 
   {{ external.md#:Bar }}
 
-  All the same notations work with remote includes:
+All the same notations work with remote includes:
+
+.. code-block:: markdown
 
   {{ <myrepo>external.md#Foo:Bar }}
 
@@ -388,36 +402,36 @@ look for the file recursively in the specified directory: if it's a remote
 include, it's the repos root directory; if it's a local include, it's
 the directory you specify in the path:
 
-.. code-block:: markdown
+``external.md`` is in the repository, but we don't know its exact path:
 
-  `external.md` is in the repository, but we don't know its exact path:
+.. code-block:: markdown
 
   {{ <myrepo>^external.md }}
 
-  Foliant will look for the file in the repo directory.
+Foliant will look for the file in the repo directory.
 
-  The same syntax works with local includes:
+The same syntax works with local includes:
+
+.. code-block:: markdown
 
   {{ ../^external.md }}
 
-  In this case, Foliant will go one level up from the directory with
-  the document containing the include and look for `external.md` recursively.
+In this case, Foliant will go one level up from the directory with
+the document containing the include and look for ``external.md`` recursively.
 
 
 Nested Includes
 ===============
 
-Included files can contain includes themselves. That's it, move along :-)
+Included files can contain includes themselves.
 
 
-Up to 11
-========
-
-You can freely combine all the features mentioned above:
+Include Frenzy!
+===============
 
 .. code-block:: markdown
 
-  {{ <myrepo#mybranch>path/to/external.md#From Heading:To Heading | nohead, sethead(3) }}
+  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead(3) }}
 
 
 *************************
