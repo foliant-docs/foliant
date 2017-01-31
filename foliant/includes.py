@@ -1,6 +1,7 @@
 """Include processor."""
 
 import re
+import os
 import os.path as ospa
 from io import StringIO
 
@@ -8,6 +9,7 @@ from . import gitutils
 
 
 IMAGE_DIRS = ("", "images", "graphics")
+IGNORE_DIRS = (".git", ".venv", ".vscode", "__pycache__", "foliantcache")
 
 HEADING_PATTERN = re.compile(
     r"^(?P<hashes>\#+)\s*(?P<title>[^\#]+)\s*$",
@@ -211,7 +213,7 @@ def find_image(image_path, start_dir, target_dir):
         level += 1
         lookup_dir = ospa.join(start_dir, "../" * level)
 
-    return ''
+    return '.'
 
 
 def adjust_image_paths(content, lookup_dir, target_dir):
@@ -234,6 +236,29 @@ def adjust_image_paths(content, lookup_dir, target_dir):
     return IMAGE_PATTERN.sub(sub, content)
 
 
+def find_incl_file(incl_file_name, lookup_dir):
+    lookup_dir_contents = os.listdir(lookup_dir)
+
+    if incl_file_name in lookup_dir_contents:
+        return ospa.join(lookup_dir, incl_file_name)
+    else:
+        child_dirs = (
+            child for child in os.listdir(lookup_dir)
+            if ospa.isdir(ospa.join(lookup_dir, child))
+            and child not in IGNORE_DIRS
+        )
+        for child_dir in child_dirs:
+            incl_file = find_incl_file(
+                incl_file_name,
+                ospa.join(lookup_dir, child_dir)
+            )
+
+            if incl_file:
+                return incl_file
+
+        return None
+
+
 def process_local_include(path, from_heading, to_heading, options, sources_dir,
                           target_dir):
     """Replace a local include statement with the file content. Necessary
@@ -241,7 +266,14 @@ def process_local_include(path, from_heading, to_heading, options, sources_dir,
     headings, strip the top heading, set heading level.
     """
 
-    with open(ospa.join(sources_dir, path), encoding="utf8") as incl_file:
+    incl_file_path = ospa.join(sources_dir, path)
+    incl_file_dir, incl_file_name = ospa.split(incl_file_path)
+
+    if incl_file_name.startswith('^'):
+        incl_file_path = find_incl_file(incl_file_name[1:], incl_file_dir)
+        incl_file_dir, incl_file_name = ospa.split(incl_file_path)
+
+    with open(incl_file_path, encoding="utf8") as incl_file:
         incl_content = incl_file.read()
 
         incl_content = adjust_headings(
@@ -253,7 +285,7 @@ def process_local_include(path, from_heading, to_heading, options, sources_dir,
 
         incl_content = adjust_image_paths(
             incl_content,
-            ospa.split(ospa.join(sources_dir, path))[0],
+            incl_file_dir,
             target_dir
         )
 
@@ -283,29 +315,33 @@ def process_includes(content, sources_dir, target_dir, cfg):
     """Replace all include statements with the respective file content."""
 
     def sub(include, sources_dir=sources_dir):
-        if include.group("repo"):
-            repo = include.group("repo")
-            repo_url = cfg.get("git", {}).get(repo) or repo
+        try:
+            if include.group("repo"):
+                repo = include.group("repo")
+                repo_url = cfg.get("git", {}).get(repo) or repo
 
-            return process_remote_include(
-                repo_url,
-                include.group("revision") or "master",
-                include.group("path"),
-                include.group("from_heading"),
-                include.group("to_heading"),
-                extract_options(include.group("options")),
-                sources_dir,
-                target_dir
-            )
-        else:
-            return process_local_include(
-                include.group("path"),
-                include.group("from_heading"),
-                include.group("to_heading"),
-                extract_options(include.group("options")),
-                sources_dir,
-                target_dir
-            )
+                return process_remote_include(
+                    repo_url,
+                    include.group("revision") or "master",
+                    include.group("path"),
+                    include.group("from_heading"),
+                    include.group("to_heading"),
+                    extract_options(include.group("options")),
+                    sources_dir,
+                    target_dir
+                )
+            else:
+                return process_local_include(
+                    include.group("path"),
+                    include.group("from_heading"),
+                    include.group("to_heading"),
+                    extract_options(include.group("options")),
+                    sources_dir,
+                    target_dir
+                )
+
+        except FileNotFoundError as exception:
+            print("Include file %s not found" % exception)
 
     result = INCLUDE_PATTERN.sub(sub, content)
 
