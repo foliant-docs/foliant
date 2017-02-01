@@ -78,7 +78,14 @@ Initial release.
 # 0.2.8
 
 - Support super advanced Markdown includes.
+- Temporary directory is now called 'foliantcache' and is not 
+  cleaned up after build.
 
 # 0.2.9
 
 - Properly handle unresolved include file lookups.
+
+# 0.3.0
+
+- Fix remote includes without revision spec.
+
