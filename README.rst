@@ -307,8 +307,17 @@ to use in build is configured in ``config.json``.
 Including External Markdown Files in Sources
 ********************************************
 
-Foliant allows to include Markdown sources from external files. The external
-file can be located on the disk or in a remote git repository.
+Foliant allows to include Markdown sources from external files. The file can
+be located on the disk or in a remote git repository.
+
+When you include a file from a git repo, the whole repo is cloned. The repo
+is cloned only once and is updated during subsequent includes.
+
+Foliant attempts to locate the images referenced in the included documents.
+First, it checks the path specified in the image directive and 'image'
+and 'graphics' directories. If the image is not there, it goes one level up
+and repeats the search. If it reaches root and doesn't find the image,
+it returns '.'.
 
 
 Basic Usage
@@ -323,11 +332,11 @@ Here is a local include:
 .. note::
 
   If you use Foliant in a Docker container, local includes pointing outside
-  the project directory will not be resolved because only the project directory
-  is mounted inside the container.
+  the project directory will not be resolved. That's because only the project
+  directory is mounted inside the container.
 
-  You can mount the directories with your local included files manually
-  to work around that.
+  To work around that, mount the directories with the localy included files
+  manually.
 
 Here is an include from git:
 
@@ -335,20 +344,21 @@ Here is an include from git:
 
   {{ <git@github.com:foliant-docs/foliant.git>path/to/external.md }}
 
-Repo URL can be provided in https, ssh, or git protocol form.
+Repo URL can be provided in https, ssh, or git protocol.
 
 .. note::
 
   If you use Foliant in a Docker container, use https protocol. Otherwise,
   you'll be prompted by git to add the repo host to ``known_hosts``.
 
-If the repo is aliased as "myrepo" in `config.json`_:
+If the repo is aliased as "myrepo" in `config.json`_, you can use the alias
+instead of the repo URL:
 
 .. code-block:: markdown
 
   {{ <myrepo>path/to/external.md }}
 
-You can specify a particular revision:
+You can also specify a particular revision (branch, tag, or commit):
 
 .. code-block:: markdown
 
@@ -359,82 +369,79 @@ Extract Document Part Between Headings
 ======================================
 
 It is possible to include only a part of a document between two headings,
-a heading and document end, or document beginning and a heading:
+a heading and document end, or document beginning and a heading.
 
-.. code-block:: markdown
-
-Extract part from the heading "Foo" to the next heading of the same level
+Extract part from the heading "From Head" to the next heading of the same level
 or the end of the document:
 
 .. code-block:: markdown
 
-  {{ external.md#Foo }}
+  {{ external.md#From Head }}
 
-From "Foo" to "Bar" (disregarding their levels):
-
-.. code-block:: markdown
-
-  {{ external.md#Foo:Bar }}
-
-From the beginning of the document to "Bar":
+From "From Head" to "To Head" (disregarding their levels):
 
 .. code-block:: markdown
 
-  {{ external.md#:Bar }}
+  {{ external.md#From Head:To Head }}
+
+From the beginning of the document to "To Head":
+
+.. code-block:: markdown
+
+  {{ external.md#:To Head }}
 
 All the same notations work with remote includes:
 
 .. code-block:: markdown
 
-  {{ <myrepo>external.md#Foo:Bar }}
+  {{ <myrepo>external.md#From Head:To Head }}
 
 
 Heading Options
 ===============
 
-You can include the document without the opening heading:
+If you want to include a document but set your own heading, strip the original
+heading with ``nohead`` option:
 
 .. code-block:: markdown
 
-  {{ external.md#Foo | nohead }}
+  {{ external.md#From Head | nohead }}
+
+If there is no opening heading, the included content is left unmodified.
 
 You can also set the level for the opening heading for the included source:
 
 .. code-block:: markdown
 
-  {{ external.md#Foo | sethead(3) }}
+  {{ external.md#From Head | sethead(3) }}
 
-The versions can be combined:
+The options can be combined:
 
 .. code-block:: markdown
 
-  {{ external.md#Foo | nohead, sethead(3) }}
+  {{ external.md#From Head | nohead, sethead(3) }}
 
 
 File Lookup
 ===========
 
-You can include knowing only its name, without knowing its path. Foliant will
-look for the file recursively in the specified directory: if it's a remote
-include, it's the repos root directory; if it's a local include, it's
-the directory you specify in the path:
+You can include a file knowing only its name, without knowing the full path.
+Foliant will look for the file recursively starting from the specified
+directory: for a remote include, it's the repo root directory; for a local one,
+it's the directory you specify in the path.
 
-``external.md`` is in the repository, but we don't know its exact path:
+Here, Foliant will look for the file in the repo directory:
 
 .. code-block:: markdown
 
   {{ <myrepo>^external.md }}
 
-Foliant will look for the file in the repo directory.
-
-The same syntax works with local includes:
+In this case, Foliant will go one level up from the directory with
+the document containing the include and look for ``external.md`` recursively:
 
 .. code-block:: markdown
 
   {{ ../^external.md }}
-
-In this case, Foliant will go one level up from the directory with
-the document containing the include and look for ``external.md`` recursively.
 
 
 Nested Includes
