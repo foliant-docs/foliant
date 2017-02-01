@@ -18,7 +18,7 @@ HEADING_PATTERN = re.compile(
 )
 IMAGE_PATTERN = re.compile(r"\!\[(?P<caption>.*)\]\((?P<path>.+)\)")
 INCLUDE_PATTERN = re.compile(
-    r"\{\{\s*(<(?P<repo>[^\#]+)(#(?P<revision>[^>]+))?\>)?" +
+    r"\{\{\s*(\<(?P<repo>[^\#^\>]+)(#(?P<revision>[^\>]+))?\>)?" +
     r"(?P<path>[^\#]+?)" +
     r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
     r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
