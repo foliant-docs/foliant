@@ -2,4 +2,4 @@ Cras scelerisque tincidunt bibendum. Nulla eget hendrerit elit. In tempus, nibh 
 
 ![](Lenna.png)
 
-{{<foliant#feature/include>test-include-project/incl2.md}}
+{{<foliant>test-include-project/incl2.md}}
