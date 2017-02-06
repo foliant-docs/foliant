@@ -15,4 +15,6 @@ seqdiag {
 
 Nullam suscipit tempus ipsum, ut aliquet sapien. Vivamus convallis sem sed metus tincidunt efficitur dignissim eget velit. Duis ullamcorper ac diam at placerat. Vivamus fringilla vel risus ut pulvinar. Mauris fringilla nisi sit amet tellus molestie accumsan. Proin at volutpat ligula. Nulla sed ante consequat, finibus ipsum sed, auctor dui.
 
+![Lenna](foo/Lenna.png)
+
 Nunc finibus nulla at convallis egestas. Proin id neque eros. Sed vitae erat nulla. Etiam aliquam vitae tellus et condimentum. Quisque facilisis neque quis volutpat blandit. Phasellus ac ipsum mattis, iaculis enim vel, lacinia metus. Nam at vestibulum quam. Ut risus sapien, accumsan vel tellus at, scelerisque placerat nisl. Donec vehicula tortor vel mattis volutpat. Fusce quis elementum enim, quis maximus augue. Etiam placerat metus non blandit suscipit. Donec id elit convallis, vulputate sapien a, tincidunt enim. Nam vel ultrices massa. Praesent semper hendrerit nisi, et suscipit risus. Donec quam diam, accumsan quis venenatis at, varius ut justo. Donec finibus ultricies lorem, eget hendrerit felis placerat sed.
