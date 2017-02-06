@@ -78,7 +78,7 @@ Initial release.
 # 0.2.8
 
 - Support super advanced Markdown includes.
-- Temporary directory is now called 'foliantcache' and is not 
+- Temporary directory is now called 'foliantcache' and is not
   cleaned up after build.
 
 # 0.2.9
@@ -89,3 +89,6 @@ Initial release.
 
 - Fix remote includes without revision spec.
 
+# 0.3.1
+
+- Fix nested local images handling.
