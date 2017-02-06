@@ -22,6 +22,8 @@ def copy_dir_content(src, dest):
         if os.path.isfile(join(src, child)):
             shutil.copy(join(src, child), dest)
         elif os.path.isdir(join(src, child)):
+            if os.path.exists(join(dest, child)):
+                shutil.rmtree(join(dest, child))
             shutil.copytree(join(src, child), join(dest, child))
 
 
