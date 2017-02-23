@@ -215,7 +215,7 @@ to a particular layout::
   │
   └───templates
           basic.tex
-          restream_logo.png
+          company_logo.png
 
 
 config.json
@@ -232,21 +232,21 @@ Config file, mostly for Pandoc.
     "second_title": "Dolor sit amet", // Document subtitle.
     "lang": "english",                // Document language, "russian" or "english."
                                       // If not specified, "russian" is used.
-    "company": "restream",            // Your company name, "undev" or "restream".
+    "company": "My Company",          // Your company name to fill in latex template.
                                       // Shown at the bottom of each page.
     "year": "2016",                   // Document publication year.
                                       // Shown at the bottom of each page.
     "title_page": "true",             // Add title page or not.
     "toc": "true",                    // Add table of contents or not.
-    "tof": "true",                    // Unknown.
+    "tof": "true",                    // Add table of figures or not.
     "template": "basic",              // LaTeX template to use. Do NOT add ".tex"!
     "version": "1.0",                 // Document version. If set to "auto"
                                       // the version is generated automatically
-                                      // based on git tag and revision number.
+                                      // based on git tag and revision number in master.
     "date": "true",                   // Add date to the title page and output
                                       // file name.
-    "type": "",                       // Unknown.
-    "alt_doc_type": "",               // Unknown.
+    "type": "",                       // Document type to show in latex template.
+    "alt_doc_type": "",               // Additional document type in latex template.
     "filters": ["filter1", "filter2"] // Pandoc filters.
     "git": {                          // Git aliases for includes.
       "foliant": "git@github.com:foliant-docs/foliant.git" // Git alias.
