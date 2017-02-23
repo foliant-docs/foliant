@@ -41,7 +41,7 @@
 \usepackage[colorlinks=true, linkcolor=black, linktoc=all, anchorcolor=black, urlcolor=cyan, pdfborder={0 0 1}, pdfborderstyle={/S/U/W 1}, linkbordercolor=black, urlbordercolor=cyan, unicode=true, linkbordercolor={1 0 0}]{hyperref} % ссылки
 
 %\usepackage{fancyvrb}
-%\usepackage{spverbatim} % потому что листингс не работает с кириллицей (ну и ладно)
+%\usepackage{spverbatim} % потому что листингс не работает с кириллицей
 
 \colorlet{punct}{red!60!black}
 \definecolor{background}{HTML}{d6d6d6}
@@ -489,8 +489,8 @@ $endif$
 \fancypagestyle{titlefooter}{%
 \fancyhf{}
 $if(russian)$
-  $if(restream)$
-      \fancyfoot[L]{\textsc{\fontsize{12}{15}\headingfontlight\nohyphens{\pageref{LastPage} страниц, АО «Рестрим»
+  $if(company)$
+      \fancyfoot[L]{\textsc{\fontsize{12}{15}\headingfontlight\nohyphens{\pageref{LastPage} страниц, $company$
         $if(date)$
          \\[0.1cm] Версия документа $version$-\today
         $else$
@@ -578,7 +578,7 @@ rightmargin=1em
 \sloppy % плохо для типографики
 
 \begin{titlepage}
-    \includegraphics[scale=0.15]{restream_logo.png}
+    \includegraphics[scale=0.15]{company_logo.png}
     \vspace*{\fill}
     \vspace{-5cm}
     $if(second_title)$
