@@ -217,6 +217,16 @@ to a particular layout::
           basic.tex
           company_logo.png
 
+.. important::
+
+  After ``foliant make`` is invoked, a directory called ``foliantcache``
+  is created in the directory where you run Foliant. The ``foliantcache``
+  directory stores temporary files and included repos.
+
+  The ``foliantcache`` directory should not be tracked by your version control
+  system, because it will double your repo size at best. Add ``foliantcache``
+  to ``.gitignore`` or ``.hgignore``.
+
 
 config.json
 ===========
