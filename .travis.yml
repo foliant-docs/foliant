@@ -1,0 +1,18 @@
+branches:
+  only:
+  - master
+
+language: python
+
+python:
+  - 3.6
+
+services:
+  - docker
+
+sudo: required
+
+script:
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - FOLIANT_VERSION=$(python -c "import foliant; print(foliant.__version__)")
+  - docker build -t foliant/foliant:latest -t foliant/foliant:$FOLIANT_VERSION --build-arg FOLIANT_VERSION=$FOLIANT_VERSION .
