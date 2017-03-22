@@ -217,6 +217,16 @@ to a particular layout::
           basic.tex
           company_logo.png
 
+.. important::
+
+  After ``foliant make`` is invoked, a directory called ``foliantcache``
+  is created in the directory where you run Foliant. The ``foliantcache``
+  directory stores temporary files and included repos.
+
+  The ``foliantcache`` directory should not be tracked by your version control
+  system, because it will double your repo size at best. Add ``foliantcache``
+  to ``.gitignore`` or ``.hgignore``.
+
 
 config.json
 ===========
@@ -413,13 +423,13 @@ You can also set the level for the opening heading for the included source:
 
 .. code-block:: markdown
 
-  {{ external.md#From Head | sethead(3) }}
+  {{ external.md#From Head | sethead:3 }}
 
 The options can be combined:
 
 .. code-block:: markdown
 
-  {{ external.md#From Head | nohead, sethead(3) }}
+  {{ external.md#From Head | nohead, sethead:3 }}
 
 
 File Lookup
@@ -455,7 +465,7 @@ Include Frenzy!
 
 .. code-block:: markdown
 
-  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead(3) }}
+  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead:3 }}
 
 
 *************************
