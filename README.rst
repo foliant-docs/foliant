@@ -423,13 +423,13 @@ You can also set the level for the opening heading for the included source:
 
 .. code-block:: markdown
 
-  {{ external.md#From Head | sethead(3) }}
+  {{ external.md#From Head | sethead:3 }}
 
 The options can be combined:
 
 .. code-block:: markdown
 
-  {{ external.md#From Head | nohead, sethead(3) }}
+  {{ external.md#From Head | nohead, sethead:3 }}
 
 
 File Lookup
@@ -465,7 +465,7 @@ Include Frenzy!
 
 .. code-block:: markdown
 
-  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead(3) }}
+  {{ <myrepo#mybranch>path/^external.md#From Heading:To Heading | nohead, sethead:3 }}
 
 
 *************************
