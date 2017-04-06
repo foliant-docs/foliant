@@ -10,9 +10,9 @@ sudo: required
 services:
 - docker
 
-install:
+install: ""
 
-script:
+script: ""
 
 deploy:
   provider: pypi
