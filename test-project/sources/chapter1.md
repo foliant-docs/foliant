@@ -1,6 +1,6 @@
 # Cras scelerisque tincidunt bibendum
 
-{{ ../../^incl.md | sethead(3) }}
+{{ ../../^incl.md | sethead:3 }}
 
 ```seqdiag
 seqdiag {

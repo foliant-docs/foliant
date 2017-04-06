@@ -4,21 +4,20 @@ from __future__ import print_function
 
 import subprocess
 
-def convert(swagger_location, output_file, template_file):
+def convert(swagger_location, output_file, template_file,
+            additional_swagger_location):
     """Convert Swagger JSON file to Markdown."""
 
-    if template_file:
-        s2m_command = "swagger2markdown -i %s -o %s -t %s" % (
-            swagger_location,
-            output_file,
-            template_file
-        )
+    s2m_command = "swagger2markdown -i %s -o %s" % (
+        swagger_location,
+        output_file
+    )
 
-    else:
-        s2m_command = "swagger2markdown -i %s -o %s" % (
-            swagger_location,
-            output_file
-        )
+    if template_file:
+        s2m_command += " -t %s" % template_file
+
+    if additional_swagger_location:
+        s2m_command += " -a %s" % additional_swagger_location
 
     print("Baking output... ", end='')
 
