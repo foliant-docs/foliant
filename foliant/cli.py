@@ -4,21 +4,23 @@ Usage:
   foliant (build | make) <target> [--path=<project-path>]
   foliant (upload | up) <document> [--secret=<client_secret*.json>]
   foliant (swagger2markdown | s2m) <swagger-location> [--output=<output-file>]
-    [--template=<jinja2-template>]
+    [--template=<jinja2-template>] [--additional=<swagger-location>]
   foliant (apidoc2markdown | a2m) <apidoc-location> [--output=<output-file>]
     [--template=<jinja2-template>]
   foliant (-h | --help)
   foliant --version
 
 Options:
-  -h --help                         Show this screen.
-  -v --version                      Show version.
-  -p --path=<project-path>          Path to your project [default: .].
-  -s --secret=<client_secret*.json> Path to Google app's client secret file.
-  -o --output=<output-file>         Path to the converted Markdown file
-                                    [default: api.md]
-  -t --template=<jinja2-template>   Custom Jinja2 template for the Markdown
-                                    output.
+  -h --help                          Show this screen.
+  -v --version                       Show version.
+  -p --path=<project-path>           Path to your project [default: .].
+  -s --secret=<client_secret*.json>  Path to Google app's client secret file.
+  -o --output=<output-file>          Path to the converted Markdown file
+                                     [default: api.md]
+  -t --template=<jinja2-template>    Custom Jinja2 template for the Markdown
+                                     output.
+  -a --additional=<swagger-location> Complementary Swagger file to fill in
+                                     missing values from the main one.
 """
 
 from docopt import docopt
@@ -46,8 +48,14 @@ def main():
     elif args["swagger2markdown"] or args["s2m"]:
         swagger_location = args["<swagger-location>"]
         output_file = args["--output"]
-        config_file = args.get("--template")
-        swagger2markdown.convert(swagger_location, output_file, config_file)
+        template_file = args.get("--template")
+        additional_swagger_location = args.get("--additional")
+        swagger2markdown.convert(
+            swagger_location,
+            output_file,
+            template_file,
+            additional_swagger_location
+        )
 
         print("---")
         print("Result: %s" % output_file)
@@ -55,8 +63,8 @@ def main():
     elif args["apidoc2markdown"] or args["a2m"]:
         apidoc_location = args["<apidoc-location>"]
         output_file = args["--output"]
-        config_file = args.get("--template")
-        apidoc2markdown.convert(apidoc_location, output_file, config_file)
+        template_file = args.get("--template")
+        apidoc2markdown.convert(apidoc_location, output_file, template_file)
 
         print("---")
         print("Result: %s" % output_file)
