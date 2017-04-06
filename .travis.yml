@@ -10,6 +10,10 @@ sudo: required
 services:
 - docker
 
+install:
+
+script:
+
 deploy:
   provider: pypi
   user: moigagoo
