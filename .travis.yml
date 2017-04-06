@@ -1,0 +1,29 @@
+branches:
+  only:
+  - master
+
+language: python
+python:
+- 3.6
+
+sudo: required
+services:
+- docker
+
+deploy:
+  provider: pypi
+  user: moigagoo
+  password:
+    secure: xjM9Satz10PevXqyZEiDNOkOjJy+x7x5gPJXxeU1C1YEigNGSFmIsiYzjWNW0BEpwoYmIMUfYIznov59sKaCXIAODlIA967uoUA+MdLM5wqXOYpkNJ+sy+oiN1t5THBuE/l5tngvBCeyUww7tolqnCN2z4rXLact7fjgOPselsJSnCzmR7h/Z31nMBSvhDuDtsmZV/Zo3AIHMm+QwdBuDI8uyMqnNjiLFix3j+VDccjAt/FM897sBPwwmupN3GpPEI3M+ZKfSzm5xjgNh6pr5TAvJ5wCnAvFz+/r9JEwdvkCAt+VvGpAegEDDXAErfLKQPxyhHqpUKcrTjp0zi3fX56YtRYiu8LYo0fqJq/5eTMzhxnXgsUOnte+75GHB/ZlGBdn3CLtLSvt/IKqNm+2vt5JBVJYl+lt3aIBdz7xrPiZpKGsnDiANRzKd8Sh6bfHjvx06xXfwBQjQzrcY5dL6nyFhBmC61ExDVQ5jptHaeRp2rqaoCUCx4QujQK8ZQvR6hoJeHztwD68xRZ60mWVTIYATP7P4cgwXL1xLlFvGQNDYH6SHszfvH+ryL3JBBmqdpPyu05dtdexSp9ixY3p/rc9cEN70vX11pNS0oTyLjVqWQ9Nbw+EBfjGiO3OBZfv/9DiwutwnhBfMIVikNd3tPIW48M/C9/gai/9M5F9fO0=
+  on:
+    branch: master
+    tags: true
+  distributions: bdist_wheel
+
+after_deploy:
+- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- FOLIANT_VERSION=$(python -c "import foliant; print(foliant.__version__)")
+- docker build -t foliant/foliant:latest -t foliant/foliant:$FOLIANT_VERSION --build-arg
+  FOLIANT_VERSION=$FOLIANT_VERSION .
+- docker push foliant/foliant:latest
+- docker push foliant/foliant:$FOLIANT_VERSION

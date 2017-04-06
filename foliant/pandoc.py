@@ -46,10 +46,11 @@ def generate_command(params, output_file, src_file, cfg):
             else:
                 params.append(generate_variable(key, value))
         elif key == "company":
-            if value in ("restream", "undev"):
-                params.append(generate_variable(value, "true"))
-            else:
-                raise RuntimeError("Unsupported company: %s" % value)
+            # if value in ("restream", "undev"):
+            #     params.append(generate_variable(value, "true"))
+            # else:
+            #     raise RuntimeError("Unsupported company: %s" % value)
+                params.append(generate_variable(key, value))
         elif key in ("type", "alt_doc_type"):
             if value:
                 params.append(generate_variable(key, value))
