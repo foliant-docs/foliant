@@ -263,8 +263,8 @@ def find_incl_file(incl_file_name, lookup_dir):
 def process_local_include(path, from_heading, to_heading, options, sources_dir,
                           target_dir):
     """Replace a local include statement with the file content. Necessary
-    modifications are applies before returning the content: cut between certain
-    headings, strip the top heading, set heading level.
+    adjustments are applied to the content: cut between certain headings,
+    strip the top heading, set heading level.
     """
 
     incl_file_path = ospa.join(sources_dir, path)
