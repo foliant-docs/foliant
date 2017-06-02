@@ -1,4 +1,5 @@
-test-project:
+pdf:
   build: .
   volumes:
     - .:/usr/src/app
+  command: "make pdf"
