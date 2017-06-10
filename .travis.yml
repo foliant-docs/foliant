@@ -15,7 +15,6 @@ deploy:
   password:
     secure: tZ4hgShOLcNs+bcmrhEZa7Yphh5fDwXrQZZY6cXLbJy5qsTP9xGAMyEx/pHZZLILHtMQou2mB8dvimDmHWh4G/LMQsOfXTuOB/3vmmNejr7Y1s8ZAdd0LIiJvmVCIq0aUILyAfJ4O8tGlWHv9/yvBi3E2oF8nXL3o9I9xjSezyUEBbU/irMNVQW4RyIaQl5rXjJVQD1rllFY0Sm2o6lQ9xTsEmf3jkmvffb36j0gQ6GS6S9li199CkQeZpG6XyjC8qx5IvX+XQQKv7AlIiOC4IsgL58vOY+Ev+me/YB9l8wDDRt+VuAl+cg9cMkvV53XSxTcuw7MCbGx7tD3PUc4mfDnPyZCkMNzLJdydc8YLKyEgxfgyh+/rNuqmVegffePDuBwrFM2zl/lutlPRJJq5g+G58Eu+GpPMN3igs3xg53dHkaUC+VK6W14sVQ8jDwDRZaeXT7BguJ8dO1DnJz7ed+O+V92gtfzgsWBOG+w4v2vGMTR35zR/nX70zWQ78tQweoac2n26JX6uE8dLkaOHiN7OClYnLHjhd0jHNMSLEpcccV7euGodrr8f8E/eoaUGoCJi+GXg1e5PLzjqBhbrUzqRhLDwME46GJqDEqiIKGFt0TwX7pUlXMXevSuTchfrTNRNb9Kg+QWdXp6bC+hM1f4eshE49aVpA9bAwY+jwI=
   on:
-    tags: true
     distributions: sdist bdist_wheel
     repo: foliant-docs/foliant
 after_deploy:
