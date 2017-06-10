@@ -15,7 +15,7 @@ lists_without_preceding_blankline+implicit_figures+raw_tex+citations+\
 tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+\
 inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks"
 
-LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings \
+LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings --number-sections \
 --latex-engine=xelatex"
 
 
@@ -46,11 +46,7 @@ def generate_command(params, output_file, src_file, cfg):
             else:
                 params.append(generate_variable(key, value))
         elif key == "company":
-            # if value in ("restream", "undev"):
-            #     params.append(generate_variable(value, "true"))
-            # else:
-            #     raise RuntimeError("Unsupported company: %s" % value)
-                params.append(generate_variable(key, value))
+            params.append(generate_variable(key, value))
         elif key in ("type", "alt_doc_type"):
             if value:
                 params.append(generate_variable(key, value))
