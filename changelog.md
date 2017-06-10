@@ -92,3 +92,7 @@ Initial release.
 # 0.3.1
 
 - Fix nested local images handling.
+
+# 0.3.4
+
+- Fix missing section numbers in PDF.
