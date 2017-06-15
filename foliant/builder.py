@@ -128,7 +128,7 @@ def build(target_format, project_dir):
     elif target_format.startswith('g'):
         output_file = output_title + ".docx"
         pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
-        uploader.upload(output_file)
+        uploader.upload(join(tmp_dir, output_file))
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
 
