@@ -96,3 +96,7 @@ Initial release.
 # 0.3.4
 
 - Fix missing section numbers in PDF.
+
+# 0.3.5
+
+- Fix Gdrive upload.
