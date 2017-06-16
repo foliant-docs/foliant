@@ -118,6 +118,10 @@ def build(target_format, project_dir):
         output_file = output_title + ".docx"
         pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
         shutil.copy(join(tmp_dir, output_file), output_file)
+    elif target_format.startswith('o'):
+        output_file = output_title + ".odt"
+        pandoc.to_odt(src_file, output_file, tmp_dir, cfg)
+        shutil.copy(join(tmp_dir, output_file), output_file)
     elif target_format.startswith('t'):
         output_file = output_title + ".tex"
         pandoc.to_tex(src_file, output_file, tmp_dir, cfg)
