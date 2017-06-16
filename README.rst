@@ -93,7 +93,7 @@ Usage
 .. code-block:: shell
 
   $ foliant -h
-  Foliant: Markdown to PDF, Docx, and LaTeX generator powered by Pandoc.
+  Foliant: Markdown to PDF, Docx, ODT, and LaTeX generator powered by Pandoc.
 
   Usage:
     foliant (build | make) <target> [--path=<project-path>]
@@ -206,6 +206,7 @@ to a particular layout::
   │
   ├───references
   │       ref.docx
+  │       ref.odt
   │
   ├───sources
   │   │   chapter1.md
@@ -286,7 +287,7 @@ Contents file. Here, you define the order of the chapters of your project:
 references
 ==========
 
-Directory with the Docx reference file. It **must** be called ``ref.docx``.
+Directory with the Docx and ODT reference files. They **must** be called ``ref.docx`` and ``ref.odt``.
 
 
 sources/

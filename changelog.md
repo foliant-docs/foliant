@@ -100,3 +100,7 @@ Initial release.
 # 0.3.5
 
 - Fix Gdrive upload.
+
+# 0.3.6
+
+- Add OpenDocument target.

@@ -24,8 +24,7 @@ def generate_variable(key, value):
 
     return '--variable "%s"="%s"' % (key, value)
 
-
-def generate_command(params, output_file, src_file, cfg):
+def generate_command(params, output_file, src_file, cfg, set_template=False):
     """Generate the entire Pandoc command with params to invoke."""
 
     params = ["-o " + output_file, FROM_PARAMS, LATEX_PARAMS, params]
@@ -33,7 +32,7 @@ def generate_command(params, output_file, src_file, cfg):
     for key, value in cfg.items():
         if key in ("title", "second_title", "year", "date", "title_page", "tof", "toc"):
             params.append(generate_variable(key, value))
-        elif key == "template":
+        elif key == "template" and set_template:
             params.append('--template="%s.tex"' % value)
         elif key == "lang":
             if value in ("russian", "english"):
@@ -42,7 +41,9 @@ def generate_command(params, output_file, src_file, cfg):
                 params.append(generate_variable("russian", "true"))
         elif key == "version":
             if value == "auto":
-                params.append(generate_variable(key, gitutils.get_version()))
+                version = gitutils.get_version()
+                if version:
+                    params.append(generate_variable(key, version))
             else:
                 params.append(generate_variable(key, value))
         elif key == "company":
@@ -90,7 +91,8 @@ def to_pdf(src_file, output_file, tmp_path, cfg):
         "-t latex",
         output_file,
         src_file,
-        cfg
+        cfg,
+        set_template=True
     )
     run(pandoc_command, tmp_path)
 
@@ -107,6 +109,18 @@ def to_docx(src_file, output_file, tmp_path, cfg):
     run(pandoc_command, tmp_path)
 
 
+def to_odt(src_file, output_file, tmp_path, cfg):
+    """Convert Markdown to OpenDocument via Pandoc."""
+
+    pandoc_command = generate_command(
+        '--reference-odt="ref.odt"',
+        output_file,
+        src_file,
+        cfg
+    )
+    run(pandoc_command, tmp_path)
+
+
 def to_tex(src_file, output_file, tmp_path, cfg):
     """Convert Markdown to TeX via Pandoc."""
 
@@ -114,6 +128,7 @@ def to_tex(src_file, output_file, tmp_path, cfg):
         "-t latex",
         output_file,
         src_file,
-        cfg
+        cfg,
+        set_template=True
     )
     run(pandoc_command, tmp_path)
