@@ -31,7 +31,7 @@ def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
         )
 
     except subprocess.CalledProcessError as e:
-        pass
+        print("Processing diagram %s failed: %s" % (sd_src_path, e))
 
     return sd_img_ref
 
