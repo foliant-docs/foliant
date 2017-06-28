@@ -104,3 +104,8 @@ Initial release.
 # 0.3.6
 
 - Add OpenDocument target.
+
+# 0.3.7
+
+- Add error reporting to seqdiag processor.
+- Fix gdrive upload result output.
