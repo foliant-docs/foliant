@@ -6,17 +6,18 @@ import sys
 import os
 from os.path import join
 import subprocess
+from uuid import uuid4
 
 
-def process_seqdiag_block(sd_block, sd_number, src_dir, sd_dir):
+def process_seqdiag_block(sd_block, sd_id, src_dir, sd_dir):
     """Extract diagram definition, convert it to image,
     and return the image ref.
     """
 
-    sd_src_filename = "%d.diag" % sd_number
+    sd_src_filename = "%s.diag" % sd_id
     sd_content = '\n'.join(sd_block[1: -1])
     sd_caption = sd_block[0].replace("```seqdiag", '').strip()
-    sd_img_ref = "![%s](%s/%d.png)" % (sd_caption, sd_dir, sd_number)
+    sd_img_ref = "![%s](%s/%s.png)" % (sd_caption, sd_dir, sd_id)
     sd_src_path = join(src_dir, sd_dir, sd_src_filename)
     sd_command = "seqdiag -a %s" % sd_src_path
 
@@ -47,7 +48,7 @@ def process_diagrams(src_dir, src_file):
     sd_dir = "diagrams"
     src_path = join(src_dir, src_file)
     buffer, new_source = [], []
-    sd_number = 0
+    sd_id = uuid4()
 
     if not os.path.exists(join(src_dir, sd_dir)):
         os.makedirs(join(src_dir, sd_dir))
@@ -67,12 +68,12 @@ def process_diagrams(src_dir, src_file):
                     new_source.append(
                         process_seqdiag_block(
                             buffer,
-                            sd_number,
+                            sd_id,
                             src_dir,
                             sd_dir
                         )
                     )
-                    sd_number += 1
+                    sd_id = uuid4()
                     buffer = []
 
     with open(src_path, 'w', encoding="utf8") as src:
