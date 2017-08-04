@@ -109,3 +109,8 @@ Initial release.
 
 - Add error reporting to seqdiag processor.
 - Fix gdrive upload result output.
+
+
+# 0.3.8
+
+- Diagram files extracted from `seqdiag` blocks are now named with UUIDs, not with sequential numbers. This is done to avoid collisions during partial builds.
