@@ -114,3 +114,10 @@ Initial release.
 # 0.3.8
 
 - Diagram files extracted from `seqdiag` blocks are now named with UUIDs, not with sequential numbers. This is done to avoid collisions during partial builds.
+
+
+# 0.3.9
+
+- GDrive upload: Upload didn't work under Docker. Fixed.
+- GDrive upload: Switched from local server to command line auth.
+- Docx: A warning about unkown config value "template" would pop up during build. Fixed.
