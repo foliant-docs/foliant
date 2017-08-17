@@ -6,7 +6,7 @@ def upload(document):
     """Upload .docx file to Google Drive and return a web view link to it."""
 
     auth = pydrive.auth.GoogleAuth()
-    auth.LocalWebserverAuth()
+    auth.CommandLineAuth()
 
     gdrive = pydrive.drive.GoogleDrive(auth)
 
