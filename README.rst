@@ -2,6 +2,9 @@
 Foliant
 #######
 
+.. image:: https://travis-ci.org/foliant-docs/foliant.svg?branch=master
+    :target: https://travis-ci.org/foliant-docs/foliant
+
 **Foliant** is a documentation generator that builds PDF, Docx, and TeX documents from Markdown source.
 
 **Warning! Alpha-stage software!** The API is unstable, and there are issues with the code. With 99% probability we will rewrite Foliant before 1.0, maybe multiple times.
