@@ -78,12 +78,7 @@ There are two options:
           ----
           Result: Dolor_sit_amet_16-12-2016.pdf
 
-  .. warning::
-
-    `Uploading to Google Drive`_ currently doesn't work if you run Foliant
-    in a container.
-
-    .. _official Foliant image: https://hub.docker.com/r/foliant/foliant/
+.. _official Foliant image: https://hub.docker.com/r/foliant/foliant/
 
 
 *****

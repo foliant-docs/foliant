@@ -46,5 +46,3 @@
     ----
     Result: Dolor_sit_amet_16-12-2016.pdf
     ```
-
-**Warning:** *Uploading to Google Drive currently doesn't work if you run Foliant in a container.*
