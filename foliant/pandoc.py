@@ -32,8 +32,9 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
     for key, value in cfg.items():
         if key in ("title", "second_title", "year", "date", "title_page", "tof", "toc"):
             params.append(generate_variable(key, value))
-        elif key == "template" and set_template:
-            params.append('--template="%s.tex"' % value)
+        elif key == "template":
+            if set_template:
+                params.append('--template="%s.tex"' % value)
         elif key == "lang":
             if value in ("russian", "english"):
                 params.append(generate_variable(value, "true"))
