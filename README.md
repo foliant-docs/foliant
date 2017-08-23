@@ -12,7 +12,7 @@
 There are two ways to install Foliant: natively and in Docker. We recommend using Docker because it'll save you time and effort installing dependencies.
 
 
-### Native Installation
+### Native
 
 1.  Install Foliant with pip:
 
@@ -31,31 +31,71 @@ There are two ways to install Foliant: natively and in Docker. We recommend usin
 3.  Use ``foliant`` command as described in [Usage](#usage).
 
 
-### Docker Installation
+### Docker
 
-1.  In your project directory, create a file called ``docker-compose.yml`` with the following content:
+You can use Foliant right away with `docker run`:
+
+```shell
+$ docker run --rm -v `pwd`:/usr/src/app -w /usr/src/app foliant/foliant make pdf
+```
+
+Alternatively, to have a shorter command to type, create a file called ``docker-compose.yml`` with the following content:
 
 ```yaml
 version: '3'
 
 services:
   foliant:
-    image: foliant/foliant:latest
+    image: foliant/foliant
     volumes:
       - .:/usr/src/app
     working_dir: /usr/src/app
 ```
 
-2.  Run `foliant` service with the same params as the regular `foliant` command (see [Usage](#usage)):
+Then use Foliant with `docker-compose run`:
 
 ```shell
 $ docker-compose run --rm foliant make pdf
-Collecting source... Done!
-Drawing diagrams... Done!
-Baking output... Done!
-----
-Result: Dolor_sit_amet_0.1.0_23-08-2017.pdf
 ```
+
+If you want to use custom fonts in LaTeX, create a new Dockerfile inherited from foliant/foliant and install them in a `RUN` block:
+
+```dockerfile
+FROM foliant/foliant
+
+RUN apt-get install wget; \
+    wget http://www.paratype.ru/uni/public/PTSans.zip; \
+    mkdir -p /usr/share/fonts/truetype/ptsans/; \
+    unzip PTSans.zip -d /usr/share/fonts/truetype/ptsans/; \
+    rm PTSans.zip; \
+    fc-cache -fv
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+```
+
+Then use the new image instead of foliant/foliant:
+
+```shell
+$ docker build -t my-project .
+$ docker run --rm -v `pwd`:/usr/src/app -w /usr/src/app my-project make pdf
+```
+
+Modify docker-compose.yml accordingly:
+
+```yaml
+my-project:
+    build: .
+    volumes:
+        - .:/usr/src/app
+```
+
+And use it:
+
+```shell
+$ docker-compose run --rm my-project make pdf
+```
+
 
 ## Usage
 
@@ -240,8 +280,8 @@ Directory with the Markdown source file of your project.
 Images that can be embedded in the source files. When embedding an image, **do not** prepend it with `images/`:
 
 ```markdown
-  ![](image1.png)        # right
-  ![](images/image1.png) # wrong
+![](image1.png)        # right
+![](images/image1.png) # wrong
 ```
 
 
@@ -264,7 +304,7 @@ Foliant attempts to locate the images referenced in the included documents. Firs
 Here is a local include:
 
 ```markdown
-  {{ ../../external.md }}
+{{ ../../external.md }}
 ```
 
 > **Note**
