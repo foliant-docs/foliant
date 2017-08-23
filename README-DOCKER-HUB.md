@@ -33,7 +33,7 @@ Then use Foliant with `docker-compose run`:
 $ docker-compose run --rm foliant make pdf
 ```
 
-If you want to use custom fonts in LaTeX, create a new Dockerfile inherited from foliant/foliant and install them in a `RUN` block:
+If you want to use custom fonts in LaTeX or seqdiag diagrams, create a new Dockerfile inherited from foliant/foliant and install them in a `RUN` block:
 
 ```dockerfile
 FROM foliant/foliant
@@ -43,7 +43,10 @@ RUN apt-get install wget; \
     mkdir -p /usr/share/fonts/truetype/ptsans/; \
     unzip PTSans.zip -d /usr/share/fonts/truetype/ptsans/; \
     rm PTSans.zip; \
-    fc-cache -fv
+    fc-cache -fv; \
+    echo "[seqdiag]" > ~/.blockdiagrc; \
+    echo "fontpath = /usr/share/fonts/truetype/dinpro/DejaVuSansMono.ttf" >> ~/.blockdiagrc; \
+    mkdir -p /usr/src/app
 RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
