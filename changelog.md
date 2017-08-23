@@ -121,3 +121,7 @@ Initial release.
 - GDrive upload: Upload didn't work under Docker. Fixed.
 - GDrive upload: Switched from local server to command line auth.
 - Docx: A warning about unkown config value "template" would pop up during build. Fixed.
+
+# 0.4.0
+
+- Pandoc: Added `backtick_code_blocks` option.

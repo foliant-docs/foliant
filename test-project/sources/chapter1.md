@@ -8,6 +8,10 @@ seqdiag {
 }
 ```
 
+```python
+print("foo")
+```
+
 ## Aliquam quis accumsan mauris
 
 {{ doesnotexist.md }}
