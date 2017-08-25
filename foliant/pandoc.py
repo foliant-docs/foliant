@@ -25,14 +25,24 @@ def generate_variable(key, value):
 
     return '--variable "%s"="%s"' % (key, value)
 
+def generate_flag(key, value):
+    """Generate a ``--variavle key`` entry."""
+
+    if value == "true":
+        return '--variable "%s"' % key
+    else:
+        return ''
+
 def generate_command(params, output_file, src_file, cfg, set_template=False):
     """Generate the entire Pandoc command with params to invoke."""
 
     params = ["-o " + output_file, FROM_PARAMS, LATEX_PARAMS, params]
 
     for key, value in cfg.items():
-        if key in ("title", "second_title", "year", "date", "title_page", "tof", "toc"):
+        if key in ("title", "second_title", "year"):
             params.append(generate_variable(key, value))
+        elif key in ("date", "title_page", "tof", "toc"):
+            params.append(generate_flag(key, value))
         elif key == "template":
             if set_template:
                 params.append('--template="%s.tex"' % value)
@@ -50,9 +60,6 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
                 params.append(generate_variable(key, value))
         elif key == "company":
             params.append(generate_variable(key, value))
-        elif key in ("type", "alt_doc_type"):
-            if value:
-                params.append(generate_variable(key, value))
         elif key == "filters":
             for filt in value:
                 params.append("-F %s" % filt)
@@ -60,6 +67,8 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
             pass
         elif key == "git":
             pass
+        elif key in ("type", "alt_doc_type"):
+            print("Deprecated config key: %s" % key)
         else:
             print("Unsupported config key: %s" % key)
 
