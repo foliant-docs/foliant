@@ -60,9 +60,6 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
                 params.append(generate_variable(key, value))
         elif key == "company":
             params.append(generate_variable(key, value))
-        elif key in ("type", "alt_doc_type"):
-            if value:
-                params.append(generate_variable(key, value))
         elif key == "filters":
             for filt in value:
                 params.append("-F %s" % filt)
@@ -70,6 +67,8 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
             pass
         elif key == "git":
             pass
+        elif key in ("type", "alt_doc_type"):
+            print("Deprecated config key: %s" % key)
         else:
             print("Unsupported config key: %s" % key)
 
