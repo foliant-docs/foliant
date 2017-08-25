@@ -125,3 +125,9 @@ Initial release.
 # 0.4.0
 
 - Pandoc: Added `backtick_code_blocks` option.
+
+
+# 0.4.1
+
+- Pandoc: Add support for "false" config values.
+- Config: Deprecate `type` and `alt_doc_type` keys.
