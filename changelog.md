@@ -131,3 +131,9 @@ Initial release.
 
 - Pandoc: Add support for "false" config values.
 - Config: Deprecate `type` and `alt_doc_type` keys.
+
+
+# 0.4.2
+
+- Add colors.
+- Improve warnings.
