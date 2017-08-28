@@ -3,6 +3,8 @@
 import subprocess
 from os.path import join
 
+from colorama import Fore
+
 
 SEQDIAG_COMMAND = "seqdiag -a"
 
@@ -23,6 +25,9 @@ def process_diagram(caption, body, src_dir, diag_dir_name, diag_id):
             shell=True
         )
     except subprocess.CalledProcessError as exception:
-        print("Processing diagram %s failed: %s" % (diag_src_path, exception))
+        print(
+            Fore.YELLOW + "\nWarning: Processing of diagram %s failed: %s"
+            % (diag_src_path, exception)
+        )
 
     return "![%s](%s/%s.png)" % (caption, diag_dir_name, diag_id)
