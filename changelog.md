@@ -137,3 +137,4 @@ Initial release.
 
 - Add colors.
 - Improve warnings.
+- Refactor diagram processing to simplify addition of new backends.
