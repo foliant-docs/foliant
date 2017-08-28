@@ -24,6 +24,8 @@ Options:
 """
 
 from docopt import docopt
+from colorama import init, deinit, Fore
+
 from foliant import builder, uploader, swagger2markdown, apidoc2markdown
 from foliant import __version__ as foliant_version
 
@@ -31,19 +33,15 @@ from foliant import __version__ as foliant_version
 def main():
     """Handles command-line params and runs the respective core function."""
 
+    init(autoreset=True)
+
     args = docopt(__doc__, version="Foliant %s (Python)" % foliant_version)
 
     if args["build"] or args["make"]:
-        output_file = builder.build(args["<target>"], args["--path"])
-
-        print("----")
-        print("Result: %s" % output_file)
+        result = builder.build(args["<target>"], args["--path"])
 
     elif args["upload"] or args["up"]:
-        link = uploader.upload(args["<document>"])
-
-        print("----")
-        print("Link: %s" % link)
+        result = uploader.upload(args["<document>"])
 
     elif args["swagger2markdown"] or args["s2m"]:
         swagger_location = args["<swagger-location>"]
@@ -57,14 +55,17 @@ def main():
             additional_swagger_location
         )
 
-        print("---")
-        print("Result: %s" % output_file)
+        result = output_file
 
     elif args["apidoc2markdown"] or args["a2m"]:
         apidoc_location = args["<apidoc-location>"]
-        output_file = args["--output"]
+        result = args["--output"]
         template_file = args.get("--template")
         apidoc2markdown.convert(apidoc_location, output_file, template_file)
 
-        print("---")
-        print("Result: %s" % output_file)
+        result = output_file
+
+    print("---")
+    print(Fore.GREEN + "Result: %s" % result)
+
+    deinit()

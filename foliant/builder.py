@@ -9,7 +9,7 @@ from datetime import date
 
 import yaml
 
-from . import gitutils, pandoc, uploader, seqdiag, includes
+from . import gitutils, pandoc, uploader, diagrams, includes
 
 
 def copy_dir_content(src, dest):
@@ -108,7 +108,7 @@ def build(target_format, project_dir):
 
     collect_source(project_dir, tmp_dir, src_file, cfg)
 
-    seqdiag.process_diagrams(tmp_dir, src_file)
+    diagrams.process_diagrams(tmp_dir, src_file)
 
     if target_format.startswith('p'):
         output_file = output_title + ".pdf"
