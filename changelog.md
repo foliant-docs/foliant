@@ -135,6 +135,6 @@ Initial release.
 
 # 0.4.2
 
-- Add colors.
-- Improve warnings.
+- Diagrams: Add PlantUML support.
 - Refactor diagram processing to simplify addition of new backends.
+- Add colors to output, visually improve warnings.
