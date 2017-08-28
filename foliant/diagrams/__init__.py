@@ -6,11 +6,12 @@ from os.path import join
 import re
 from uuid import uuid4
 
-from . import seqdiag
+from . import seqdiag, plantuml
 
 
 DIAG_BACKENDS = {
-    "seqdiag": seqdiag.process_diagram
+    "seqdiag": seqdiag.process_diagram,
+    "plantuml": plantuml.process_diagram,
 }
 DIAG_PATTERN = re.compile(
     r"^```(?P<kind>%s)(?P<caption>.*?)$(?P<body>.*?)```$"
