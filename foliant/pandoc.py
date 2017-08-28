@@ -4,6 +4,9 @@ from __future__ import print_function
 
 import sys
 import subprocess
+
+from colorama import Fore
+
 from . import gitutils
 
 PANDOC_PATH = "pandoc"
@@ -68,9 +71,9 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
         elif key == "git":
             pass
         elif key in ("type", "alt_doc_type"):
-            print("Deprecated config key: %s" % key)
+            print(Fore.YELLOW + "Warning: Deprecated config key: %s" % key)
         else:
-            print("Unsupported config key: %s" % key)
+            print(Fore.YELLOW + "Warning: Unsupported config key: %s" % key)
 
     return ' '.join([PANDOC_PATH] + params + [src_file])
 

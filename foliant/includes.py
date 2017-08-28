@@ -6,6 +6,8 @@ import os
 import os.path as ospa
 from io import StringIO
 
+from colorama import Fore
+
 from . import gitutils
 
 
@@ -355,7 +357,7 @@ def process_includes(content, sources_dir, target_dir, cfg):
 
         except FileNotFoundError as exception:
             print(
-                "\n\tWarning: File '%s' does not exist." % exception.filename
+                Fore.YELLOW + "\nWarning: File '%s' does not exist." % exception.filename
             )
 
     result = INCLUDE_PATTERN.sub(sub, content)

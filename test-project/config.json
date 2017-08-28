@@ -1,5 +1,4 @@
 {
-  "type": "",
   "title": "Lorem ipsum",
   "file_name": "Dolor_sit_amet",
   "second_title":"Dolor sit amet",
@@ -9,7 +8,6 @@
   "title_page": "true",
   "toc": "true",
   "tof": "true",
-  "alt_doc_type": "",
   "template": "basic",
   "version": "auto",
   "date": "true",

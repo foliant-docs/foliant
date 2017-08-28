@@ -131,3 +131,10 @@ Initial release.
 
 - Pandoc: Add support for "false" config values.
 - Config: Deprecate `type` and `alt_doc_type` keys.
+
+
+# 0.4.2
+
+- Diagrams: Add PlantUML support.
+- Refactor diagram processing to simplify addition of new backends.
+- Add colors to output, visually improve warnings.

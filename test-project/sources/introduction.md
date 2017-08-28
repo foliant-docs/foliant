@@ -13,6 +13,12 @@ seqdiag {
 }
 ```
 
+```plantuml
+@startuml
+Alice -> Bob: test
+@enduml
+```
+
 Nullam suscipit tempus ipsum, ut aliquet sapien. Vivamus convallis sem sed metus tincidunt efficitur dignissim eget velit. Duis ullamcorper ac diam at placerat. Vivamus fringilla vel risus ut pulvinar. Mauris fringilla nisi sit amet tellus molestie accumsan. Proin at volutpat ligula. Nulla sed ante consequat, finibus ipsum sed, auctor dui.
 
 ![Lenna](foo/Lenna.png)
