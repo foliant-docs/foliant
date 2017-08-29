@@ -2,6 +2,11 @@
   "title": "Lorem ipsum",
   "file_name": "Dolor_sit_amet",
   "second_title":"Dolor sit amet",
+  "chapters": [
+    "introduction",
+    "chapter1",
+    "remote"
+  ],
   "lang": "english",
   "company": "restream",
   "year":"2016",
