@@ -34,7 +34,6 @@ setup(
     platforms="any",
     install_requires=[
         "PyDrive>=1.2.1",
-        "PyYAML",
         "docopt",
         "seqdiag"
     ],

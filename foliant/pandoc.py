@@ -68,7 +68,7 @@ def generate_command(params, output_file, src_file, cfg, set_template=False):
                 params.append("-F %s" % filt)
         elif key == "file_name":
             pass
-        elif key == "git":
+        elif key in ("git", "chapters"):
             pass
         elif key in ("type", "alt_doc_type"):
             print(Fore.YELLOW + "Warning: Deprecated config key: %s" % key)
