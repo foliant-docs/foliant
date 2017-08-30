@@ -6,6 +6,7 @@ from os.path import join, splitext
 from datetime import date
 
 from colorama import Fore
+import yaml
 
 from . import gitutils, pandoc, uploader, diagrams, includes
 
@@ -74,18 +75,28 @@ def collect_source(project_dir, target_dir, src_file, cfg):
     print("Collecting source... ", end='')
     sys.stdout.flush()
 
-    if "main.yaml" in os.listdir(project_dir):
-        print(
-            Fore.YELLOW
-            + "\nWarning: main.yaml is deprecated. Use `chapters` key in config.json instead.",
-            end=''
-        )
-
     with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
-        chapters = cfg.get(
-            "chapters",
-            (splitext(i)[0] for i in os.listdir(join(project_dir, SOURCES_DIR_NAME)))
-        )
+        chapters = cfg.get("chapters")
+
+        if not chapters:
+            try:
+                with open(join(project_dir, "main.yaml"), encoding="utf8") as chapters_file:
+                    chapters = yaml.load(chapters_file)["chapters"]
+
+                print(
+                    Fore.YELLOW
+                    + "\nWarning: main.yaml is deprecated."
+                    + " Use `chapters` key in config.json instead.",
+                    end=''
+                )
+
+            except FileNotFoundError:
+                print(
+                    Fore.RED + "\nCritical error: `chapters` key is missing in config.json.",
+                    end=''
+                )
+                print(Fore.RESET)
+                sys.exit()
 
         for chapter_name in chapters:
             chapter_file = chapter_name + ".md"

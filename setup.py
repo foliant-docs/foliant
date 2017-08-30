@@ -36,7 +36,8 @@ setup(
         "PyDrive>=1.2.1",
         "docopt",
         "seqdiag",
-        "colorama"
+        "colorama",
+        "PyYAML"
     ],
     extras_require={
         "s2m": ["swagger2markdown>=0.1.9"],
