@@ -357,7 +357,7 @@ def process_includes(content, sources_dir, target_dir, cfg):
 
         except FileNotFoundError as exception:
             print(
-                Fore.YELLOW + "\nWarning: File '%s' does not exist." % exception.filename
+                Fore.YELLOW + "\nWarning: File '%s' not found." % exception.filename
             )
 
     result = INCLUDE_PATTERN.sub(sub, content)

@@ -1,15 +1,22 @@
-from __future__ import print_function
-
 """Document builder for foliant. Implements "build" subcommand."""
 
 import sys
 import os, shutil, json
-from os.path import join
+from os.path import join, splitext
 from datetime import date
 
-import yaml
+from colorama import Fore
 
 from . import gitutils, pandoc, uploader, diagrams, includes
+
+
+SOURCES_DIR_NAME = "sources"
+IMAGES_DIR_NAME = "images"
+TEMPLATES_DIR_NAME = "templates"
+REFERENCES_DIR_NAME = "references"
+TMP_DIR_NAME = "foliantcache"
+MERGED_SRC_FILE_NAME = "output.md"
+CONFIG_FILE_NAME = "config.json"
 
 
 def copy_dir_content(src, dest):
@@ -67,29 +74,37 @@ def collect_source(project_dir, target_dir, src_file, cfg):
     print("Collecting source... ", end='')
     sys.stdout.flush()
 
-    with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
-        with open(
-            join(project_dir, "main.yaml"),
-            encoding="utf8"
-        ) as contents_file:
-            for chapter_name in yaml.load(contents_file)["chapters"]:
-                chapter_file = chapter_name + ".md"
-                with open(
-                    join(project_dir, "sources", chapter_file),
-                    encoding="utf8"
-                ) as chapter:
-                    src.write(
-                        includes.process_includes(
-                            chapter.read(),
-                            join(project_dir, "sources"),
-                            target_dir,
-                            cfg
-                        ) + "\n"
-                    )
+    if "main.yaml" in os.listdir(project_dir):
+        print(
+            Fore.YELLOW
+            + "\nWarning: main.yaml is deprecated. Use `chapters` key in config.json instead.",
+            end=''
+        )
 
-    copy_dir_content(join(project_dir, "sources", "images"), target_dir)
-    copy_dir_content(join(project_dir, "templates"), target_dir)
-    copy_dir_content(join(project_dir, "references"), target_dir)
+    with open(join(target_dir, src_file), 'w+', encoding="utf8") as src:
+        chapters = cfg.get(
+            "chapters",
+            (splitext(i)[0] for i in os.listdir(join(project_dir, SOURCES_DIR_NAME)))
+        )
+
+        for chapter_name in chapters:
+            chapter_file = chapter_name + ".md"
+            with open(
+                join(project_dir, SOURCES_DIR_NAME, chapter_file),
+                encoding="utf8"
+            ) as chapter:
+                src.write(
+                    includes.process_includes(
+                        chapter.read(),
+                        join(project_dir, SOURCES_DIR_NAME),
+                        target_dir,
+                        cfg
+                    ) + "\n"
+                )
+
+    copy_dir_content(join(project_dir, SOURCES_DIR_NAME, IMAGES_DIR_NAME), target_dir)
+    copy_dir_content(join(project_dir, TEMPLATES_DIR_NAME), target_dir)
+    copy_dir_content(join(project_dir, REFERENCES_DIR_NAME), target_dir)
 
     print("Done!")
 
@@ -97,42 +112,38 @@ def collect_source(project_dir, target_dir, src_file, cfg):
 def build(target_format, project_dir):
     """Convert source Markdown to the target format using Pandoc."""
 
-    tmp_dir = "foliantcache"
-    src_file = "output.md"
+    if not os.path.exists(TMP_DIR_NAME):
+        os.makedirs(TMP_DIR_NAME)
 
-    if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir)
-
-    cfg = json.load(open(join(project_dir, "config.json"), encoding="utf8"))
+    cfg = json.load(open(join(project_dir, CONFIG_FILE_NAME), encoding="utf8"))
     output_title = get_title(cfg)
 
-    collect_source(project_dir, tmp_dir, src_file, cfg)
-
-    diagrams.process_diagrams(tmp_dir, src_file)
+    collect_source(project_dir, TMP_DIR_NAME, MERGED_SRC_FILE_NAME, cfg)
+    diagrams.process_diagrams(TMP_DIR_NAME, MERGED_SRC_FILE_NAME)
 
     if target_format.startswith('p'):
         output_file = output_title + ".pdf"
-        pandoc.to_pdf(src_file, output_file, tmp_dir, cfg)
-        shutil.copy(join(tmp_dir, output_file), output_file)
+        pandoc.to_pdf(MERGED_SRC_FILE_NAME, output_file, TMP_DIR_NAME, cfg)
+        shutil.copy(join(TMP_DIR_NAME, output_file), output_file)
     elif target_format.startswith('d'):
         output_file = output_title + ".docx"
-        pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
-        shutil.copy(join(tmp_dir, output_file), output_file)
+        pandoc.to_docx(MERGED_SRC_FILE_NAME, output_file, TMP_DIR_NAME, cfg)
+        shutil.copy(join(TMP_DIR_NAME, output_file), output_file)
     elif target_format.startswith('o'):
         output_file = output_title + ".odt"
-        pandoc.to_odt(src_file, output_file, tmp_dir, cfg)
-        shutil.copy(join(tmp_dir, output_file), output_file)
+        pandoc.to_odt(MERGED_SRC_FILE_NAME, output_file, TMP_DIR_NAME, cfg)
+        shutil.copy(join(TMP_DIR_NAME, output_file), output_file)
     elif target_format.startswith('t'):
         output_file = output_title + ".tex"
-        pandoc.to_tex(src_file, output_file, tmp_dir, cfg)
-        shutil.copy(join(tmp_dir, output_file), output_file)
+        pandoc.to_tex(MERGED_SRC_FILE_NAME, output_file, TMP_DIR_NAME, cfg)
+        shutil.copy(join(TMP_DIR_NAME, output_file), output_file)
     elif target_format.startswith('m'):
         output_file = output_title + ".md"
-        shutil.copy(join(tmp_dir, src_file), output_file)
+        shutil.copy(join(TMP_DIR_NAME, MERGED_SRC_FILE_NAME), output_file)
     elif target_format.startswith('g'):
         output_file = output_title + ".docx"
-        pandoc.to_docx(src_file, output_file, tmp_dir, cfg)
-        output_file = uploader.upload(join(tmp_dir, output_file))
+        pandoc.to_docx(MERGED_SRC_FILE_NAME, output_file, TMP_DIR_NAME, cfg)
+        output_file = uploader.upload(join(TMP_DIR_NAME, output_file))
     else:
         raise RuntimeError("Invalid target: %s" % target_format)
 
