@@ -145,3 +145,8 @@ Initial release.
 - Deprecate `main.yaml`.
 - Add colorama to dependencies and thus fix Docker image build broken in 0.4.2.
 - Remove PyYAML from dependencies.
+
+
+# 0.4.4
+
+- Make `main.yaml` deprecation softer: if `chapters` is missing in `config.json`, `main.yaml` is used instead and a warning is shown. If it's also missing, the build fails.
