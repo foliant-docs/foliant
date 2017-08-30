@@ -138,3 +138,10 @@ Initial release.
 - Diagrams: Add PlantUML support.
 - Refactor diagram processing to simplify addition of new backends.
 - Add colors to output, visually improve warnings.
+
+
+# 0.4.3
+
+- Deprecate `main.yaml`.
+- Add colorama to dependencies and thus fix Docker image build broken in 0.4.2.
+- Remove PyYAML from dependencies.
