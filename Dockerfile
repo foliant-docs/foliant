@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:devel
 LABEL authors="Konstantin Molchanov <moigagoo@live.com>"
 
 ARG FOLIANT_VERSION
@@ -7,12 +7,12 @@ RUN apt-get update; apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-generic-recommended \
+    texlive-latex-recommended \
     texlive-lang-english \
     texlive-lang-cyrillic \
-    latex-xcolor \
     texlive-fonts-extra \
     texlive-generic-extra \
-    texlive-math-extra \
+    texlive-science \
     texlive-latex-extra \
     texlive-bibtex-extra \
     texlive-xetex

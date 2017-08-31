@@ -86,14 +86,12 @@ def collect_source(project_dir, target_dir, src_file, cfg):
                 print(
                     Fore.YELLOW
                     + "\nWarning: main.yaml is deprecated."
-                    + " Use `chapters` key in config.json instead.",
-                    end=''
+                    + " Use `chapters` key in config.json instead."
                 )
 
             except FileNotFoundError:
                 print(
-                    Fore.RED + "\nCritical error: `chapters` key is missing in config.json.",
-                    end=''
+                    Fore.RED + "\nCritical error: `chapters` key is missing in config.json."
                 )
                 print(Fore.RESET)
                 sys.exit()
