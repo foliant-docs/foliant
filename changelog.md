@@ -150,3 +150,9 @@ Initial release.
 # 0.4.4
 
 - Make `main.yaml` deprecation softer: if `chapters` is missing in `config.json`, `main.yaml` is used instead and a warning is shown. If it's also missing, the build fails.
+
+
+# 0.4.5
+
+- Add aesthetic linebreak after the `main.yaml` warning.
+- Docker: Require Ubuntu Artful to fix issue with missing title numbering due to ancient Pandoc and TeXLive versions.
