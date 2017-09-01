@@ -1,1 +1,0 @@
-{{<foliant>^incl.md | nohead}}

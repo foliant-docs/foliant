@@ -156,3 +156,8 @@ Initial release.
 
 - Add aesthetic linebreak after the `main.yaml` warning.
 - Docker: Require Ubuntu Artful to fix issue with missing title numbering due to ancient Pandoc and TeXLive versions.
+
+
+# 0.4.6
+
+- Docker: Fix EPS conversion issues.
