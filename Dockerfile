@@ -6,6 +6,7 @@ ARG FOLIANT_VERSION
 RUN apt-get update; apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended \
+    texlive-font-utils \
     texlive-generic-recommended \
     texlive-latex-recommended \
     texlive-lang-english \
