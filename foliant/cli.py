@@ -24,7 +24,8 @@ Options:
 """
 
 from docopt import docopt
-from colorama import init, deinit, Fore
+import colorama
+from colorama import Fore
 
 from foliant import builder, uploader, swagger2markdown, apidoc2markdown
 from foliant import __version__ as foliant_version
@@ -33,7 +34,7 @@ from foliant import __version__ as foliant_version
 def main():
     """Handles command-line params and runs the respective core function."""
 
-    init(autoreset=True)
+    colorama.init(autoreset=True)
 
     args = docopt(__doc__, version="Foliant %s (Python)" % foliant_version)
 
@@ -68,4 +69,8 @@ def main():
     print("---")
     print(Fore.GREEN + "Result: %s" % result)
 
-    deinit()
+    colorama.deinit()
+
+
+if __name__ == "__main__":
+    main()
