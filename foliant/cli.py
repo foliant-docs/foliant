@@ -70,7 +70,3 @@ def main():
     print(Fore.GREEN + "Result: %s" % result)
 
     colorama.deinit()
-
-
-if __name__ == "__main__":
-    main()
