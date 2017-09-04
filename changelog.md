@@ -161,3 +161,8 @@ Initial release.
 # 0.4.6
 
 - Docker: Fix EPS conversion issues.
+
+
+# 0.4.7
+
+- Remove swagger2markdown and apidoc2markdown commands. Use [swagger2markdown](https://github.com/foliant-docs/swagger2markdown) amd [apidoc2markdown](https://github.com/foliant-docs/apidoc2markdown) packages instead.
