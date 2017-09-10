@@ -166,3 +166,4 @@ Initial release.
 # 0.4.7 (in progress)
 
 - Remove swagger2markdown and apidoc2markdown commands. Use [swagger2markdown](https://github.com/foliant-docs/swagger2markdown) amd [apidoc2markdown](https://github.com/foliant-docs/apidoc2markdown) packages instead.
+- Add `startnum` and `fancy_lists` pandoc extensions. Be aware that it'll break documents that use standard markdown enumerators which ignore list numbers themselves.
