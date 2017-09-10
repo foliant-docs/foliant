@@ -17,7 +17,7 @@ all_symbols_escapable+strikeout+superscript+subscript+\
 lists_without_preceding_blankline+implicit_figures+raw_tex+citations+\
 tex_math_dollars+header_attributes+auto_identifiers+startnum+footnotes+\
 inline_notes+fenced_code_attributes+intraword_underscores+escaped_line_breaks+\
-backtick_code_blocks"
+backtick_code_blocks+startnum+fancy_lists"
 
 LATEX_PARAMS = "--no-tex-ligatures --smart --normalize --listings --number-sections \
 --latex-engine=xelatex"
