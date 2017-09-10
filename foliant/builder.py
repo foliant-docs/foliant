@@ -121,8 +121,7 @@ def collect_source(project_dir, target_dir, src_file, cfg):
 def build(target_format, project_dir):
     """Convert source Markdown to the target format using Pandoc."""
 
-    if not os.path.exists(TMP_DIR_NAME):
-        os.makedirs(TMP_DIR_NAME)
+    os.makedirs(TMP_DIR_NAME, exist_ok=True)
 
     cfg = json.load(open(join(project_dir, CONFIG_FILE_NAME), encoding="utf8"))
     output_title = get_title(cfg)
