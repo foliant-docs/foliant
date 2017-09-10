@@ -2,6 +2,7 @@ import os.path
 import webbrowser
 import pydrive.auth, pydrive.drive
 
+
 def upload(document):
     """Upload .docx file to Google Drive and return a web view link to it."""
 
