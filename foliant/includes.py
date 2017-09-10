@@ -329,7 +329,7 @@ def process_remote_include(repo, revision, path, from_heading, to_heading,
 def process_includes(content, sources_dir, target_dir, cfg):
     """Replace all include statements with the respective file content."""
 
-    def sub(include, sources_dir=sources_dir):
+    def sub(include):
         try:
             if include.group("repo"):
                 repo = include.group("repo")
