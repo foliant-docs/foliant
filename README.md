@@ -18,4 +18,4 @@ Baking output... Done!
 Result: My_Project_0.1.0-26-08-2017.pdf
 ```
 
-[Learn more in the wiki →](https://github.com/foliant-docs/foliant/wiki)
+[Learn more in the docs →](docs/README.md)
