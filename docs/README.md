@@ -12,6 +12,9 @@
 * [Embedding Diagrams](Embedding-Diagrams.md)
 * [Troubleshooting](Troubleshooting.md)
 * [Dev Guide](Dev-Guide/README.md)
+  * [General Concepts](Dev-Guide/General-Concepts.md)
+  * [Testing Code Modifications](Dev-Guide/Testing-Code-Modifications.md)
+  * [Adding a Diagram Backend](Dev-Guide/Adding-a-Diagram-Backend.md)
 
 Useful links:
 
