@@ -20,4 +20,3 @@ Useful links:
 
 * [Report an issue](https://github.com/foliant-docs/foliant/issues/new)
 * [Foliant on Docker Hub](https://hub.docker.com/r/foliant/foliant/)
-* [Open positions at Restream (in Russian)](http://restream.rt.ru/vacancies#vacancies_list-vacancies)
