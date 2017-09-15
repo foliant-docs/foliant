@@ -167,3 +167,5 @@ Initial release.
 
 - Remove swagger2markdown and apidoc2markdown commands. Use [swagger2markdown](https://github.com/foliant-docs/swagger2markdown) amd [apidoc2markdown](https://github.com/foliant-docs/apidoc2markdown) packages instead.
 - Add `startnum` and `fancy_lists` pandoc extensions. Be aware that it'll break documents that use standard markdown enumerators which ignore list numbers themselves.
+- Diagrams: Diagram sources and generated images from all backends used to sit in "diagrams" directory. Now there are subdirs for each backend.
+ 
