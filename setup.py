@@ -39,11 +39,6 @@ setup(
         "colorama",
         "PyYAML"
     ],
-    extras_require={
-        "s2m": ["swagger2markdown>=0.1.9"],
-        "a2m": ["apidoc2markdown"],
-        "all": ["swagger2markdown>=0.1.9", "apidoc2markdown"]
-    },
     entry_points={
         "console_scripts": [
             "foliant=foliant.cli:main"
