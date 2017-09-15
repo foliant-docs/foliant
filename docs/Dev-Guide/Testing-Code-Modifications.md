@@ -8,10 +8,19 @@ First, you'll need a test project to run Foliant on. The easiest way to do it is
 $ cookiecutter gh:foliant-docs/cookiecutter-foliant 
 ```
 
-To test code modifications, run `foliant` module with Python the repo root, the same way you would run `foliant` command:
+To test code modifications, create a file called `run.py` in the repository root with the following content:
+
+```python
+from foliant import cli
+
+cli.main()
+
+```
+
+Then run `run.py` with Python the same way you would run `foliant` command:
 
 ```shell
-$ python ./foliant
+$ python run.py
 Usage:
   foliant (build | make) <target> [--path=<project-path>]
   foliant (upload | up) <document> [--secret=<client_secret*.json>]
