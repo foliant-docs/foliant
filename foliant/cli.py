@@ -17,8 +17,8 @@ from docopt import docopt
 import colorama
 from colorama import Fore
 
-from foliant import builder, uploader
-from foliant import __version__ as foliant_version
+from . import builder, uploader
+from . import __version__ as foliant_version
 
 
 def main():
