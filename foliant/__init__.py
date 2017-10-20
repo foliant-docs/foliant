@@ -4,4 +4,4 @@ from a single Markdown source. It also uploads Docx files to Google Drive
 as Google Documents.
 """
 
-__version__ = "0.4.6"
+__version__ = "0.4.7"
