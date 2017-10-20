@@ -25,7 +25,12 @@ INCLUDE_PATTERN = re.compile(
     r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
     r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
 )
-
+IGNORED_INCLUDE_PATTERN = re.compile(
+    r"\<\<\s*(\<(?P<repo>[^\#^\>]+)(#(?P<revision>[^\>]+))?\>)?" +
+    r"(?P<path>[^\#]+?)" +
+    r"(\#(?P<from_heading>[^:]*?)(:(?P<to_heading>.+?))?)?" +
+    r"\s*(\|\s*(?P<options>.+))?\s*\}\}"
+)
 
 def convert_value(value):
     """Attempt to convert a string to integer, float, or boolean. If nothing
@@ -329,7 +334,7 @@ def process_remote_include(repo, revision, path, from_heading, to_heading,
 def process_includes(content, sources_dir, target_dir, cfg):
     """Replace all include statements with the respective file content."""
 
-    def sub(include, sources_dir=sources_dir):
+    def sub(include):
         try:
             if include.group("repo"):
                 repo = include.group("repo")
@@ -359,10 +364,14 @@ def process_includes(content, sources_dir, target_dir, cfg):
             print(
                 Fore.YELLOW + "\nWarning: File '%s' not found." % exception.filename
             )
+            return include.group(0).replace("{{", "<<")
+
+    def restore_ignored_includes(ignored_include):
+        return ignored_include.group(0).replace("<<", "{{")
 
     result = INCLUDE_PATTERN.sub(sub, content)
 
     if INCLUDE_PATTERN.search(result):
         return process_includes(result, sources_dir, target_dir, cfg)
     else:
-        return result
+        return IGNORED_INCLUDE_PATTERN.sub(restore_ignored_includes, result)
