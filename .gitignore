@@ -99,3 +99,12 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Submodules from external packages
+foliant/backends/*
+!foliant/backends/__init__.py
+!foliant/backends/base.py
+
+foliant/preprocessors/*
+!foliant/preprocessors/__init__.py
+!foliant/preprocessors/base.py
