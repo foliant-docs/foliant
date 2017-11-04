@@ -117,3 +117,5 @@ __folianttmp__
 # Foliant built files
 *.pdf
 *.docx
+
+/run.py
