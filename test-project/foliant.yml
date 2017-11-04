@@ -10,6 +10,9 @@ chapters:
     - Subsection 1: section1/subsection1.md
 
 preprocessors:
+  - flags:
+      flags:
+        - foo
   - includes:
       cache_dir: .includescache
       recursive: true
