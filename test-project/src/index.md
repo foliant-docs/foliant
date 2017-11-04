@@ -1,8 +1,18 @@
 # Hello
 
+````if any foo
+Foo.
+''''
+
+````if all foo bar
 Foo.
 
-<<< ../../README.md >>>
+Bar.
+''''
+
+````include ../../README.md''''
+
+````include <foliant>README.md#Foliant''''
 
 ````seqdiag This is a caption
 seqdiag {
@@ -13,4 +23,4 @@ seqdiag {
               webserver <-- database;
   browser <-- webserver;
 }
-````
+''''
