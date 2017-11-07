@@ -22,7 +22,7 @@ def parse(project_path: Path, config_file_name: str) -> dict:
 
     def _resolve_path_tag(_, node) -> str:
         path = Path(node.value).expanduser()
-        return (project_path / path).absolute().resolve().as_posix()
+        return (project_path / path).resolve(strict=True).as_posix()
 
     add_constructor('!path', _resolve_path_tag)
 
