@@ -9,9 +9,9 @@ Not baz.
 </if>
 
 <if flags="foo">
-<include>
-  ../../README.md
-</include>
+  <include>
+    ../../README.md
+  </include>
 </if>
 
 ## Usage
