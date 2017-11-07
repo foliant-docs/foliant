@@ -100,9 +100,9 @@ class Cli(Cliar):
             try:
                 config = config_parser.parse(project_path, self.config_file_name)
 
-            except FileNotFoundError:
+            except FileNotFoundError as exception:
                 config = None
-                raise FileNotFoundError(f'{self.config_file_name} not found in {project_path}')
+                raise FileNotFoundError(f'{exception} not found')
 
             except Exception as exception:
                 config = None
