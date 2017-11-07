@@ -20,10 +20,23 @@ def parse(project_path: Path, config_file_name: str) -> dict:
     :returns: Dictionary representing the YAML tree
     '''
 
-    def _resolve_path_tag(_, node) -> str:
-        path = Path(node.value).expanduser()
-        return (project_path / path).resolve(strict=True).as_posix()
+    def _resolve_include_tag(_, node) -> str:
+        '''Replace value after ``!include`` with the content of the referenced file.'''
 
+        path = Path(node.value).expanduser()
+        with open(project_path/path) as include_file:
+            return load(include_file)
+
+    def _resolve_path_tag(_, node) -> str:
+        '''Convert value after ``!path`` to an existing, absolute Posix path.
+
+        Relative paths are relative to the project path.
+        '''
+
+        path = Path(node.value).expanduser()
+        return (project_path/path).resolve(strict=True).as_posix()
+
+    add_constructor('!include', _resolve_include_tag)
     add_constructor('!path', _resolve_path_tag)
 
     with open(project_path/config_file_name) as config_file:
