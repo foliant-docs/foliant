@@ -11,12 +11,9 @@ preprocessors:
       flags:
         - foo
   - includes:
-      cache_dir: .includescache
-      recursive: true
       aliases:
         foliant: https://github.com/foliant-docs/foliant.git
   - blockdiag:
-      seqdiag_binary_path: seqdiag
       antialias: true
       font: !path Anonymous_Pro.ttf
 
