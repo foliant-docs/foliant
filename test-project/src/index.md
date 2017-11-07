@@ -1,20 +1,26 @@
 # Hello
 
-````if any foo
-Foo.
-''''
+<if flags="foo, bar" kind="all">
+Foo and Bar.
+</if>
 
-````if all foo bar
-Foo.
+<if flags="baz" kind="none">
+Not baz.
+</if>
 
-Bar.
-''''
+<if flags="foo">
+<include>
+  ../../README.md
+</include>
+</if>
 
-````include ../../README.md''''
+## Usage
 
-````include <foliant>README.md#Foliant''''
+<include sethead="2" nohead="true">
+  $foliant$^README.md#Foliant
+</include>
 
-````seqdiag This is a caption
+<seqdiag caption="This is a caption">
 seqdiag {
   browser  -> webserver [label = "GET /index.html"];
   browser <-- webserver;
@@ -23,4 +29,4 @@ seqdiag {
               webserver <-- database;
   browser <-- webserver;
 }
-''''
+</seqdiag>
