@@ -19,4 +19,7 @@ preprocessors:
 
 backend_config:
   pandoc: !include pandoc.yml
-  mkdocs: !include mkdocs.yml
+  mkdocs:
+    site_name: *title
+    site_url: http://example.com
+    site_author: Konstantin Molchanov
