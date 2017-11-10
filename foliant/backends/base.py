@@ -1,6 +1,7 @@
 from pathlib import Path
 from importlib import import_module
 from shutil import copytree
+from datetime import date
 from typing import Tuple, List, Callable
 
 from foliant.utils import spinner
@@ -10,7 +11,8 @@ class BaseBackend(object):
     '''Base backend. All backends must inherit from this one.'''
 
     targets = ()
-    required_preprocessors = ()
+    required_preprocessors_before = ()
+    required_preprocessors_after = ()
 
     def __init__(self, project_path: Path, config: dict, quiet=False):
         self.project_path = project_path
@@ -18,6 +20,25 @@ class BaseBackend(object):
         self.quiet = quiet
 
         self.working_dir = project_path / config['tmp_dir']
+
+    def get_slug(self) -> str:
+        '''Generate a slug from the project title and version and the current date.
+
+        Spaces in title are replaced with underscores, then the version and the current date
+        are appended.
+        '''
+
+        components = []
+
+        components.append(self.config['title'].replace(' ', '_'))
+
+        version = self.config.get('version')
+        if version:
+            components.append(str(version))
+
+        components.append(str(date.today()))
+
+        return '-'.join(components)
 
     def apply_preprocessor(self, preprocessor: str or dict):
         '''Apply preprocessor.
@@ -60,7 +81,13 @@ class BaseBackend(object):
 
         copytree(src_path, self.working_dir)
 
-        for preprocessor in (*self.required_preprocessors, *self.config.get('preprocessors', ())):
+        preprocessors = (
+            *self.required_preprocessors_before,
+            *self.config.get('preprocessors', ()),
+            *self.required_preprocessors_after
+        )
+
+        for preprocessor in preprocessors:
             self.apply_preprocessor(preprocessor)
 
         return self.make(target)
