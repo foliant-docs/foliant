@@ -9,7 +9,7 @@ from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
-from foliant import config_parser
+from foliant.config import Parser
 from foliant.utils import spinner, get_available_backends, tmp
 
 
@@ -98,7 +98,7 @@ class Cli(Cliar):
 
         with spinner('Parsing config', quiet):
             try:
-                config = config_parser.parse(project_path, self.config_file_name)
+                config = Parser(project_path, self.config_file_name).parse()
 
             except FileNotFoundError as exception:
                 config = None
