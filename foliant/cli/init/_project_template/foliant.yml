@@ -1,0 +1,20 @@
+title: &title {project_title}
+version: &version 0.1.0
+
+chapters:
+  - index.md
+
+preprocessors:
+  - includes:
+      aliases:
+        foliant: https://github.com/foliant-docs/foliant.git
+
+backend_config:
+  pandoc:
+    params:
+      pdf-engine: xelatex
+    markdown_extensions: !include pandoc.yml#markdown_extensions
+
+  mkdocs:
+    mkdocs.yml:
+      site_name: *title
