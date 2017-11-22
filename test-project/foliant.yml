@@ -33,7 +33,7 @@ backend_config:
       pdf-engine: xelatex
       listings: true
       number-sections: true
-    markdown_extensions: !include pandoc_md_extensions.yml
+    markdown_extensions: !include pandoc.yml#markdown_extensions
 
   mkdocs:
     mkdocs.yml:
