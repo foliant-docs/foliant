@@ -2,13 +2,32 @@
 
 from contextlib import contextmanager
 from pkgutil import iter_modules
+from importlib import import_module
 from shutil import rmtree
 from pathlib import Path
 from typing import Dict, Tuple, Type
 
 from halo import Halo
 
-from foliant import cli, backends
+
+def get_available_config_parsers() -> Dict[str, Type]:
+    '''Get the names of the installed ``foliant.config`` submodules and the corresponding
+    ``Parser`` classes.
+
+    Used for construction of the Foliant config parser, which is a class that inherits
+    from all ``foliant.config.*.Parser`` classes.
+
+    :returns: Dictionary with submodule names as keys as classes as values
+    '''
+
+    config_module = import_module('foliant.config')
+
+    result = {}
+
+    for importer, modname, _ in iter_modules(config_module.__path__):
+        result[modname] = importer.find_module(modname).load_module(modname).Parser
+
+    return result
 
 
 def get_available_clis() -> Dict[str, Type]:
@@ -21,9 +40,14 @@ def get_available_clis() -> Dict[str, Type]:
     :returns: Dictionary with submodule names as keys as classes as values
     '''
 
+    cli_module = import_module('foliant.cli')
+
     result = {}
 
-    for importer, modname, _ in iter_modules(cli.__path__):
+    for importer, modname, _ in iter_modules(cli_module.__path__):
+        if modname == 'base':
+            continue
+
         result[modname] = importer.find_module(modname).load_module(modname).Cli
 
     return result
@@ -39,9 +63,12 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
     :returns: Dictionary of submodule names as keys and target tuples as values
 
     '''
+
+    backends_module = import_module('foliant.backends')
+
     result = {}
 
-    for importer, modname, _ in iter_modules(backends.__path__):
+    for importer, modname, _ in iter_modules(backends_module.__path__):
         if modname == 'base':
             continue
 
