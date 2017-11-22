@@ -36,6 +36,7 @@ backend_config:
     markdown_extensions: !include pandoc_md_extensions.yml
 
   mkdocs:
-    site_name: *title
-    site_url: http://example.com
-    site_author: Konstantin Molchanov
+    mkdocs.yml:
+      site_name: *title
+      site_url: http://example.com
+      site_author: Konstantin Molchanov
