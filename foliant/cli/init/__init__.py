@@ -11,28 +11,30 @@ from foliant.utils import spinner
 
 
 class Cli(Cliar):
-    @set_arg_map({'project_title': 'name'})
-    @set_metavars({'project_title': 'NAME'})
+    @set_arg_map({'project_name': 'name'})
+    @set_metavars({'project_name': 'NAME'})
     @set_help(
         {
-            'project_title': 'Name of the Foliant project',
+            'project_name': 'Name of the Foliant project',
             'quiet': 'Hide all output accept for the result. Useful for piping.'
         }
     )
-    def init(self, project_title='', quiet=False):
+    def init(self, project_name='', quiet=False):
         '''Generate new Foliant project.'''
 
-        if not project_title:
-            project_title = prompt('Enter the project name: ')
+        if not project_name:
+            project_name = prompt('Enter the project name: ')
 
-        project_path = Path(slugify(project_title))
+        project_path = Path(slugify(project_name))
 
-        template_path = Path(__file__).parent / '_project_template'
+        templates_path = Path(__file__).parent / '_templates'
+
+        default_template_path = templates_path / 'default'
 
         result = None
 
         with spinner('Generating Foliant project', quiet):
-            copytree(template_path, project_path)
+            copytree(default_template_path, project_path)
 
             foliant_yml_path = project_path / 'foliant.yml'
 
@@ -40,14 +42,14 @@ class Cli(Cliar):
                 foliant_yml_content = foliant_yml.read()
 
             with open(foliant_yml_path, 'w', encoding='utf8') as foliant_yml:
-                foliant_yml.write(foliant_yml_content.format(project_title=project_title))
+                foliant_yml.write(foliant_yml_content.format(title=project_name))
 
             result = project_path.absolute()
 
         if result:
             if not quiet:
                 print('─────────────────────')
-                print(f'Project "{project_title}" created in {result}')
+                print(f'Project "{project_name}" created in {result}')
             else:
                 print(result)
 

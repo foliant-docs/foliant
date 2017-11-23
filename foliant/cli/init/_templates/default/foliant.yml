@@ -1,4 +1,4 @@
-title: &title {project_title}
+title: &title {title}
 version: &version 0.1.0
 
 chapters:
