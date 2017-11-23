@@ -109,6 +109,16 @@ foliant/preprocessors/*
 !/foliant/preprocessors/__init__.py
 !/foliant/preprocessors/base.py
 
+foliant/cli/*
+!/foliant/cli/__init__.py
+!/foliant/cli/make.py
+
+foliant/config/*
+!/foliant/config/__init__.py
+!/foliant/config/base.py
+!/foliant/config/include.py
+!/foliant/config/path.py
+
 # Foliant caches and tmp dirs
 __folianttmp__
 .includescache
