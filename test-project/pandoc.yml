@@ -1,5 +1,4 @@
 markdown_extensions:
-  - markdown_strict
   - smart
   - simple_tables
   - multiline_tables

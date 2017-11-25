@@ -8,17 +8,13 @@ Foo and Bar.
 Not baz.
 </if>
 
-<if flags="foo">
-  <include>
-    ../../README.md
-  </include>
-</if>
-
 ## Usage
 
-<include sethead="2" nohead="true">
-  $foliant$^README.md#Foliant
-</include>
+<if flags="foo">
+  <include sethead="2" nohead="true">
+    $foliant$^README.md#Foliant
+  </include>
+</if>
 
 <seqdiag caption="This is a caption">
 seqdiag {
