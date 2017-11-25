@@ -83,3 +83,11 @@ $ foliant make pdf -p hello-foliant/
 ─────────────────────
 Result: Hello_Foliant-0.1.0-2017-11-24.pdf
 ```
+
+> **Important**
+>
+> To produce pdf, Pandoc first converts Markdown to tex and then coverts it to pdf. To convert pdf > from tex, you need to have a LaTeX distribution installed:
+>
+> -   [MacTeX](http://tug.org/mactex/) for macOS
+> -   [MikTeX](https://miktex.org/) for Windows
+> -   [TeXLive](https://tug.org/texlive/) for Linux
