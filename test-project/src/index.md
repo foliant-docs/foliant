@@ -16,7 +16,7 @@ Not baz.
   </include>
 </if>
 
-<seqdiag caption="This is a caption">
+<seqdiag caption="This is a caption" format="svg">
 seqdiag {
   browser  -> webserver [label = "GET /index.html"];
   browser <-- webserver;
