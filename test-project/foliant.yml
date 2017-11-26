@@ -14,8 +14,9 @@ preprocessors:
       aliases:
         foliant: https://github.com/foliant-docs/foliant.git
   - blockdiag:
-      antialias: true
-      font: !path Anonymous_Pro.ttf
+      params:
+        antialias: true
+        font: !path Anonymous_Pro.ttf
 
 backend_config:
   pandoc:
