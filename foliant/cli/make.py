@@ -28,7 +28,7 @@ class BackendValidator(Validator):
         if backend not in self.available_backends:
             raise ValidationError(
                 message=f'Backend {backend} not found. '
-                + f'Available backends are {", ".join(self.available_backends)}.',
+                + f'Available backends are: {", ".join(self.available_backends)}.',
                 cursor_position=0
             )
 
