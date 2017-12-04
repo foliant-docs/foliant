@@ -20,7 +20,7 @@ preprocessors:
 
 backend_config:
   pandoc:
-    template: templates/basic.tex
+    template: !path templates/basic.tex
     vars:
       title: *title
       second_title: This is a subtitle
@@ -31,9 +31,9 @@ backend_config:
       toc: true
       version: *version
     params:
-      pdf-engine: xelatex
+      pdf_engine: xelatex
       listings: true
-      number-sections: true
+      number_sections: true
     markdown_extensions: !include pandoc.yml#markdown_extensions
 
   mkdocs:
