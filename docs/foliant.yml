@@ -1,0 +1,26 @@
+title: Foliant Docs
+
+chapters:
+  - Intro: index.md
+  - Backends: backends.md
+  - Preprocessors: preprocessors.md
+  - CLI Extensions: cli.md
+
+preprocessors:
+  - includes:
+      aliases:
+        foliantcontrib: https://github.com/foliant-docs/foliantcontrib.git
+
+backend_config:
+  pandoc:
+    params:
+      pdf_engine: xelatex
+    markdown_extensions:
+      - backtick_code_blocks
+      - definition_lists
+  mkdocs:
+    mkdocs.yml:
+      theme:
+        name: material
+      markdown_extensions:
+        - def_list
