@@ -124,8 +124,9 @@ __folianttmp__
 .includescache
 .diagramscache
 
-# Foliant built files
+# Foliant built files and dirs
 *.pdf
 *.docx
+*.mkdocs
 
 /run.py
