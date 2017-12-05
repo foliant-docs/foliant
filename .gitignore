@@ -128,5 +128,6 @@ __folianttmp__
 *.pdf
 *.docx
 *.mkdocs
+*.mkdocs.src
 
 /run.py
