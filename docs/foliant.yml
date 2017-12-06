@@ -1,10 +1,18 @@
 title: Foliant Docs
 
 chapters:
-  - Intro: index.md
-  - Backends: backends.md
-  - Preprocessors: preprocessors.md
-  - CLI Extensions: cli.md
+  - index.md
+  - installation.md
+  - Backends:
+    - MkDocs: backends/mkdocs.md
+    - backends/pandoc.md
+  - Preprocessors:
+    - preprocessors/blockdiag.md
+    - preprocessors/flags.md
+    - preprocessors/flatten.md
+    - preprocessors/includes.md
+  - CLI Extensions:
+    - cli/init.md
 
 preprocessors:
   - includes:
@@ -22,5 +30,17 @@ backend_config:
     mkdocs.yml:
       theme:
         name: material
+        palette:
+          primary: cyan
+          accent: light blue
+        font:
+          text: PT Sans
+          code: PT Mono
+        logo:
+          icon: book
+        feature:
+          tabs: true
+
       markdown_extensions:
         - def_list
+        - codehilite
