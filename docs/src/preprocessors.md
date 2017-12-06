@@ -24,5 +24,5 @@
 ## Includes
 
 <include sethead="3" nohead="true" recursive="false">
-    $foliantcontrib#develop$flags/README.md
+    $foliantcontrib#develop$includes/README.md
 </include>
