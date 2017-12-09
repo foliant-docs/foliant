@@ -1,4 +1,4 @@
-title: Foliant Docs
+title: Foliant
 
 chapters:
   - index.md
@@ -16,6 +16,7 @@ chapters:
 
 preprocessors:
   - includes:
+      recursive: false
       aliases:
         foliantcontrib: https://github.com/foliant-docs/foliantcontrib.git
 
@@ -28,6 +29,8 @@ backend_config:
       - definition_lists
   mkdocs:
     mkdocs.yml:
+      repo_name: foliant-docs/foliant
+      repo_url: https://github.com/foliant-docs/foliant
       theme:
         name: material
         palette:
@@ -37,8 +40,11 @@ backend_config:
           text: PT Sans
           code: PT Mono
         logo:
-          icon: book
-
+          icon: import_contacts
+      extra:
+        social:
+          - type: github
+            link: https://github.com/foliant-docs/foliant
       markdown_extensions:
         - def_list
         - codehilite
