@@ -108,6 +108,8 @@ ENV/
 foliant/preprocessors/*
 !/foliant/preprocessors/__init__.py
 !/foliant/preprocessors/base.py
+!/foliant/preprocessors/_stash.py
+!/foliant/preprocessors/_unstash.py
 
 foliant/cli/*
 !/foliant/cli/__init__.py
@@ -123,6 +125,7 @@ foliant/config/*
 __folianttmp__
 .includescache
 .diagramscache
+.stash
 
 # Foliant built files and dirs
 *.pdf
