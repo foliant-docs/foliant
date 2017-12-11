@@ -16,7 +16,6 @@ chapters:
 
 preprocessors:
   - includes:
-      recursive: false
       aliases:
         foliantcontrib: https://github.com/foliant-docs/foliantcontrib.git
 
