@@ -51,7 +51,10 @@ class BaseBackend(object):
         elif isinstance(preprocessor, dict):
             (preprocessor_name, preprocessor_options), = (*preprocessor.items(),)
 
-        with spinner(f'Applying preprocessor {preprocessor_name}', self.quiet):
+        with spinner(
+            f'Applying preprocessor {preprocessor_name}',
+            self.quiet or preprocessor_name.startswith('_')
+            ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
                 preprocessor_module.Preprocessor(
@@ -82,9 +85,11 @@ class BaseBackend(object):
         copytree(src_path, self.working_dir)
 
         preprocessors = (
+            '_stash',
             *self.required_preprocessors_before,
             *self.config.get('preprocessors', ()),
-            *self.required_preprocessors_after
+            *self.required_preprocessors_after,
+            '_unstash'
         )
 
         for preprocessor in preprocessors:
