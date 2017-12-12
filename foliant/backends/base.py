@@ -85,11 +85,10 @@ class BaseBackend(object):
         copytree(src_path, self.working_dir)
 
         preprocessors = (
-            '_stash',
             *self.required_preprocessors_before,
             *self.config.get('preprocessors', ()),
             *self.required_preprocessors_after,
-            '_unstash'
+            '_unescape'
         )
 
         for preprocessor in preprocessors:
