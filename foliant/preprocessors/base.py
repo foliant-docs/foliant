@@ -9,7 +9,7 @@ class BasePreprocessor(object):
     '''Base preprocessor. All preprocessors must inherit from this one.'''
 
     defaults = {}
-    tags = None
+    tags = ()
 
     @staticmethod
     def get_options(options_string: str) -> Dict[str, OptionValue]:
@@ -62,7 +62,9 @@ class BasePreprocessor(object):
 
         if self.tags:
             self.pattern = re.compile(
-                rf'\<(?P<tag>{"|".join(self.tags)})(\s(?P<options>.*?))?\>(?P<body>.*?)\</(?P=tag)\>',
+                rf'(?<!\<)\<(?P<tag>{"|".join(self.tags)})'+
+                rf'(\s(?P<options>.*?))?\>'+
+                rf'(?P<body>.*?)\</(?P=tag)\>',
                 flags=re.MULTILINE|re.DOTALL
             )
 
