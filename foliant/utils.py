@@ -5,9 +5,29 @@ from pkgutil import iter_modules
 from importlib import import_module
 from shutil import rmtree
 from pathlib import Path
-from typing import Dict, Tuple, Type
+from typing import Dict, Tuple, Type, Set
 
 from halo import Halo
+
+
+def get_available_tags() -> Set[str]:
+    '''Extract ``tags`` attribute values from installed
+    ``foliant.preprocessors.*.Preprocessor`` classes.
+
+    :returns: Set of tags
+    '''
+
+    preprocessors_module = import_module('foliant.preprocessors')
+
+    result = set()
+
+    for importer, modname, _ in iter_modules(preprocessors_module.__path__):
+        if modname == 'base':
+            continue
+
+        result.update(importer.find_module(modname).load_module(modname).Preprocessor.tags)
+
+    return result
 
 
 def get_available_config_parsers() -> Dict[str, Type]:
