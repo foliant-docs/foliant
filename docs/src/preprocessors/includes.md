@@ -1,5 +1,5 @@
 # Includes
 
 <include sethead="2" nohead="true">
-    $foliantcontrib#develop$includes/README.md
+    $https://github.com/foliant-docs/foliantcontrib.includes.git#develop$README.md
 </include>

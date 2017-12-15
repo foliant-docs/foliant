@@ -1,5 +1,5 @@
 # Pandoc
 
 <include sethead="2" nohead="true">
-    $foliantcontrib#develop$pandoc/README.md
+    $https://github.com/foliant-docs/foliantcontrib.pandoc.git#develop$README.md
 </include>

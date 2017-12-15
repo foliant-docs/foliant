@@ -1,5 +1,5 @@
 # Flatten
 
 <include sethead="2" nohead="true">
-    $foliantcontrib#develop$flatten/README.md
+    $https://github.com/foliant-docs/foliantcontrib.flatten.git#develop$README.md
 </include>

@@ -1,5 +1,5 @@
 # Blockdiag
 
 <include sethead="2" nohead="true">
-    $foliantcontrib#develop$blockdiag/README.md
+    $https://github.com/foliant-docs/foliantcontrib.blockdiag.git#develop$README.md
 </include>

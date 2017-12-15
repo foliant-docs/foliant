@@ -15,9 +15,7 @@ chapters:
     - cli/init.md
 
 preprocessors:
-  - includes:
-      aliases:
-        foliantcontrib: https://github.com/foliant-docs/foliantcontrib.git
+  - includes
 
 backend_config:
   pandoc:
