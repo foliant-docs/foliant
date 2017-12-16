@@ -43,6 +43,8 @@ backend_config:
         social:
           - type: github
             link: https://github.com/foliant-docs/foliant
+          - type: file-pdf-o
+            link: foliant-docs.pdf
       markdown_extensions:
         - def_list
         - codehilite
