@@ -28,6 +28,9 @@ class BaseBackend(object):
         are appended.
         '''
 
+        if 'slug' in self.config:
+            return self.config['slug']
+
         components = []
 
         components.append(self.config['title'].replace(' ', '_'))
