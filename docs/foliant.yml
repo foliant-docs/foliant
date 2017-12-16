@@ -37,8 +37,8 @@ backend_config:
         font:
           text: PT Sans
           code: PT Mono
-        logo:
-          icon: import_contacts
+        logo: octopus.svg
+        favicon: octopus.ico
       extra:
         social:
           - type: github
