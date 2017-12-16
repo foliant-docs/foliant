@@ -129,6 +129,7 @@ __folianttmp__
 
 # Foliant built files and dirs
 *.pdf
+!docs/src/foliant-docs.pdf
 *.docx
 *.mkdocs
 *.mkdocs.src
