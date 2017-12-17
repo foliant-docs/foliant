@@ -37,14 +37,14 @@ backend_config:
         font:
           text: PT Sans
           code: PT Mono
-        logo: octopus.svg
-        favicon: octopus.ico
+        logo: assets/octopus.svg
+        favicon: assets/octopus.ico
       extra:
         social:
           - type: github
             link: https://github.com/foliant-docs/foliant
           - type: file-pdf-o
-            link: foliant-docs.pdf
+            link: assets/foliant-docs.pdf
       markdown_extensions:
         - def_list
         - codehilite
