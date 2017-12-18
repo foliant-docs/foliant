@@ -37,8 +37,8 @@ backend_config:
         font:
           text: PT Sans
           code: PT Mono
-        logo: assets/octopus.svg
-        favicon: assets/octopus.ico
+        logo: assets/octopus-white.svg
+        favicon: assets/octopus-black-32.ico
       extra:
         social:
           - type: github
