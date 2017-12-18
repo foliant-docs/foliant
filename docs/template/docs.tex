@@ -1,24 +1,26 @@
 \documentclass{article}
 
 \usepackage{graphicx}
+\usepackage{hyperref}
 
-\title{My first document}
-\date{2017-12-17}
+$if(listings)$
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
+$endif$
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\title{Foliant}
 \author{Konstantin Molchanov}
 
 \begin{document}
     \pagenumbering{gobble}
     \maketitle
-    \includegraphics[width=\linewidth]{octopus-black-512.png}
+    \includegraphics[width=\linewidth]{$logo$}
     \newpage
     \pagenumbering{arabic}
 
-    \section{Section}
-
-    Hello, World!
-
-    \subsection{Subsection}
-
-    Structuring a document is easy!
+    $body$
 
 \end{document}

@@ -20,11 +20,18 @@ preprocessors:
 
 backend_config:
   pandoc:
+    template: !path template/docs.tex
+    vars:
+      logo: !path template/octopus-black-512.png
     params:
       pdf_engine: xelatex
+      listings: true
     markdown_extensions:
       - backtick_code_blocks
       - definition_lists
+      - raw_tex
+      - all_symbols_escapable
+      - smart
   mkdocs:
     mkdocs.yml:
       repo_name: foliant-docs/foliant
