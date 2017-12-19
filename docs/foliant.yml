@@ -29,9 +29,6 @@ backend_config:
     markdown_extensions:
       - backtick_code_blocks
       - definition_lists
-      - raw_tex
-      - all_symbols_escapable
-      - smart
   mkdocs:
     mkdocs.yml:
       repo_name: foliant-docs/foliant
