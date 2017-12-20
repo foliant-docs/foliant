@@ -108,8 +108,7 @@ ENV/
 foliant/preprocessors/*
 !/foliant/preprocessors/__init__.py
 !/foliant/preprocessors/base.py
-!/foliant/preprocessors/_stash.py
-!/foliant/preprocessors/_unstash.py
+!/foliant/preprocessors/_unescape.py
 
 foliant/cli/*
 !/foliant/cli/__init__.py
