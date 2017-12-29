@@ -33,6 +33,7 @@ backend_config:
     mkdocs.yml:
       repo_name: foliant-docs/foliant
       repo_url: https://github.com/foliant-docs/foliant
+      edit_uri: edit/develop/edit
       theme:
         name: material
         palette:
