@@ -1,4 +1,4 @@
 foliantcontrib.mkdocs
-foliantcontrib.pandoc
+foliantcontrib.pandoc >= 1.0.2
 foliantcontrib.includes
 mkdocs-material
