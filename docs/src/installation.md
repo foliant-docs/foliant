@@ -1,8 +1,8 @@
 # Installation
 
-Installing Foliant to your system can be split into three stages: installing Python with your system's package manager, installing Foliant with pip, and optionally installing Pandoc and TeXLive bundle. Below you'll find the instructions for three popluar platforms: macOS, Windows, and Ubuntu.
+Installing Foliant to your system can be split into three stages: installing Python with your system's package manager, installing Foliant with pip, and optionally installing Pandoc and TeXLive bundle. Below you'll find the instructions for three popular platforms: macOS, Windows, and Ubuntu.
 
-Alternatively, you can avoid installing Foliant and its dependencies on your system by using Docker and the [official Foliant Docker images](https://hub.docker.com/r/foliant/foliant/). If that's the path you want to follow, [skip straight to the Docker instructions](#docker).
+Alternatively, you can avoid installing Foliant and its dependencies on your system by using Docker and the [official Foliant Docker images](https://hub.docker.com/r/foliant/foliant/). If that's the path you want to follow, [skip straight to the Docker instructions](<if targets="pdf">#docker</if><if targets="site">docker.md</if>).
 
 
 ## macOS
@@ -56,26 +56,3 @@ Alternatively, you can avoid installing Foliant and its dependencies on your sys
 
         $ apt update && apt install -y wget texlive-full librsvg2-bin
         $ wget https://github.com/jgm/pandoc/releases/download/2.0.5/pandoc-2.0.5-1-amd64.deb && dpkg -i pandoc-2.0.5-1-amd64.deb
-
-
-## Docker
-
-1.  Install [Docker](https://www.docker.com/) for your platform.
-
-2.  Create a Dockerfile in your project directory (if you use `foliant init`, the Dockerfile is created automatically):
-
-        FROM foliant/foliant
-
-    If you plan to bake pdf or docx, use the image with Pandoc and TeXLive:
-
-        FROM foliant/foliant:pandoc
-
-    > Pandoc and TeXLive are not included in the default image because they add about 5 GB to the image size. For situations where you're interesing in site generation only, this would add way too much overhead.
-
-3.  Build the image for your project:
-
-        $ docker build -t my-project .
-
-4.  Run Foliant in Docker:
-
-        $ docker run --rm -it -v (pwd):/usr/src/app -w /usr/src/app my-project make pdf

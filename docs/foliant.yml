@@ -4,6 +4,7 @@ slug: foliant-docs
 chapters:
   - index.md
   - installation.md
+  - docker.md
   - Backends:
     - MkDocs: backends/mkdocs.md
     - backends/pandoc.md
@@ -16,6 +17,7 @@ chapters:
     - cli/init.md
 
 preprocessors:
+  - flags
   - includes
 
 backend_config:
