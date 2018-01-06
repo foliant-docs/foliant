@@ -2,7 +2,7 @@
 
 Installing Foliant to your system can be split into three stages: installing Python with your system's package manager, installing Foliant with pip, and optionally installing Pandoc and TeXLive bundle. Below you'll find the instructions for three popular platforms: macOS, Windows, and Ubuntu.
 
-Alternatively, you can avoid installing Foliant and its dependencies on your system by using Docker and the [official Foliant Docker images](https://hub.docker.com/r/foliant/foliant/). If that's the path you want to follow, [skip straight to the Docker instructions](<if targets="pdf">#docker</if><if targets="site, ghp" kind="any">docker.md</if>).
+Alternatively, you can avoid installing Foliant and its dependencies on your system by using Docker and the [official Foliant Docker images](https://hub.docker.com/r/foliant/foliant/). If that's the path you want to follow, [skip straight to the Docker instructions](<if backends="pandoc">#docker</if><if backends="mkdocs">docker.md</if>).
 
 
 ## macOS
