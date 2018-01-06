@@ -14,9 +14,10 @@ class BaseBackend(object):
     required_preprocessors_before = ()
     required_preprocessors_after = ()
 
-    def __init__(self, project_path: Path, config: dict, quiet=False):
+    def __init__(self, project_path: Path, config: dict, context: dict, quiet=False):
         self.project_path = project_path
         self.config = config
+        self.context = context
         self.quiet = quiet
 
         self.working_dir = project_path / config['tmp_dir']
@@ -63,6 +64,7 @@ class BaseBackend(object):
                 preprocessor_module.Preprocessor(
                     self.project_path,
                     self.config,
+                    self.context,
                     preprocessor_options
                 ).apply()
 

@@ -111,10 +111,20 @@ class Cli(Cliar):
         if config is None:
             return
 
+        context = {
+            'target': target,
+            'backend': backend
+        }
+
         backend_module = import_module(f'foliant.backends.{backend}')
 
         with tmp(project_path/config['tmp_dir'], keep_tmp):
-            result = backend_module.Backend(project_path, config, quiet).preprocess_and_make(target)
+            result = backend_module.Backend(
+                project_path,
+                config,
+                context,
+                quiet
+            ).preprocess_and_make(target)
 
         if result:
             if not quiet:

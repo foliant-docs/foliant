@@ -53,9 +53,10 @@ class BasePreprocessor(object):
             for option in option_pattern.finditer(options_string)
         }
 
-    def __init__(self, project_path: Path, config: dict, options={}):
+    def __init__(self, project_path: Path, config: dict, context: dict, options={}):
         self.project_path = project_path
         self.config = config
+        self.context = context
         self.options = {**self.defaults, **options}
 
         self.working_dir = project_path / config['tmp_dir']
