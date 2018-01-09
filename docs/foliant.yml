@@ -1,4 +1,4 @@
-title: Foliant
+title: &title Foliant
 slug: foliant-docs
 
 chapters:
@@ -24,6 +24,8 @@ backend_config:
   pandoc:
     template: !path template/docs.tex
     vars:
+      title: *title
+      subtitle: User's Manual
       logo: !path template/octopus-black-512.png
     params:
       pdf_engine: xelatex
