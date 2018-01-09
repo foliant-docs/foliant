@@ -18,4 +18,4 @@
 
 4.  Run Foliant in Docker:
 
-        $ docker run --rm -it -v (pwd):/usr/src/app -w /usr/src/app my-project make pdf
+        $ docker run --rm -it -v `pwd`:/usr/src/app -w /usr/src/app my-project make pdf
