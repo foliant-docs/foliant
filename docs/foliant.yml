@@ -50,7 +50,7 @@ backend_config:
           - type: github
             link: https://github.com/foliant-docs/foliant
           - type: file-pdf-o
-            link: /assets/foliant-docs.pdf
+            link: /foliant/assets/foliant-docs.pdf
       markdown_extensions:
         - def_list
         - codehilite
