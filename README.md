@@ -36,7 +36,7 @@ $ pip install foliantcontrib.pandoc
 ```shell
 $ foliant init
 Enter the project name: Hello Foliant
-v Generating Foliant project
+✓ Generating Foliant project
 ─────────────────────
 Project "Hello Foliant" created in /path/to/hello-foliant
 ```
@@ -58,9 +58,9 @@ hello-foliant/
 
 ```shell
 $ foliant make site -p hello-foliant/
-v Parsing config
-v Applying preprocessor mkdocs
-v Making site with MkDocs
+✓ Parsing config
+✓ Applying preprocessor mkdocs
+✓ Making site with MkDocs
 ─────────────────────
 Result: Hello_Foliant-0.1.0-2017-11-24.mkdocs
 ```
@@ -77,9 +77,9 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
 ```shell
 $ foliant make pdf -p hello-foliant/
-v Parsing config
-v Applying preprocessor mkdocs
-v Making pdf with Pandoc
+✓ Parsing config
+✓ Applying preprocessor mkdocs
+✓ Making pdf with Pandoc
 ─────────────────────
 Result: Hello_Foliant-0.1.0-2017-11-24.pdf
 ```
