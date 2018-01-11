@@ -30,6 +30,8 @@ backend_config:
     params:
       pdf_engine: xelatex
       listings: true
+    markdown_extensions:
+      - backtick_code_blocks
   mkdocs:
     mkdocs.yml:
       repo_name: foliant-docs/foliant
