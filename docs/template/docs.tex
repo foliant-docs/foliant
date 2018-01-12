@@ -343,8 +343,11 @@ $endif$
 \defaultfontfeatures{Ligatures=TeX}
 \newfontfamily\headingfont[]{PT Sans}
 \newfontfamily\headingfontlight[]{PT Sans}
-%\newfontfamily\headingfont[]{Geometria Medium}
-%\newfontfamily\headingfontreg[]{Geometria}
+\newfontfamily\symbolsfont[]{DejaVu Sans}
+
+\usepackage[Latin, Cyrillics, Symbols]{ucharclasses}
+\setTransitionsForSymbols{\begingroup\symbolsfont}{\endgroup}
+
 
 \let\[\zz\let\]\zzz
 
