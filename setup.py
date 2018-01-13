@@ -27,7 +27,7 @@ setup(
     install_requires=[
         'PyYAML',
         'cliar>=1.1.9',
-        'halo',
+        'halo>=0.0.10',
         'prompt_toolkit'
     ],
     classifiers=[
