@@ -118,7 +118,7 @@ def spinner(text: str, quiet=False):
 
     except Exception as exception:
         if not quiet:
-            halo.fail(exception)
+            halo.fail(str(exception))
         else:
             halo.stop()
 
