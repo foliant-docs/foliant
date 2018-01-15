@@ -5,6 +5,7 @@ chapters:
   - index.md
   - installation.md
   - docker.md
+  - quickstart.md
   - Backends:
     - MkDocs: backends/mkdocs.md
     - backends/pandoc.md
@@ -13,10 +14,14 @@ chapters:
     - preprocessors/flags.md
     - preprocessors/flatten.md
     - preprocessors/includes.md
+    - preprocessors/macros.md
   - CLI Extensions:
     - cli/init.md
 
 preprocessors:
+  - macros:
+      macros:
+        ref: <if backends="pandoc">{0}</if><if backends="mkdocs">{1}</if>
   - flags
   - includes
 
