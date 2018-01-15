@@ -2,4 +2,5 @@ foliantcontrib.mkdocs
 foliantcontrib.pandoc >= 1.0.2
 foliantcontrib.includes
 foliantcontrib.flags >= 1.0.1
+foliantcontrib.macros >= 1.0.1
 mkdocs-material
