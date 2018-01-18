@@ -21,7 +21,7 @@ chapters:
 preprocessors:
   - macros:
       macros:
-        ref: <if backends="pandoc">{0}</if><if backends="mkdocs">{1}</if>
+        ref: <if backends="pandoc">{pandoc}</if><if backends="mkdocs">{mkdocs}</if>
   - flags
   - includes
 
