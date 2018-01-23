@@ -1,4 +1,4 @@
-# Docker
+# Run in Docker <if backends="pandoc">{#docker}</if>
 
 1.  Install [Docker](https://www.docker.com/) for your platform.
 
@@ -10,12 +10,16 @@
 
         FROM foliant/foliant:pandoc
 
-    > Pandoc and TeXLive are not included in the default image because they add about 5 GB to the image size. For situations where you're interesing in site generation only, this would add way too much overhead.
+    > Pandoc and TeXLive are not included in the default image because they add about 5 GB to the image size. If you're interested in site generation only, this would add huge unnecessary overhead.
 
 3.  Build the image for your project:
 
         $ docker build -t my-project .
 
-4.  Run Foliant in Docker:
+4.  Run Foliant with Docker:
 
         $ docker run --rm -it -v `pwd`:/usr/src/app -w /usr/src/app my-project make pdf
+
+    In PowerShell:
+
+        $ docker run --rm -it -v ${PWD}:/usr/src/app -w /usr/src/app my-project make pdf
