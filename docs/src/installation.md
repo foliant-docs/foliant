@@ -13,7 +13,7 @@ Alternatively, you can avoid installing Foliant and its dependencies on your sys
 
 2.  Install Foliant with pip:
 
-        $ pip3 install foliant
+        $ python3 -m pip install foliant foliantcontrib.init
 
 3.  If you plan to bake pdf or docx, install Pandoc and MacTeX with Homebrew:
 
@@ -31,7 +31,7 @@ Alternatively, you can avoid installing Foliant and its dependencies on your sys
 
 2.  Install Foliant with pip:
 
-        $ pip install foliant
+        $ python -m pip install foliant foliantcontrib.init
 
 3.  If you plan to bake pdf or docx, install Pandoc and MikTeX with Scoop:
 
@@ -50,7 +50,7 @@ Alternatively, you can avoid installing Foliant and its dependencies on your sys
 
 2.  Install Foliant with pip:
 
-        $ pip3 install foliant
+        $ python3.6 -m pip install foliant foliantcontrib.init
 
 3.  If you plan to bake pdf or docx, install Pandoc and TeXLive with apt and wget:
 
