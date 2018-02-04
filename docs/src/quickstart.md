@@ -63,7 +63,7 @@ Result: Hello_Foliant-2018-01-23.mkdocs
 ```
 
 
-That's it! Your static, MkDocs-powered website is ready. To serve it, use any web server. Since you must have Python installed, you can use its built-in server:
+That's it! Your static, MkDocs-powered website is ready. To view it, use any web server, for example, Python's built-in one:
 
 ```bash
 $ cd Hello_Foliant-2018-01-23.mkdocs
@@ -76,27 +76,40 @@ Open [localhost:8000](http://localhost:8000) in your web browser. You should see
 ![Basic Foliant project build with MkDocs](_img/basic-mkdocs.png)
 
 
-## Build PDF
+## Build Pdf
+
+>   **Note**
+>
+>   To build pdfs with Pandoc, make sure you have it and TeXLive installed (see [Installation](<macro pandoc="#installation" mkdocs="installation.md">ref</macro>)).
 
 In the project directory, run:
 
 ```bash
 $ foliant make pdf
 ✔ Parsing config
-✔ Applying preprocessor mkdocs
-✔ Making site with MkDocs
+✔ Applying preprocessor flatten
+✔ Making pdf with Pandoc
 ─────────────────────
 Result: Hello_Foliant-2018-01-23.pdf
 ```
 
-That's it! Your static, MkDocs-powered website is ready. To serve it, use any web server. Since you must have Python installed, you can use its built-in server:
+If you want to build pdf with Docker, make sure you use `foliant/foliant:pandoc` as your base image, i.e. that your `Dockerfile` starts with:
 
-```bash
-$ cd Hello_Foliant-2018-01-23.mkdocs
-$ python -m http.server
-Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+```docker
+FROM foliant/foliant:pandoc
 ```
 
-Open [localhost:8000](http://localhost:8000) in your web browser. You should see something like this:
+Then, run this command in the project directory:
 
-![Basic Foliant project build with MkDocs](_img/basic-mkdocs.png)
+```bash
+$ docker-compose run --rm hello-foliant make pdf
+✔ Parsing config
+✔ Applying preprocessor flatten
+✔ Making pdf with Pandoc
+─────────────────────
+Result: Hello_Foliant-2018-01-23.pdf
+```
+
+Your standalone pdf documentation is ready! Open it with your favorite pdf viewer and you should see something like this:
+
+![Basic Foliant project build with MkDocs](_img/basic-pdf.png)
