@@ -2,7 +2,7 @@
 
 Installing Foliant to your system can be split into three stages: installing Python with your system's package manager, installing Foliant with pip, and optionally installing Pandoc and TeXLive bundle. Below you'll find the instructions for three popular platforms: macOS, Windows, and Ubuntu.
 
-Alternatively, you can avoid installing Foliant and its dependencies on your system by using Docker and the [official Foliant Docker images](https://hub.docker.com/r/foliant/foliant/). If that's the path you want to follow, [skip straight to the Docker instructions](<macro pandoc="#docker" mkdocs="docker.md">ref</macro>).
+Alternatively, you can avoid installing Foliant and its dependencies on your system by using [Docker and Docker Compose](#docker).
 
 
 ## macOS
@@ -56,3 +56,32 @@ Alternatively, you can avoid installing Foliant and its dependencies on your sys
 
         $ apt update && apt install -y wget texlive-full librsvg2-bin
         $ wget https://github.com/jgm/pandoc/releases/download/2.0.5/pandoc-2.0.5-1-amd64.deb && dpkg -i pandoc-2.0.5-1-amd64.deb
+
+## Docker
+
+If you use [`foliant init`](<macro mkdocs="cli/init.md" pandoc="#init">ref</macro>), `Dockerfile` and `docker-compose.yml` files to build the project are created automatically. To build the project, run:
+
+```bash
+# Site:
+$ docker-compose run --rm <project-name> make site
+# Pdf:
+$ docker-compose run --rm <project-name> make pdf
+```
+
+Alternatively, you can create the Dockerfile manually using Foliant's official Docker images:
+
+```docker
+FROM foliant/foliant
+# If you plan to bake PDFs, uncomment this line and comment the line above:
+# FROM foliant/foliant:pandoc
+RUN pip3 install foliantcontrib.mkdocs
+```
+
+Then, run Foliant in a container:
+
+```bash
+# Site:
+$ docker run --rm -it -v `pwd`:/usr/src/app -w /usr/src/app my-project make site
+# Pdf:
+$ docker run --rm -it -v `pwd`:/usr/src/app -w /usr/src/app my-project make pdf
+```

@@ -4,7 +4,6 @@ slug: foliant-docs
 chapters:
   - index.md
   - installation.md
-  - docker.md
   - quickstart.md
   - Backends:
     - MkDocs: backends/mkdocs.md
