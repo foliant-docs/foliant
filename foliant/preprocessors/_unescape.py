@@ -9,7 +9,7 @@ class Preprocessor(BasePreprocessor):
         super().__init__(*args, **kwargs)
 
         self.pattern = re.compile(
-            rf'\<\<(?P<tag>{"|".join(get_available_tags())})'+
+            rf'\<\<(?P<tag>.+)'+
             rf'(\s(?P<options>.*?))?\>'+
             rf'(?P<body>.*?)\</(?P=tag)\>',
             flags=re.MULTILINE|re.DOTALL
