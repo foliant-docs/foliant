@@ -169,3 +169,9 @@ Initial release.
 - Add `startnum` and `fancy_lists` pandoc extensions. Be aware that it'll break documents that use standard markdown enumerators which ignore list numbers themselves.
 - Diagrams: Diagram sources and generated images from all backends used to sit in "diagrams" directory. Now there are subdirs for each backend.
 - Includes: Unresolved include definitions are kept in the source. They used to get replaced with ''. Fixes issue #28.
+
+
+# 0.4.8
+
+- Fixed PlantUML diagrams broken in 0.4.7.
+
