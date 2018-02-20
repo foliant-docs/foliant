@@ -173,5 +173,10 @@ Initial release.
 
 # 0.4.8
 
-- Fixed PlantUML diagrams broken in 0.4.7.
+- Fix PlantUML diagrams broken in 0.4.7.
+
+
+# 0.4.9
+
+- Fix Dockerfile by installing and configuring tzdata.
 
