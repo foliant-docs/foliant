@@ -3,7 +3,10 @@ LABEL authors="Konstantin Molchanov <moigagoo@live.com>"
 
 ARG FOLIANT_VERSION
 
-RUN apt-get update; apt-get install -y \
+RUN apt-get update
+RUN apt-get install -y tzdata
+RUN dpkg-reconfigure -f noninteractive tzdata
+RUN apt-get install -y \
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-font-utils \
