@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 0.1.0
 
 Initial release.
@@ -180,3 +181,9 @@ Initial release.
 
 - Fix Dockerfile by installing and configuring tzdata.
 
+=======
+# 1.0.0
+
+Complete rewrite.
+
+>>>>>>> feature/nextgen

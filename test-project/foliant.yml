@@ -1,0 +1,43 @@
+title: &title Foliant 1.0.0 Test Project
+version: &version 1.17
+
+chapters:
+  - index.md
+  - Section 1:
+    - Subsection 1: section1/subsection1.md
+
+preprocessors:
+  - flags:
+      flags:
+        - foo
+  - includes:
+      aliases:
+        foliant: https://github.com/foliant-docs/foliant.git
+  - blockdiag:
+      params:
+        antialias: true
+        font: !path Anonymous_Pro.ttf
+
+backend_config:
+  pandoc:
+    template: !path templates/basic.tex
+    vars:
+      title: *title
+      second_title: This is a subtitle
+      logo: !path templates/logo.png
+      lang: ru
+      company: Рестрим
+      year: 2017
+      toc: true
+      version: *version
+    params:
+      pdf_engine: xelatex
+      listings: true
+      number_sections: true
+    markdown_extensions: !include pandoc.yml#markdown_extensions
+
+  mkdocs:
+    mkdocs.yml:
+      site_name: *title
+      site_url: http://example.com
+      site_author: Konstantin Molchanov

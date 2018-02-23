@@ -1,47 +1,49 @@
 from setuptools import setup, find_packages
 
-import foliant
 
+SHORT_DESCRIPTION = 'Modular, Markdown-based documentation generator that makes \
+pdf, docx, html, and more.'
 
-def readme():
-    try:
-        with open("README.rst", encoding="utf8") as f:
-            return f.read()
-    except IOError:
-        pass
+try:
+    with open('README.md', encoding='utf8') as readme:
+        LONG_DESCRIPTION = readme.read()
+
+except FileNotFoundError:
+    LONG_DESCRIPTION = SHORT_DESCRIPTION
+
 
 setup(
-    name="foliant",
-    version=foliant.__version__,
-    url="https://github.com/foliant-docs/foliant",
-    download_url="https://pypi.org/project/foliant",
-    license="MIT",
-    author="Konstantin Molchanov",
-    author_email="moigagoo@live.com",
-    description="Markdown-based, Pandoc-powered documentation generator.",
-    long_description=readme(),
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Topic :: Documentation",
-        "Topic :: Utilities",
-    ],
+    name='foliant',
+    version='1.0.0',
+    url='https://github.com/foliant-docs/foliant',
+    download_url='https://pypi.org/project/foliant',
+    license='MIT',
+    author='Konstantin Molchanov',
+    author_email='moigagoo@live.com',
+    description=SHORT_DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    platforms="any",
+    platforms='any',
     install_requires=[
-        "PyDrive>=1.2.1",
-        "docopt",
-        "seqdiag",
-        "colorama",
-        "PyYAML"
+        'PyYAML',
+        'cliar>=1.1.9',
+        'halo>=0.0.10',
+        'prompt_toolkit'
+    ],
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Documentation',
+        'Topic :: Utilities',
+        'Programming Language :: Python :: 3.6'
     ],
     entry_points={
-        "console_scripts": [
-            "foliant=foliant.cli:main"
+        'console_scripts': [
+            'foliant=foliant.cli:entry_point'
         ]
     }
 )
