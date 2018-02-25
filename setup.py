@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+from foliant import __version__ as foliant_version
+
 
 SHORT_DESCRIPTION = 'Modular, Markdown-based documentation generator that makes \
 pdf, docx, html, and more.'
@@ -14,7 +16,7 @@ except FileNotFoundError:
 
 setup(
     name='foliant',
-    version='1.0.0',
+    version=foliant_version,
     url='https://github.com/foliant-docs/foliant',
     download_url='https://pypi.org/project/foliant',
     license='MIT',
