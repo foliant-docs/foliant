@@ -22,14 +22,13 @@ deploy:
 after_deploy:
   - git clone https://github.com/foliant-docs/docker.git
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build -t foliant/foliant:slim -t foliant/foliant:$TRAVIS_TAG-slim --build-arg VERSION=$TRAVIS_TAG -f Dockerfile-slim docker
+  - cd docker
+  - docker build -t foliant/foliant:slim -t foliant/foliant:$TRAVIS_TAG-slim --build-arg VERSION=$TRAVIS_TAG -f Dockerfile-slim .
   - docker push foliant/foliant:slim
   - docker push foliant/foliant:$TRAVIS_TAG-slim
-
-  - docker build -t foliant/foliant -t foliant/foliant:$TRAVIS_TAG docker
+  - docker build -t foliant/foliant -t foliant/foliant:$TRAVIS_TAG .
   - docker push foliant/foliant
   - docker push foliant/foliant:$TRAVIS_TAG
-
-  - docker build -t foliant/foliant:pandoc -t foliant/foliant:$TRAVIS_TAG-pandoc -f Dockerfile-pandoc docker
+  - docker build -t foliant/foliant:pandoc -t foliant/foliant:$TRAVIS_TAG-pandoc -f Dockerfile-pandoc .
   - docker push foliant/foliant:pandoc
   - docker push foliant/foliant:$TRAVIS_TAG-pandoc
