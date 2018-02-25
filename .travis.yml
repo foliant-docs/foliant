@@ -21,7 +21,7 @@ deploy:
 
 after_deploy:
   - git clone https://github.com/foliant-docs/docker.git
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - cd docker
   - docker build -t foliant/foliant:slim -t foliant/foliant:$TRAVIS_TAG-slim --build-arg VERSION=$TRAVIS_TAG -f Dockerfile-slim .
   - docker push foliant/foliant:slim
