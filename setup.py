@@ -24,6 +24,7 @@ setup(
     author_email='moigagoo@live.com',
     description=SHORT_DESCRIPTION,
     long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     platforms='any',
     install_requires=[
