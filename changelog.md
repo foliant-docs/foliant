@@ -9,3 +9,8 @@
 # 1.0.2
 
 -   Use README.md as package description.
+
+
+# 1.0.3
+
+-   Fix critical issue when config parsing would fail if any config value contained non-latin characters.
