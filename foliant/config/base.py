@@ -24,7 +24,7 @@ class BaseParser(object):
         :returns: Dictionary representing the YAML tree
         '''
 
-        with open(self.config_path) as config_file:
+        with open(self.config_path, encoding='utf8') as config_file:
             config = {**self._defaults, **load(config_file)}
 
             config['src_dir'] = Path(config['src_dir']).expanduser()
