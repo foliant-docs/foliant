@@ -104,6 +104,7 @@ ENV/
 /foliant/backends/*
 !/foliant/backends/__init__.py
 !/foliant/backends/base.py
+!/foliant/backends/pre.py
 
 foliant/preprocessors/*
 !/foliant/preprocessors/__init__.py
