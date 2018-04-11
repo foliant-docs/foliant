@@ -5,6 +5,10 @@ from foliant.backends.base import BaseBackend
 
 
 class Backend(BaseBackend):
+    '''Backend that just applies its preprocessors and returns a project
+    that doesn't need any further preprocessing.
+    '''
+
     targets = 'pre',
 
     def __init__(self, *args, **kwargs):
