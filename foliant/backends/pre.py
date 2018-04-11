@@ -14,7 +14,9 @@ class Backend(BaseBackend):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._preprocessed_dir_name = f'{self.get_slug()}.pre'
+        self._preprocessed_config = self.config.get('backend_config', {}).get('pre', {})
+
+        self._preprocessed_dir_name = f'{self._preprocessed_config.get("slug", self.get_slug())}.pre'
 
     def make(self, target: str) -> str:
         rmtree(self._preprocessed_dir_name, ignore_errors=True)
