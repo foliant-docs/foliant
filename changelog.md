@@ -14,3 +14,8 @@
 # 1.0.3
 
 -   Fix critical issue when config parsing would fail if any config value contained non-latin characters.
+
+
+# 1.0.4
+
+-   Add `pre` backend with `pre` target that applies the preprocessors from the config and returns a Foliant project that doesn't require any preprocessing.
