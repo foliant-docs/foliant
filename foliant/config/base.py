@@ -1,4 +1,5 @@
 from pathlib import Path
+from logging import Logger
 from typing import Dict
 
 from yaml import load
@@ -10,8 +11,9 @@ class BaseParser(object):
         'tmp_dir': Path('./__folianttmp__')
     }
 
-    def __init__(self, project_path: Path, config_file_name: str):
+    def __init__(self, project_path: Path, logger: Logger, config_file_name: str):
         self.project_path = project_path
+        self.logger = logger
         self.config_path = project_path / config_file_name
 
     def parse(self) -> Dict:
