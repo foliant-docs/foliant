@@ -2,8 +2,7 @@
 
 from pathlib import Path
 from importlib import import_module
-from time import time
-from logging import getLogger, FileHandler, Formatter, DEBUG, WARNING
+from logging import DEBUG, WARNING
 from typing import List
 
 from cliar import Cliar, set_arg_map, set_metavars, set_help
@@ -61,6 +60,10 @@ class Cli(Cliar):
         ):
         '''Make TARGET with BACKEND.'''
 
+        self.logger.setLevel(DEBUG if debug else WARNING)
+
+        self.logger.info('Build started.')
+
         available_backends = get_available_backends()
 
         if backend:
@@ -100,17 +103,9 @@ class Cli(Cliar):
                 except KeyboardInterrupt:
                     return
 
-        logger = getLogger('foliant')
-        logger.setLevel(DEBUG if debug else WARNING)
-
-        handler = FileHandler(f'{int(time())}.log', delay=True)
-        handler.setFormatter(Formatter('%(asctime)s | %(name)16s | %(levelname)8s | %(message)s'))
-
-        logger.addHandler(handler)
-
-        with spinner('Parsing config', quiet):
+        with spinner('Parsing config', self.logger, quiet):
             try:
-                config = Parser(project_path, logger, self.config_file_name).parse()
+                config = Parser(project_path, self.logger, self.config_file_name).parse()
 
             except FileNotFoundError as exception:
                 config = None
@@ -121,6 +116,7 @@ class Cli(Cliar):
                 raise type(exception)(f'Invalid config: {exception}')
 
         if config is None:
+            self.logger.critical('Config parsing failed.')
             return
 
         context = {
@@ -130,16 +126,20 @@ class Cli(Cliar):
 
         backend_module = import_module(f'foliant.backends.{backend}')
 
+        self.logger.debug(f'Imported backend {backend_module}.')
+
         with tmp(project_path/config['tmp_dir'], keep_tmp):
             result = backend_module.Backend(
                 project_path,
-                logger,
+                self.logger,
                 config,
                 context,
                 quiet
             ).preprocess_and_make(target)
 
         if result:
+            self.logger.info(f'Result: {result}')
+
             if not quiet:
                 print('─────────────────────')
                 print(f'Result: {result}')
