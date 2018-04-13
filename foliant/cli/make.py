@@ -2,6 +2,8 @@
 
 from pathlib import Path
 from importlib import import_module
+from time import time
+from logging import getLogger, FileHandler, Formatter, DEBUG, WARNING
 from typing import List
 
 from cliar import Cliar, set_arg_map, set_metavars, set_help
@@ -44,7 +46,8 @@ class Cli(Cliar):
             'backend': 'Backend to make the target with: Pandoc, MkDocs, etc.',
             'project_path': 'Path to the Foliant project',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
-            'keep_tmp': 'Keep the tmp directory after the build.'
+            'keep_tmp': 'Keep the tmp directory after the build.',
+            'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
         }
     )
     def make(
@@ -53,7 +56,8 @@ class Cli(Cliar):
             backend='',
             project_path=Path('.'),
             quiet=False,
-            keep_tmp=False
+            keep_tmp=False,
+            debug=False
         ):
         '''Make TARGET with BACKEND.'''
 
@@ -96,9 +100,17 @@ class Cli(Cliar):
                 except KeyboardInterrupt:
                     return
 
+        logger = getLogger('foliant')
+        logger.setLevel(DEBUG if debug else WARNING)
+
+        handler = FileHandler(f'{int(time())}.log', delay=True)
+        handler.setFormatter(Formatter('%(asctime)s | %(name)16s | %(levelname)8s | %(message)s'))
+
+        logger.addHandler(handler)
+
         with spinner('Parsing config', quiet):
             try:
-                config = Parser(project_path, self.config_file_name).parse()
+                config = Parser(project_path, logger, self.config_file_name).parse()
 
             except FileNotFoundError as exception:
                 config = None
@@ -121,6 +133,7 @@ class Cli(Cliar):
         with tmp(project_path/config['tmp_dir'], keep_tmp):
             result = backend_module.Backend(
                 project_path,
+                logger,
                 config,
                 context,
                 quiet
