@@ -13,7 +13,7 @@ class BaseParser(object):
 
     def __init__(self, project_path: Path, logger: Logger, config_file_name: str):
         self.project_path = project_path
-        self.logger = logger
+        self.logger = logger.getChild('cfg')
         self.config_path = project_path / config_file_name
 
     def parse(self) -> Dict:
@@ -26,10 +26,16 @@ class BaseParser(object):
         :returns: Dictionary representing the YAML tree
         '''
 
+        self.logger.info('Parsing started.')
+
         with open(self.config_path, encoding='utf8') as config_file:
             config = {**self._defaults, **load(config_file)}
 
             config['src_dir'] = Path(config['src_dir']).expanduser()
             config['tmp_dir'] = Path(config['tmp_dir']).expanduser()
+
+            self.logger.debug(f'Config: {config}')
+
+            self.logger.info(f'Parsing completed.')
 
             return config
