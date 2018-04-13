@@ -24,7 +24,7 @@ class BaseBackend(object):
         quiet=False
     ):
         self.project_path = project_path
-        self.logger = logger
+        self.logger = logger.getChild('bkd')
         self.config = config
         self.context = context
         self.quiet = quiet
@@ -65,8 +65,9 @@ class BaseBackend(object):
             (preprocessor_name, preprocessor_options), = (*preprocessor.items(),)
 
         with spinner(
-            f'Applying preprocessor {preprocessor_name}',
-            self.quiet or preprocessor_name.startswith('_')
+                f'Applying preprocessor {preprocessor_name}',
+                self.logger,
+                self.quiet or preprocessor_name.startswith('_')
             ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
