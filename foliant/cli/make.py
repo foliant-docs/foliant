@@ -147,4 +147,5 @@ class Cli(Cliar):
                 print(result)
 
         else:
+            self.logger.critical('No result')
             exit(1)
