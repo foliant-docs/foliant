@@ -34,8 +34,8 @@ class BaseParser(object):
             config['src_dir'] = Path(config['src_dir']).expanduser()
             config['tmp_dir'] = Path(config['tmp_dir']).expanduser()
 
-            self.logger.debug(f'Config: {config}')
-
             self.logger.info(f'Parsing completed.')
+
+            self.logger.debug(f'Config: {config}')
 
             return config
