@@ -24,7 +24,7 @@ class BaseBackend(object):
         quiet=False
     ):
         self.project_path = project_path
-        self.logger = logger.getChild('bkd')
+        self.logger = logger
         self.config = config
         self.context = context
         self.quiet = quiet
