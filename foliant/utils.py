@@ -103,6 +103,7 @@ def spinner(text: str, logger: Logger, quiet=False):
     '''Spinner decoration for long running processes.
 
     :param text: The spinner's caption
+    :param logger: Logger to capture the error if it occurs
     :param quiet: If ``True``, the spinner is hidden
     '''
 
