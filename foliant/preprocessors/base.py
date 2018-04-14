@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from logging import Logger
 from distutils.util import strtobool
 from typing import Dict
 OptionValue = int or float or bool or str
@@ -53,8 +54,9 @@ class BasePreprocessor(object):
             for option in option_pattern.finditer(options_string)
         }
 
-    def __init__(self, project_path: Path, config: dict, context: dict, options={}):
+    def __init__(self, project_path: Path, logger: Logger, config: dict, context: dict, options={}):
         self.project_path = project_path
+        self.logger = logger
         self.config = config
         self.context = context
         self.options = {**self.defaults, **options}

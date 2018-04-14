@@ -133,5 +133,7 @@ __folianttmp__
 *.docx
 *.mkdocs
 *.mkdocs.src
+*.pre
 
 /run.py
+/test

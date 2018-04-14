@@ -2,6 +2,7 @@ from pathlib import Path
 from importlib import import_module
 from shutil import copytree
 from datetime import date
+from logging import Logger
 from typing import Tuple, List, Callable
 
 from foliant.utils import spinner
@@ -14,8 +15,16 @@ class BaseBackend(object):
     required_preprocessors_before = ()
     required_preprocessors_after = ()
 
-    def __init__(self, project_path: Path, config: dict, context: dict, quiet=False):
+    def __init__(
+        self,
+        project_path: Path,
+        logger: Logger,
+        config: dict,
+        context: dict,
+        quiet=False
+    ):
         self.project_path = project_path
+        self.logger = logger
         self.config = config
         self.context = context
         self.quiet = quiet
@@ -56,13 +65,15 @@ class BaseBackend(object):
             (preprocessor_name, preprocessor_options), = (*preprocessor.items(),)
 
         with spinner(
-            f'Applying preprocessor {preprocessor_name}',
-            self.quiet or preprocessor_name.startswith('_')
+                f'Applying preprocessor {preprocessor_name}',
+                self.logger,
+                self.quiet or preprocessor_name.startswith('_')
             ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
                 preprocessor_module.Preprocessor(
                     self.project_path,
+                    self.logger,
                     self.config,
                     self.context,
                     preprocessor_options

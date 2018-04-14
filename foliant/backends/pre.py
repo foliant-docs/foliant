@@ -14,12 +14,18 @@ class Backend(BaseBackend):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._preprocessed_config = self.config.get('backend_config', {}).get('pre', {})
+        self._pre_config = self.config.get('backend_config', {}).get('pre', {})
 
-        self._preprocessed_dir_name = f'{self._preprocessed_config.get("slug", self.get_slug())}.pre'
+        self._preprocessed_dir_name = f'{self._pre_config.get("slug", self.get_slug())}.pre'
+
+        self.logger = self.logger.getChild('pre')
+
+        self.logger.debug(f'Backend inited: {self.__dict__}')
 
     def make(self, target: str) -> str:
         rmtree(self._preprocessed_dir_name, ignore_errors=True)
         copytree(self.working_dir, self._preprocessed_dir_name)
+
+        self.logger.debug(f'Result: {self._preprocessed_dir_name}.')
 
         return self._preprocessed_dir_name
