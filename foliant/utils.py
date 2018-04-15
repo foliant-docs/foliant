@@ -111,6 +111,8 @@ def spinner(text: str, logger: Logger, quiet=False):
     halo.start()
 
     try:
+        logger.info(text)
+
         yield
 
         if not quiet:

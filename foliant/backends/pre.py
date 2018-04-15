@@ -26,6 +26,4 @@ class Backend(BaseBackend):
         rmtree(self._preprocessed_dir_name, ignore_errors=True)
         copytree(self.working_dir, self._preprocessed_dir_name)
 
-        self.logger.debug(f'Result: {self._preprocessed_dir_name}.')
-
         return self._preprocessed_dir_name
