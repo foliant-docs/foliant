@@ -146,6 +146,8 @@ class Cli(Cliar):
             else:
                 print(result)
 
+            return result
+
         else:
             self.logger.critical('No result returned by backend.')
             exit(1)
