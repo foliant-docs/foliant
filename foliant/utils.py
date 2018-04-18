@@ -69,6 +69,9 @@ def get_available_clis() -> Dict[str, Type]:
     result = {}
 
     for importer, modname, _ in iter_modules(cli_module.__path__):
+        if modname == 'base':
+            continue
+
         result[modname] = importer.find_module(modname).load_module(modname).Cli
 
     return result

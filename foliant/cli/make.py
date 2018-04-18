@@ -5,13 +5,14 @@ from importlib import import_module
 from logging import DEBUG, WARNING
 from typing import List
 
-from cliar import Cliar, set_arg_map, set_metavars, set_help
+from cliar import set_arg_map, set_metavars, set_help
 from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
 from foliant.config import Parser
 from foliant.utils import spinner, get_available_backends, tmp
+from foliant.cli.base import BaseCli
 
 
 class BackendValidator(Validator):
@@ -34,7 +35,7 @@ class BackendValidator(Validator):
             )
 
 
-class Cli(Cliar):
+class Cli(BaseCli):
     config_file_name = 'foliant.yml'
 
     @set_arg_map({'backend': 'with', 'project_path': 'path'})

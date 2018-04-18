@@ -113,6 +113,7 @@ foliant/preprocessors/*
 
 foliant/cli/*
 !/foliant/cli/__init__.py
+!/foliant/cli/base.py
 !/foliant/cli/make.py
 
 foliant/config/*
