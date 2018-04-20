@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "foliant"
+version = "1.0.4"
+description = "Modular, Markdown-based documentation generator that makes pdf, docx, html, and more."
+license = "MIT"
+authors = ["Konstantin Molchanov <moigagoo@live.com>"]
+readme = "README.md"
+homepage = "https://foliant-docs.github.io/docs/"
+repository = "https://github.com/foliant-docs/foliant"
+documentation = "https://foliant-docs.github.io/docs/"
+keywords = ["documentation", "markdown", "html", "docx", "pdf"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pyyaml = "^3.12"
+cliar = "^1.1.9"
+halo = "^0.0.10"
+prompt_toolkit = "^1.0"
+
+[tool.poetry.scripts]
+foliant = 'foliant.cli:entry_point'
+
