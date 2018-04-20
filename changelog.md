@@ -16,8 +16,8 @@
 -   Fix critical issue when config parsing would fail if any config value contained non-latin characters.
 
 
-# 1.0.4 (upcoming)
+# 1.0.4
 
 -   **Breaking change.** Add logging to all stages of building a project. Config parser extensions, CLI extensions, backends, and preprocessors can now access `self.logger` and create child loggers with `self.logger = self.logger.getChild('newbackend')`.
 -   Add `pre` backend with `pre` target that applies the preprocessors from the config and returns a Foliant project that doesn't require any preprocessing.
--   CLI: `make` now returns its result, which makes is easier to call it from extensions.
+-   `make` now returns its result, which makes is easier to call it from extensions.
