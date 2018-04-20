@@ -5,6 +5,7 @@ from pkgutil import iter_modules
 from importlib import import_module
 from shutil import rmtree
 from pathlib import Path
+from logging import Logger
 from typing import Dict, Tuple, Type, Set
 
 from halo import Halo
@@ -68,6 +69,9 @@ def get_available_clis() -> Dict[str, Type]:
     result = {}
 
     for importer, modname, _ in iter_modules(cli_module.__path__):
+        if modname == 'base':
+            continue
+
         result[modname] = importer.find_module(modname).load_module(modname).Cli
 
     return result
@@ -98,10 +102,11 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
 
 
 @contextmanager
-def spinner(text: str, quiet=False):
+def spinner(text: str, logger: Logger, quiet=False):
     '''Spinner decoration for long running processes.
 
     :param text: The spinner's caption
+    :param logger: Logger to capture the error if it occurs
     :param quiet: If ``True``, the spinner is hidden
     '''
 
@@ -109,6 +114,8 @@ def spinner(text: str, quiet=False):
     halo.start()
 
     try:
+        logger.info(text)
+
         yield
 
         if not quiet:
@@ -117,6 +124,8 @@ def spinner(text: str, quiet=False):
             halo.stop()
 
     except Exception as exception:
+        logger.error(str(exception))
+
         if not quiet:
             halo.fail(str(exception))
         else:

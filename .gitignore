@@ -104,6 +104,7 @@ ENV/
 /foliant/backends/*
 !/foliant/backends/__init__.py
 !/foliant/backends/base.py
+!/foliant/backends/pre.py
 
 foliant/preprocessors/*
 !/foliant/preprocessors/__init__.py
@@ -112,6 +113,7 @@ foliant/preprocessors/*
 
 foliant/cli/*
 !/foliant/cli/__init__.py
+!/foliant/cli/base.py
 !/foliant/cli/make.py
 
 foliant/config/*
@@ -132,5 +134,7 @@ __folianttmp__
 *.docx
 *.mkdocs
 *.mkdocs.src
+*.pre
 
 /run.py
+/test

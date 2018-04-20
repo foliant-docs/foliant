@@ -15,6 +15,10 @@ class Preprocessor(BasePreprocessor):
             flags=re.MULTILINE|re.DOTALL
         )
 
+        self.logger = self.logger.getChild('_unescape')
+
+        self.logger.debug(f'Preprocessor inited: {self.__dict__}')
+
     def process_escaped_tags(self, content: str) -> str:
         '''Unescape escaped tags, i.e. remove leading ``<`` from each tag definition.
 
@@ -24,7 +28,14 @@ class Preprocessor(BasePreprocessor):
         '''
 
         def _sub(escaped_tag):
-            return escaped_tag.group(0)[1:]
+            tag_group = escaped_tag.group(0)
+            result = tag_group[1:]
+
+            self.logger.debug(
+                f'Replacing {tag_group} with {result}'
+            )
+
+            return result
 
         return self.pattern.sub(_sub, content)
 
