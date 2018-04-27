@@ -17,6 +17,9 @@ cliar = "^1.1.9"
 halo = "^0.0.10"
 prompt_toolkit = "^1.0"
 
+[tool.poetry.dev-dependencies]
+pytest = "^3.5"
+
 [tool.poetry.scripts]
 foliant = 'foliant.cli:entry_point'
 
