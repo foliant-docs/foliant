@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/foliant-docs/foliant.svg?branch=develop)](https://travis-ci.org/foliant-docs/foliant)
+[![Travis](https://img.shields.io/travis/foliant-docs/foliant.svg)](https://travis-ci.org/foliant-docs/foliant)
+[![PyPI](https://img.shields.io/pypi/v/foliant.svg)](https://pypi.org/project/foliant/)
 
 # Foliant
 
