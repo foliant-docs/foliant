@@ -13,7 +13,9 @@ def test_get_available_config_parsers():
     parsers = utils.get_available_config_parsers()
 
     assert set(parsers.keys()) == {'path', 'include'}
-    assert issubclass(parsers['path'], foliant.config.base.BaseParser)
+
+    for parser_class in parsers.values():
+        assert issubclass(parser_class, foliant.config.base.BaseParser)
 
 def test_get_available_clis():
     '''Check that there's exactly one default CLI with a single ``make`` command.'''
@@ -22,5 +24,5 @@ def test_get_available_clis():
 
     assert set(clis.keys()) == {'make'}
 
-    for cli_type in clis.values():
-        assert issubclass(cli_type, foliant.cli.base.BaseCli)
+    for cli_class in clis.values():
+        assert issubclass(cli_class, foliant.cli.base.BaseCli)
