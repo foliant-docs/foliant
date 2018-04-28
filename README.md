@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/foliant-docs/foliant.svg?branch=develop)](https://travis-ci.org/foliant-docs/foliant)
+
 # Foliant
 
 Foliant is a all-in-one documentation authoring tool. It lets you produce standalone documents in pdf and docx, as well as websites, from single Markdown source.
