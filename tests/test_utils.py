@@ -1,3 +1,5 @@
+'''Test utils behind Foliant's extension framework. '''
+
 import foliant
 from foliant import utils
 
