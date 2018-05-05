@@ -9,7 +9,7 @@ from foliant.cli import Foliant
 class TestPreBackend(object):
     tests_path = Path(__file__).absolute().parent
     test_project_dir_name = 'pre-backend-test-project'
-    reference_dir_name = 'pre-backend-test-projec-reference'
+    reference_dir_name = 'pre-backend-test-project-reference'
 
     def setup(self):
         '''Build ``pre`` target from the sample project and put it into the tests dir.'''
