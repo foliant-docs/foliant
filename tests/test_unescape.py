@@ -30,12 +30,14 @@ class TestUnescape(object):
 
     def test_multiline(self):
         input_text = '''Text before escaped tag.
-<<tag></tag>
-Text after escapted tag.
+<<tag>
+    Body.
+</tag>
 '''
         expected_text = '''Text before escaped tag.
-<tag></tag>
-Text after escapted tag.
+<tag>
+    Body.
+</tag>
 '''
         assert self.preprocessor.process_escaped_tags(input_text) == expected_text
 
