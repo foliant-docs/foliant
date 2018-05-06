@@ -7,8 +7,12 @@ sudo: required
 services:
   - docker
 
-install: ''
-script: ''
+install:
+  - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - poetry install
+
+script:
+  - poetry run pytest
 
 deploy:
   provider: pypi
