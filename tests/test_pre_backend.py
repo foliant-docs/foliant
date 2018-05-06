@@ -1,7 +1,6 @@
 from pathlib import Path
 from shutil import move, rmtree
 from datetime import date
-from filecmp import dircmp
 
 from foliant.cli import Foliant
 
@@ -36,7 +35,12 @@ class TestPreBackend(object):
     def test_compare_with_reference(self):
         '''Check that the result is the same as the reference.'''
 
-        assert not dircmp(self.result_path, self.tests_path/self.reference_dir_name).diff_files
+        for markdown_file_path in self.result_path.rglob('.md'):
+            reference_file_path = self.tests_path/self.reference_dir_name/markdown_file_path.name
+
+            with open(markdown_file_path, encoding='utf8') as markdown_file:
+                with open(reference_file_path, encoding='utf8') as reference_file:
+                    assert markdown_file.read() == reference_file.read()
 
     def teardown(self):
         rmtree(self.result_path)
