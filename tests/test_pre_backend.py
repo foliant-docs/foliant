@@ -1,46 +1,46 @@
 from pathlib import Path
 from shutil import move, rmtree
+from platform import system
+from filecmp import dircmp
 from datetime import date
+from collections import namedtuple
+
+
+Project = namedtuple('Project', ('dir_name', 'path'))
+
 
 from foliant.cli import Foliant
 
 
 class TestPreBackend(object):
     tests_path = Path(__file__).absolute().parent
-    test_project_dir_name = 'pre-backend-test-project'
-    reference_dir_name = 'pre-backend-test-project-reference'
+    test_projects_path = tests_path / 'projects'
+    references_path = tests_path / 'references' / ('crlf' if system() == 'Windows' else 'lf')
+    test_projects = 'simple',
 
     def setup(self):
-        '''Build ``pre`` target from the sample project and put it into the tests dir.'''
+        self.results = {}
 
-        self.result_dir_name = Foliant().make(
-            'pre',
-            project_path=self.tests_path/self.test_project_dir_name,
-            quiet=True
-        )
+        for project in self.test_projects:
+            result_dir_name =  Foliant().make(
+                'pre',
+                project_path=self.test_projects_path/project,
+                quiet=True
+            )
 
-        self.result_path = self.tests_path / self.result_dir_name
+            result_path = self.tests_path / result_dir_name
 
-        rmtree(self.result_path, ignore_errors=True)
-        move(Path(self.result_dir_name), self.result_path)
+            rmtree(result_path, ignore_errors=True)
+            move(Path(result_dir_name), result_path)
 
-    def test_dir_name(self):
-        '''Check that the result is built into a directory with the right name.'''
+            self.results[project] = Project(result_dir_name, result_path)
 
-        title_part = self.test_project_dir_name.replace('-', ' ').title().replace(' ', '_')
-        date_part  = date.today().isoformat()
+    def test_simple_dir_name(self):
+        assert self.results['simple'].dir_name == f'Simple-{date.today().isoformat()}.pre'
 
-        assert self.result_dir_name == f'{title_part}-{date_part}.pre'
-
-    def test_compare_with_reference(self):
-        '''Check that the result is the same as the reference.'''
-
-        for markdown_file_path in self.result_path.rglob('.md'):
-            reference_file_path = self.tests_path/self.reference_dir_name/markdown_file_path.name
-
-            with open(markdown_file_path, encoding='utf8') as markdown_file:
-                with open(reference_file_path, encoding='utf8') as reference_file:
-                    assert markdown_file.read() == reference_file.read()
+    def test_simple_compare_with_reference(self):
+        assert not dircmp(self.results['simple'].path, self.references_path/'simple').diff_files
 
     def teardown(self):
-        rmtree(self.result_path)
+        for result_path in (result.path for result in self.results.values()):
+            rmtree(result_path)
