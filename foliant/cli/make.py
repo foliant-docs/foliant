@@ -36,15 +36,14 @@ class BackendValidator(Validator):
 
 
 class Cli(BaseCli):
-    config_file_name = 'foliant.yml'
-
-    @set_arg_map({'backend': 'with', 'project_path': 'path'})
+    @set_arg_map({'backend': 'with', 'project_path': 'path', 'config_file_name': 'config'})
     @set_metavars({'target': 'TARGET', 'backend': 'BACKEND'})
     @set_help(
         {
             'target': 'Target format: pdf, docx, html, etc.',
             'backend': 'Backend to make the target with: Pandoc, MkDocs, etc.',
             'project_path': 'Path to the Foliant project',
+            'config_file_name': 'Name of config file of the Foliant project',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
@@ -55,6 +54,7 @@ class Cli(BaseCli):
             target,
             backend='',
             project_path=Path('.'),
+            config_file_name='foliant.yml',
             quiet=False,
             keep_tmp=False,
             debug=False
@@ -106,7 +106,7 @@ class Cli(BaseCli):
 
         with spinner('Parsing config', self.logger, quiet):
             try:
-                config = Parser(project_path, self.logger, self.config_file_name).parse()
+                config = Parser(project_path, self.logger, config_file_name).parse()
 
             except FileNotFoundError as exception:
                 config = None
