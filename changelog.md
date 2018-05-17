@@ -26,3 +26,4 @@
 # 1.0.5
 
 -   Allow to override default config file name in CLI.
+-   Allow multiline tags. Process `true` and `false` attribute values as boolean, not as integer.
