@@ -42,12 +42,19 @@ class BasePreprocessor(object):
                 try:
                     return float(value)
                 except ValueError:
-                    try:
-                        return strtobool(value)
-                    except ValueError:
+                    if value.lower() == 'true':
+                        return True
+
+                    elif value.lower() == 'false':
+                        return False
+
+                    else:
                         return value
 
-        option_pattern = re.compile(r'(?P<key>\w+)="(?P<value>.+?)"')
+        option_pattern = re.compile(
+            r'(?P<key>\w+)="(?P<value>.+?)"',
+            flags=re.DOTALL
+        )
 
         return {
             option.group('key'): _cast_value(option.group('value'))
@@ -65,10 +72,10 @@ class BasePreprocessor(object):
 
         if self.tags:
             self.pattern = re.compile(
-                rf'(?<!\<)\<(?P<tag>{"|".join(self.tags)})'+
-                rf'(\s(?P<options>.*?))?\>'+
-                rf'(?P<body>.*?)\</(?P=tag)\>',
-                flags=re.MULTILINE|re.DOTALL
+                f'(?<!\<)\<(?P<tag>{"|".join(self.tags)})' +
+                f'(\s(?P<options>[^\<\>]*))?\>' +
+                f'(?P<body>.*?)\<\/(?P=tag)\>',
+                flags=re.DOTALL
             )
 
     def apply(self):
