@@ -52,7 +52,7 @@ class BasePreprocessor(object):
                         return value
 
         option_pattern = re.compile(
-            r'(?P<key>\w+)="(?P<value>.+?)"',
+            '(?P<key>[A-Za-z_:][0-9A-Za-z_:\-\.]*)="(?P<value>.+?)"',
             flags=re.DOTALL
         )
 
