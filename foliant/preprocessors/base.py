@@ -42,17 +42,13 @@ class BasePreprocessor(object):
                 try:
                     return float(value)
                 except ValueError:
-                    if value.lower() == 'true':
-                        return True
-
-                    elif value.lower() == 'false':
-                        return False
-
-                    else:
+                     try:
+                         return bool(strtobool(value))
+                     except ValueError:
                         return value
 
         option_pattern = re.compile(
-            '(?P<key>[A-Za-z_:][0-9A-Za-z_:\-\.]*)="(?P<value>.+?)"',
+            r'(?P<key>[A-Za-z_:][0-9A-Za-z_:\-\.]*)="(?P<value>.+?)"',
             flags=re.DOTALL
         )
 
@@ -72,9 +68,9 @@ class BasePreprocessor(object):
 
         if self.tags:
             self.pattern = re.compile(
-                f'(?<!\<)\<(?P<tag>{"|".join(self.tags)})' +
-                f'(\s(?P<options>[^\<\>]*))?\>' +
-                f'(?P<body>.*?)\<\/(?P=tag)\>',
+                rf'(?<!\<)\<(?P<tag>{"|".join(self.tags)})' +
+                rf'(\s(?P<options>[^\<\>]*))?\>' +
+                rf'(?P<body>.*?)\<\/(?P=tag)\>',
                 flags=re.DOTALL
             )
 
