@@ -42,9 +42,9 @@ class BasePreprocessor(object):
                 try:
                     return float(value)
                 except ValueError:
-                     try:
-                         return bool(strtobool(value))
-                     except ValueError:
+                    try:
+                        return bool(strtobool(value))
+                    except ValueError:
                         return value
 
         option_pattern = re.compile(
