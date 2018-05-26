@@ -73,11 +73,11 @@ class Cli(BaseCli):
                     f'Backend {backend} not found. '
                     + f'Available backends are {", ".join(available_backends.keys())}.'
                 )
-                return
+                exit(1)
 
             if target not in available_backends[backend]:
                 print(f'Backend {backend} cannot make {target}.')
-                return
+                exit(1)
 
         else:
             matching_backends = [
@@ -88,7 +88,7 @@ class Cli(BaseCli):
 
             if not matching_backends:
                 print(f'No backend available for {target}.')
-                return
+                exit(1)
 
             elif len(matching_backends) == 1:
                 backend = matching_backends[0]
@@ -118,7 +118,7 @@ class Cli(BaseCli):
 
         if config is None:
             self.logger.critical('Config parsing failed.')
-            return
+            exit(1)
 
         context = {
             'target': target,
