@@ -1,10 +1,10 @@
 from time import time
 from logging import getLogger, FileHandler, Formatter
 
+from cliar import set_help
+
 from foliant import __version__ as foliant_version
 from foliant.utils import get_available_clis
-
-from cliar import set_help
 
 
 class Foliant(*get_available_clis().values()):

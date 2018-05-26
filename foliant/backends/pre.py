@@ -1,6 +1,5 @@
 from shutil import copytree, rmtree
 
-from foliant.utils import spinner
 from foliant.backends.base import BaseBackend
 
 
@@ -9,7 +8,7 @@ class Backend(BaseBackend):
     that doesn't need any further preprocessing.
     '''
 
-    targets = 'pre',
+    targets = ('pre',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
