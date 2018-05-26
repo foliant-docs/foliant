@@ -18,10 +18,9 @@ halo = "^0.0.10"
 prompt_toolkit = "^1.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^3.5"
-pylint = "^1.8"
+pytest = "^3.6"
 pytest-datadir = "^1.0"
+pylint = "^1.8"
 
 [tool.poetry.scripts]
 foliant = 'foliant.cli:entry_point'
-
