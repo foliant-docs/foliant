@@ -16,7 +16,7 @@ script:
 
 deploy:
   provider: script
-  script: poetry publish --user "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
+  script: poetry publish --build --user "$PYPI_USERNAME" --password "$PYPI_PASSWORD"
   on:
     tags: true
 
