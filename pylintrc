@@ -54,7 +54,8 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=print-statement,
+disable=missing-docstring,
+        print-statement,
         parameter-unpacking,
         unpacking-in-except,
         old-raise-syntax,
@@ -73,6 +74,7 @@ disable=print-statement,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
+        too-few-public-methods,
         apply-builtin,
         basestring-builtin,
         buffer-builtin,
@@ -158,7 +160,7 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 # Set the output format. Available formats are text, parseable, colorized, json
 # and msvs (visual studio).You can also give a reporter class, eg
 # mypackage.mymodule.MyReporterClass.
-output-format=colorized
+output-format=text
 
 # Tells whether to display a full report or only the messages
 reports=no
