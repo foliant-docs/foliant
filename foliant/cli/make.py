@@ -3,9 +3,9 @@
 from pathlib import Path
 from importlib import import_module
 from logging import DEBUG, WARNING
-from typing import List
+from typing import List, Dict, Tuple
 
-from cliar import set_arg_map, set_metavars, set_help
+from cliar import set_arg_map, set_metavars, set_help, ignore
 from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
@@ -13,6 +13,14 @@ from prompt_toolkit.validation import Validator, ValidationError
 from foliant.config import Parser
 from foliant.utils import spinner, get_available_backends, tmp
 from foliant.cli.base import BaseCli
+
+
+class ConfigError(Exception):
+    pass
+
+
+class BackendError(Exception):
+    pass
 
 
 class BackendValidator(Validator):
@@ -36,6 +44,68 @@ class BackendValidator(Validator):
 
 
 class Cli(BaseCli):
+    @staticmethod
+    def validate_backend(backend: str, target: str) -> bool:
+        '''Check that the specified backend exists and can build the specified target.'''
+
+        available_backends = get_available_backends()
+
+        if backend not in available_backends:
+            raise BackendError(
+                f'Backend {backend} not found. '
+                + f'Available backends are {", ".join(available_backends.keys())}.'
+            )
+
+        if target not in available_backends[backend]:
+            raise BackendError(f'Backend {backend} cannot make {target}.')
+
+        return True
+
+    @staticmethod
+    def get_matching_backend(target: str, available_backends: Dict[str, Tuple[str]]) -> str:
+        '''Get a matching backend for the specified target. If multiple backends match
+        the specified target, prompt user.'''
+
+        matching_backends = [
+            backend
+            for backend, targets in available_backends.items()
+            if target in targets
+        ]
+
+        if not matching_backends:
+            raise BackendError(f'No backend available for {target}.')
+
+        if len(matching_backends) == 1:
+            return matching_backends[0]
+
+        try:
+            return prompt(
+                f'Please pick a backend from {matching_backends}: ',
+                completer=WordCompleter(matching_backends),
+                validator=BackendValidator(matching_backends)
+            )
+        except KeyboardInterrupt:
+            raise BackendError('No backend specified')
+
+    @ignore
+    def get_config(self, project_path: Path, config_file_name: str, quiet=False) -> dict:
+        with spinner('Parsing config', self.logger, quiet):
+            try:
+                config = Parser(project_path, config_file_name, self.logger).parse()
+
+            except FileNotFoundError as exception:
+                config = None
+                raise FileNotFoundError(f'{exception} not found')
+
+            except Exception as exception:
+                config = None
+                raise type(exception)(f'Invalid config: {exception}')
+
+        if config is None:
+            raise ConfigError('Config parsing failed.')
+
+        return config
+
     @set_arg_map({'backend': 'with', 'project_path': 'path', 'config_file_name': 'config'})
     @set_metavars({'target': 'TARGET', 'backend': 'BACKEND'})
     @set_help(
@@ -61,80 +131,40 @@ class Cli(BaseCli):
         ):
         '''Make TARGET with BACKEND.'''
 
+        # pylint: disable=too-many-arguments
+
         self.logger.setLevel(DEBUG if debug else WARNING)
 
         self.logger.info('Build started.')
 
         available_backends = get_available_backends()
 
-        if backend:
-            if backend not in available_backends:
-                print(
-                    f'Backend {backend} not found. '
-                    + f'Available backends are {", ".join(available_backends.keys())}.'
-                )
-                exit(1)
-
-            if target not in available_backends[backend]:
-                print(f'Backend {backend} cannot make {target}.')
-                exit(1)
-
-        else:
-            matching_backends = [
-                backend
-                for backend, targets in available_backends.items()
-                if target in targets
-            ]
-
-            if not matching_backends:
-                print(f'No backend available for {target}.')
-                exit(1)
-
-            elif len(matching_backends) == 1:
-                backend = matching_backends[0]
-
+        try:
+            if backend:
+                self.validate_backend(backend, target)
             else:
-                try:
-                    backend = prompt(
-                        f'Please pick a backend from {matching_backends}: ',
-                        completer=WordCompleter(matching_backends),
-                        validator=BackendValidator(matching_backends)
-                    )
+                backend = self.get_matching_backend(target, available_backends)
 
-                except KeyboardInterrupt:
-                    return
+            config = self.get_config(project_path, config_file_name, quiet)
 
-        with spinner('Parsing config', self.logger, quiet):
-            try:
-                config = Parser(project_path, self.logger, config_file_name).parse()
-
-            except FileNotFoundError as exception:
-                config = None
-                raise FileNotFoundError(f'{exception} not found')
-
-            except Exception as exception:
-                config = None
-                raise type(exception)(f'Invalid config: {exception}')
-
-        if config is None:
-            self.logger.critical('Config parsing failed.')
-            exit(1)
+        except (BackendError, ConfigError) as exception:
+            self.logger.critical(str(exception))
+            exit(str(exception))
 
         context = {
+            'project_path': project_path,
+            'config': config,
             'target': target,
             'backend': backend
         }
 
         backend_module = import_module(f'foliant.backends.{backend}')
-
         self.logger.debug(f'Imported backend {backend_module}.')
 
         with tmp(project_path/config['tmp_dir'], keep_tmp):
             result = backend_module.Backend(
-                project_path,
-                self.logger,
-                config,
                 context,
+                self.logger,
                 quiet
             ).preprocess_and_make(target)
 
@@ -150,5 +180,6 @@ class Cli(BaseCli):
             return result
 
         else:
-            self.logger.critical('No result returned by backend.')
-            exit(1)
+            self.logger.critical('No result returned by backend')
+            exit('No result returned by backend')
+            return None

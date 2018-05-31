@@ -1,4 +1,3 @@
-from pathlib import Path
 from importlib import import_module
 from shutil import copytree
 from datetime import date
@@ -14,21 +13,14 @@ class BaseBackend(object):
     required_preprocessors_before = ()
     required_preprocessors_after = ()
 
-    def __init__(
-            self,
-            project_path: Path,
-            logger: Logger,
-            config: dict,
-            context: dict,
-            quiet=False
-    ):
-        self.project_path = project_path
-        self.logger = logger
-        self.config = config
+    def __init__(self, context: dict, logger: Logger, quiet=False):
+        self.project_path = context['project_path']
+        self.config = context['config']
         self.context = context
+        self.logger = logger
         self.quiet = quiet
 
-        self.working_dir = project_path / config['tmp_dir']
+        self.working_dir = self.project_path / self.config['tmp_dir']
 
     def get_slug(self) -> str:
         '''Generate a slug from the project title and version and the current date.
@@ -71,10 +63,8 @@ class BaseBackend(object):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
                 preprocessor_module.Preprocessor(
-                    self.project_path,
-                    self.logger,
-                    self.config,
                     self.context,
+                    self.logger,
                     preprocessor_options
                 ).apply()
 

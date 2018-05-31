@@ -1,6 +1,5 @@
 from pathlib import Path
 from logging import Logger
-from typing import Dict
 
 from yaml import load
 
@@ -11,12 +10,12 @@ class BaseParser(object):
         'tmp_dir': Path('./__folianttmp__')
     }
 
-    def __init__(self, project_path: Path, logger: Logger, config_file_name: str):
+    def __init__(self, project_path: Path, config_file_name: str, logger: Logger):
         self.project_path = project_path
-        self.logger = logger.getChild('cfg')
         self.config_path = project_path / config_file_name
+        self.logger = logger.getChild('cfg')
 
-    def parse(self) -> Dict:
+    def parse(self) -> dict:
         '''Parse the config file into a Python dict. Missing values are populated
         with defaults, paths are converted to ``pathlib.Paths``.
 

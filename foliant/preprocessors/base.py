@@ -1,5 +1,4 @@
 import re
-from pathlib import Path
 from logging import Logger
 from distutils.util import strtobool
 from typing import Dict
@@ -57,14 +56,16 @@ class BasePreprocessor(object):
             for option in option_pattern.finditer(options_string)
         }
 
-    def __init__(self, project_path: Path, logger: Logger, config: dict, context: dict, options={}):
-        self.project_path = project_path
-        self.logger = logger
-        self.config = config
+    def __init__(self, context: dict, logger: Logger, options={}):
+        # pylint: disable=dangerous-default-value
+
+        self.project_path = context['project_path']
+        self.config = context['config']
         self.context = context
+        self.logger = logger
         self.options = {**self.defaults, **options}
 
-        self.working_dir = project_path / config['tmp_dir']
+        self.working_dir = self.project_path / self.config['tmp_dir']
 
         if self.tags:
             self.pattern = re.compile(
