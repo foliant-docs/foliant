@@ -10,7 +10,11 @@ from foliant.preprocessors import _unescape
 
 
 class TestUnescape(object):
-    preprocessor = _unescape.Preprocessor(Path('.'), Logger(''), {'tmp_dir': Path('.')}, {})
+    preprocessor = _unescape.Preprocessor(
+        {'project_path': Path('.'), 'config': {'tmp_dir': Path('.')}},
+        Logger(''),
+        {}
+    )
 
     def test_simple(self):
         '''Check that a simple escaped tag without body gets unescaped.'''
