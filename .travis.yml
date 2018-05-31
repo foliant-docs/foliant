@@ -13,6 +13,7 @@ install:
 
 script:
   - poetry run pytest
+  - poetry run pylint foliant
 
 deploy:
   provider: script
