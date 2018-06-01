@@ -21,6 +21,8 @@ prompt_toolkit = "^1.0"
 pytest = "^3.6"
 pytest-datadir = "^1.0"
 pylint = "^1.8"
+pytest-cov = "^2.5"
+codecov = "^2.0"
 
 [tool.poetry.scripts]
 foliant = 'foliant.cli:entry_point'

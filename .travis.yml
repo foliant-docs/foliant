@@ -12,7 +12,8 @@ install:
   - poetry install
 
 script:
-  - poetry run pytest
+  - poetry run pytest --cov=foliant
+  - poetry run codecov
   - poetry run pylint foliant
 
 deploy:

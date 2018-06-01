@@ -1,5 +1,6 @@
-[![Travis](https://img.shields.io/travis/foliant-docs/foliant.svg)](https://travis-ci.org/foliant-docs/foliant)
 [![PyPI](https://img.shields.io/pypi/v/foliant.svg)](https://pypi.org/project/foliant/)
+[![Travis](https://img.shields.io/travis/foliant-docs/foliant.svg)](https://travis-ci.org/foliant-docs/foliant)
+[![codecov](https://codecov.io/gh/foliant-docs/foliant/branch/develop/graph/badge.svg)](https://codecov.io/gh/foliant-docs/foliant)
 
 # Foliant
 
