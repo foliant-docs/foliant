@@ -7,7 +7,7 @@ from typing import List, Dict, Tuple
 
 from cliar import set_arg_map, set_metavars, set_help, ignore
 from prompt_toolkit import prompt
-from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
 from foliant.config import Parser
