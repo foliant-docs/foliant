@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "foliant"
-version = "1.0.4"
+version = "1.0.5"
 description = "Modular, Markdown-based documentation generator that makes pdf, docx, html, and more."
 license = "MIT"
 authors = ["Konstantin Molchanov <moigagoo@live.com>"]
