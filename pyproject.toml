@@ -13,7 +13,7 @@ keywords = ["documentation", "markdown", "html", "docx", "pdf"]
 [tool.poetry.dependencies]
 python = "^3.6"
 pyyaml = "^3.12"
-cliar = "^1.2.1"
+cliar = "^1.2.2"
 halo = "^0.0.10"
 prompt_toolkit = "^2.0"
 
