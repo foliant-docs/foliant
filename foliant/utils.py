@@ -110,6 +110,8 @@ def spinner(text: str, logger: Logger, quiet=False):
     :param quiet: If ``True``, the spinner is hidden
     '''
 
+    # pylint: disable=broad-except
+
     halo = Halo(text, enabled=not quiet)
     halo.start()
 

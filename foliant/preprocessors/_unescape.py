@@ -1,6 +1,5 @@
 import re
 
-from foliant.utils import get_available_tags
 from foliant.preprocessors.base import BasePreprocessor
 
 
