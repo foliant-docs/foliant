@@ -16,7 +16,9 @@ class Foliant(*get_available_clis().values()):
 
         if version:
             print(f'Foliant v.{foliant_version}')
-            exit()
+
+        else:
+            self._parser.print_help()
 
 
 def entry_point():
