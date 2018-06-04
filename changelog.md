@@ -1,3 +1,7 @@
+# 1.0.6 (under development)
+
+-   CLI: If no args are provided, print help.
+
 # 1.0.5
 
 -   Allow to override default config file name in CLI.
