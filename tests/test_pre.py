@@ -6,7 +6,7 @@ from os import chdir
 from collections import namedtuple
 
 from pytest import fixture
-from yaml import load
+from yaml import safe_load
 
 from foliant.cli import Foliant
 
@@ -27,7 +27,7 @@ def build_project(request, datadir):
     )
 
     with open(project_path/'foliant.yml') as config:
-        yield BuiltProject(request.param, load(config)['title'], result)
+        yield BuiltProject(request.param, safe_load(config)['title'], result)
 
 
 def test_dir_name(build_project):
