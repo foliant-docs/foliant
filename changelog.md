@@ -1,6 +1,7 @@
 # 1.0.6 (under development)
 
 -   CLI: If no args are provided, print help.
+-   Fix tags searching pattern in _unescape preprocessor.
 
 # 1.0.5
 
