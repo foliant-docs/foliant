@@ -1,7 +1,7 @@
 from pathlib import Path
 from logging import Logger
 
-from yaml import safe_load
+from yaml import load
 
 
 class BaseParser(object):
@@ -28,7 +28,7 @@ class BaseParser(object):
         self.logger.info('Parsing started.')
 
         with open(self.config_path, encoding='utf8') as config_file:
-            config = {**self._defaults, **safe_load(config_file)}
+            config = {**self._defaults, **load(config_file)}
 
             config['src_dir'] = Path(config['src_dir']).expanduser()
             config['tmp_dir'] = Path(config['tmp_dir']).expanduser()

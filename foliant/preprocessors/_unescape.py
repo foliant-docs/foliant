@@ -8,10 +8,10 @@ class Preprocessor(BasePreprocessor):
         super().__init__(*args, **kwargs)
 
         self.pattern = re.compile(
-            rf'\<\<(?P<tag>.+)'+
-            rf'(\s(?P<options>.*?))?\>'+
-            rf'(?P<body>.*?)\</(?P=tag)\>',
-            flags=re.MULTILINE|re.DOTALL
+            rf'\<\<(?P<tag>[^\<\>\s]+)' +
+            rf'(\s(?P<options>[^\<\>]*))?\>' +
+            rf'(?P<body>.*?)\<\/(?P=tag)\>',
+            flags=re.DOTALL
         )
 
         self.logger = self.logger.getChild('_unescape')
@@ -40,6 +40,8 @@ class Preprocessor(BasePreprocessor):
 
     def apply(self):
         for markdown_file_path in self.working_dir.rglob('*.md'):
+            self.logger.debug(f'Processing the file: {markdown_file_path}')
+
             with open(markdown_file_path, encoding='utf8') as markdown_file:
                 content = markdown_file.read()
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from yaml import safe_load, add_constructor
+from yaml import load, add_constructor
 
 from foliant.config.base import BaseParser
 
@@ -15,13 +15,13 @@ class Parser(BaseParser):
             path = Path(parts[0]).expanduser()
 
             with open(self.project_path/path) as include_file:
-                return safe_load(include_file)
+                return load(include_file)
 
         elif len(parts) == 2:
             path, section = Path(parts[0]).expanduser(), parts[1]
 
             with open(self.project_path/path) as include_file:
-                return safe_load(include_file)[section]
+                return load(include_file)[section]
 
         else:
             raise ValueError('Invalid include syntax')
