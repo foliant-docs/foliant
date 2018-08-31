@@ -15,7 +15,10 @@ class Foliant(*get_available_clis().values()):
         # pylint: disable=no-self-use
 
         if version:
-            exit(f'Foliant v.{foliant_version}')
+            print(f'Foliant v.{foliant_version}')
+
+        else:
+            self._parser.print_help()
 
 
 def entry_point():

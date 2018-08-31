@@ -1,3 +1,8 @@
+# 1.0.6
+
+-   CLI: If no args are provided, print help.
+-   Fix tags searching pattern in _unescape preprocessor.
+
 # 1.0.5
 
 -   Allow to override default config file name in CLI.
