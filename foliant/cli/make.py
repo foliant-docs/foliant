@@ -88,8 +88,8 @@ class Cli(BaseCli):
             raise BackendError('No backend specified')
 
     @ignore
-    def get_config(self, project_path: Path, config_file_name: str, quiet=False) -> dict:
-        with spinner('Parsing config', self.logger, quiet):
+    def get_config(self, project_path: Path, config_file_name: str, debug=False) -> dict:
+        with spinner('Parsing config', self.logger, debug):
             try:
                 config = Parser(project_path, config_file_name, self.logger).parse()
 
@@ -114,7 +114,6 @@ class Cli(BaseCli):
             'backend': 'Backend to make the target with: Pandoc, MkDocs, etc.',
             'project_path': 'Path to the Foliant project',
             'config_file_name': 'Name of config file of the Foliant project',
-            'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
         }
@@ -125,7 +124,6 @@ class Cli(BaseCli):
             backend='',
             project_path=Path('.'),
             config_file_name='foliant.yml',
-            quiet=False,
             keep_tmp=False,
             debug=False
         ):
@@ -145,7 +143,7 @@ class Cli(BaseCli):
             else:
                 backend = self.get_matching_backend(target, available_backends)
 
-            config = self.get_config(project_path, config_file_name, quiet)
+            config = self.get_config(project_path, config_file_name, debug)
 
         except (BackendError, ConfigError) as exception:
             self.logger.critical(str(exception))
@@ -165,17 +163,14 @@ class Cli(BaseCli):
             result = backend_module.Backend(
                 context,
                 self.logger,
-                quiet
+                debug
             ).preprocess_and_make(target)
 
         if result:
             self.logger.info(f'Result: {result}')
 
-            if not quiet:
-                print('─────────────────────')
-                print(f'Result: {result}')
-            else:
-                print(result)
+            print('─' * 20)
+            print(f'Result: {result}')
 
             return result
 

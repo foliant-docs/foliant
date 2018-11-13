@@ -13,12 +13,12 @@ class BaseBackend(object):
     required_preprocessors_before = ()
     required_preprocessors_after = ()
 
-    def __init__(self, context: dict, logger: Logger, quiet=False):
+    def __init__(self, context: dict, logger: Logger, debug=False):
         self.project_path = context['project_path']
         self.config = context['config']
         self.context = context
         self.logger = logger
-        self.quiet = quiet
+        self.debug = debug
 
         self.working_dir = self.project_path / self.config['tmp_dir']
 
@@ -58,7 +58,7 @@ class BaseBackend(object):
         with spinner(
             f'Applying preprocessor {preprocessor_name}',
             self.logger,
-            self.quiet or preprocessor_name.startswith('_')
+            self.debug
         ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
