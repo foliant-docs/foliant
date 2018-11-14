@@ -141,3 +141,4 @@ __folianttmp__
 /test
 
 *.lock
+setup.py
