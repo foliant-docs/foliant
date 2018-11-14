@@ -88,7 +88,13 @@ class Cli(BaseCli):
             raise BackendError('No backend specified')
 
     @ignore
-    def get_config(self, project_path: Path, config_file_name: str, quiet=False, debug=False) -> dict:
+    def get_config(
+        self,
+        project_path: Path,
+        config_file_name: str,
+        quiet=False,
+        debug=False
+    ) -> dict:
         with spinner('Parsing config', self.logger, quiet, debug):
             try:
                 config = Parser(project_path, config_file_name, self.logger).parse()
