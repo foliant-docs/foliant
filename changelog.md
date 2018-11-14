@@ -1,3 +1,8 @@
+# 1.0.8
+
+-   Restore quiet mode.
+-   Add the `output()` method for using in preprocessors.
+
 # 1.0.7
 
 -   Remove spinner made with Halo.
