@@ -108,6 +108,8 @@ def spinner(text: str, logger: Logger, debug=False):
     :param logger: Logger to capture the error if it occurs
     '''
 
+    # pylint: disable=broad-except
+
     try:
         logger.info(text)
 
