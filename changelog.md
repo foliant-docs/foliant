@@ -1,3 +1,9 @@
+# 1.0.7
+
+-   Remove spinner made with Halo.
+-   Abolish quiet mode because it is useless if extensions are allowed to write anything to STDOUT.
+-   Show full tracebacks in debug mode; write full tracebacks into logs.
+
 # 1.0.6
 
 -   CLI: If no args are provided, print help.

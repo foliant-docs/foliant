@@ -4,11 +4,10 @@ from contextlib import contextmanager
 from pkgutil import iter_modules
 from importlib import import_module
 from shutil import rmtree
+from traceback import format_exc
 from pathlib import Path
 from logging import Logger
 from typing import Dict, Tuple, Type, Set
-
-from halo import Halo
 
 
 def get_available_tags() -> Set[str]:
@@ -102,36 +101,34 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
 
 
 @contextmanager
-def spinner(text: str, logger: Logger, quiet=False):
-    '''Spinner decoration for long running processes.
+def spinner(text: str, logger: Logger, debug=False):
+    '''Decoration for long running processes.
 
-    :param text: The spinner's caption
+    :param text: Message to output
     :param logger: Logger to capture the error if it occurs
-    :param quiet: If ``True``, the spinner is hidden
     '''
 
     # pylint: disable=broad-except
 
-    halo = Halo(text, enabled=not quiet)
-    halo.start()
-
     try:
         logger.info(text)
 
+        print(text)
+
         yield
 
-        if not quiet:
-            halo.succeed()
-        else:
-            halo.stop()
+        print('Done\n')
 
     except Exception as exception:
-        logger.error(str(exception))
+        exception_traceback = format_exc()
 
-        if not quiet:
-            halo.fail(str(exception))
+        logger.error(exception_traceback)
+
+        if debug:
+            print(exception_traceback)
+
         else:
-            halo.stop()
+            print(str(exception))
 
 
 @contextmanager

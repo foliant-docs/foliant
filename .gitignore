@@ -139,3 +139,5 @@ __folianttmp__
 
 /run.py
 /test
+
+*.lock

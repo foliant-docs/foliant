@@ -22,8 +22,7 @@ def build_project(request, datadir):
 
     result = Foliant().make(
         'pre',
-        project_path=project_path,
-        quiet=True
+        project_path=project_path
     )
 
     with open(project_path/'foliant.yml') as config:
