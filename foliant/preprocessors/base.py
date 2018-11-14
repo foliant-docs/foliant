@@ -56,13 +56,15 @@ class BasePreprocessor(object):
             for option in option_pattern.finditer(options_string)
         }
 
-    def __init__(self, context: dict, logger: Logger, options={}):
+    def __init__(self, context: dict, logger: Logger, quiet=False, debug=False, options={}):
         # pylint: disable=dangerous-default-value
 
         self.project_path = context['project_path']
         self.config = context['config']
         self.context = context
         self.logger = logger
+        self.quiet = quiet
+        self.debug = debug
         self.options = {**self.defaults, **options}
 
         self.working_dir = self.project_path / self.config['tmp_dir']

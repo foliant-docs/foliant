@@ -100,12 +100,24 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
     return result
 
 
+def output(text: str, quiet=False):
+    '''Outputs the text to STDOUT in non-quiet mode
+
+    :param text: Message to output
+    '''
+
+    if not quiet:
+        print(text)
+
+
 @contextmanager
-def spinner(text: str, logger: Logger, debug=False):
+def spinner(text: str, logger: Logger, quiet=False, debug=False):
     '''Decoration for long running processes.
 
     :param text: Message to output
     :param logger: Logger to capture the error if it occurs
+    :param quiet: If ``True``, messages will be hidden
+    :param debug: If ``True``, show full tracebacks
     '''
 
     # pylint: disable=broad-except
@@ -113,22 +125,25 @@ def spinner(text: str, logger: Logger, debug=False):
     try:
         logger.info(text)
 
-        print(text)
+        if not quiet:
+            print(text)
 
         yield
 
-        print('Done\n')
+        if not quiet:
+            print('Done\n')
 
     except Exception as exception:
         exception_traceback = format_exc()
 
         logger.error(exception_traceback)
 
-        if debug:
-            print(exception_traceback)
+        if not quiet:
+            if debug:
+                print(exception_traceback)
 
-        else:
-            print(str(exception))
+            else:
+                print(str(exception))
 
 
 @contextmanager
