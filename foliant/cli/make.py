@@ -89,11 +89,11 @@ class Cli(BaseCli):
 
     @ignore
     def get_config(
-        self,
-        project_path: Path,
-        config_file_name: str,
-        quiet=False,
-        debug=False
+            self,
+            project_path: Path,
+            config_file_name: str,
+            quiet=False,
+            debug=False
     ) -> dict:
         with spinner('Parsing config', self.logger, quiet, debug):
             try:

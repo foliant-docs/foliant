@@ -14,8 +14,6 @@ class BaseBackend(object):
     required_preprocessors_after = ()
 
     def __init__(self, context: dict, logger: Logger, quiet=False, debug=False):
-        # pylint: disable=duplicate-code
-
         self.project_path = context['project_path']
         self.config = context['config']
         self.context = context
