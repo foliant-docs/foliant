@@ -1,4 +1,4 @@
-# 1.0.7 (under development)
+# 1.0.7
 
 -   Remove spinner made with Halo.
 -   Abolish quiet mode because it is useless if extensions are allowed to write anything to STDOUT.
