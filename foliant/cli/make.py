@@ -172,9 +172,9 @@ class Cli(BaseCli):
             print('─' * 20)
             print(f'Result: {result}')
 
-            return result
-
         else:
             self.logger.critical('No result returned by backend')
             exit('No result returned by backend')
             return None
+
+        return result
