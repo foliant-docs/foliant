@@ -9,6 +9,7 @@ services:
 
 install:
   - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - export PATH=$PATH:~/.poetry/bin
   - poetry install
 
 script:
