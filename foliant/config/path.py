@@ -18,9 +18,11 @@ class Parser(BaseParser):
     def _resolve_project_path_tag(self, _, node) -> str:
         '''Convert value after ``!project_path`` to Path object relative to the
         project path.
+
+        Return absolute path to this file without checks for existance.
         '''
 
-        return (self.project_path / node.value).absolute()
+        return (self.project_path / node.value).resolve()
 
     def _resolve_rel_path_tag(self, _, node) -> str:
         '''Convert value after ``!rel_path`` to Path object.'''
