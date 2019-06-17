@@ -24,7 +24,8 @@ class Parser(BaseParser):
 
         return (self.project_path / node.value).resolve()
 
-    def _resolve_rel_path_tag(self, _, node) -> str:
+    @staticmethod
+    def _resolve_rel_path_tag(_, node) -> str:
         '''Convert value after ``!rel_path`` to Path object.'''
 
         return Path(node.value)
