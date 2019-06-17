@@ -1,3 +1,9 @@
+# 1.0.9
+
+-   Process attribute values of pseudo-XML tags as YAML.
+-   Allow single quotes for enclosing attribute values of pseudo-XML tags.
+-   Add `!project_path` and `!rel_path` YAML tags.
+
 # 1.0.8
 
 -   Restore quiet mode.
