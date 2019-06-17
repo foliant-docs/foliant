@@ -1,6 +1,6 @@
 import re
+import yaml
 from logging import Logger
-from distutils.util import strtobool
 from typing import Dict
 OptionValue = int or float or bool or str
 
@@ -25,36 +25,13 @@ class BasePreprocessor(object):
         if not options_string:
             return {}
 
-        def _cast_value(value: str) -> OptionValue:
-            '''Attempt to convert a string to integer, float, or boolean.
-
-            If nothing matches, return the original string.
-
-            :param value: String to convert
-
-            :returns: Converted value or original string
-            '''
-
-            value = value.strip('"')
-
-            try:
-                return int(value)
-            except ValueError:
-                try:
-                    return float(value)
-                except ValueError:
-                    try:
-                        return bool(strtobool(value))
-                    except ValueError:
-                        return value
-
         option_pattern = re.compile(
-            r'(?P<key>[A-Za-z_:][0-9A-Za-z_:\-\.]*)="(?P<value>.+?)"',
+            r'(?P<key>[A-Za-z_:][0-9A-Za-z_:\-\.]*)=(\'|")(?P<value>.+?)\2',
             flags=re.DOTALL
         )
 
         return {
-            option.group('key'): _cast_value(option.group('value'))
+            option.group('key'): yaml.load(option.group('value'), yaml.Loader)
             for option in option_pattern.finditer(options_string)
         }
 
