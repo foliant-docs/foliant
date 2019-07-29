@@ -93,12 +93,24 @@ class BaseBackend(object):
 
         copytree(src_path, self.working_dir)
 
-        preprocessors = (
+        common_preprocessors = (
             *self.required_preprocessors_before,
             *self.config.get('preprocessors', ()),
-            *self.required_preprocessors_after,
-            '_unescape'
+            *self.required_preprocessors_after
         )
+
+        if self.config.get('escape_code', False):
+            preprocessors = (
+                'escapecode',
+                *common_preprocessors,
+                'unescapecode'
+            )
+
+        else:
+            preprocessors = (
+                *common_preprocessors,
+                '_unescape'
+            )
 
         for preprocessor in preprocessors:
             self.apply_preprocessor(preprocessor)

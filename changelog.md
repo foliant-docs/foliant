@@ -1,3 +1,7 @@
+# 1.0.10 (under development)
+
+-   Add `escape_code` config option. To use it, escapecode and unescapecode preprocessors must be installed.
+
 # 1.0.9
 
 -   Process attribute values of pseudo-XML tags as YAML.
