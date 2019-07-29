@@ -37,4 +37,10 @@ class BaseParser(object):
 
             self.logger.debug(f'Config: {config}')
 
+            if not config.get('escape_code', False):
+                self.logger.warning(
+                    'Working in backward compatibility mode. ' +
+                    'To get rid of this warning, enable the escape_code config option'
+                )
+
             return config
