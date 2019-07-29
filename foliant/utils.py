@@ -126,12 +126,12 @@ def spinner(text: str, logger: Logger, quiet=False, debug=False):
         logger.info(text)
 
         if not quiet:
-            print(text)
+            print(text, end='... ')
 
         yield
 
         if not quiet:
-            print('Done\n')
+            print('Done')
 
     except Exception as exception:
         exception_traceback = format_exc()
