@@ -1,4 +1,4 @@
-# 1.0.10 (under development)
+# 1.0.10
 
 -   Add `escape_code` config option. To use it, escapecode and unescapecode preprocessors must be installed.
 
