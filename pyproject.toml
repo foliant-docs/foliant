@@ -18,7 +18,7 @@ prompt_toolkit = "^2.0"
 "foliantcontrib.init" = {version = "^1.0", optional = true}
 
 [tool.poetry.extras]
-init = ["foliantcontrib.init"]
+mkdocs = ["foliantcontrib.init", "foliantcontrib.mkdocs"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.6"
