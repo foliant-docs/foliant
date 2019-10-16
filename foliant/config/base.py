@@ -10,7 +10,13 @@ class BaseParser(object):
         'tmp_dir': Path('./__folianttmp__')
     }
 
-    def __init__(self, project_path: Path, config_file_name: str, logger: Logger, quiet: bool = False):
+    def __init__(
+        self,
+        project_path: Path,
+        config_file_name: str,
+        logger: Logger,
+        quiet: bool = False
+    ):
         self.project_path = project_path
         self.config_path = project_path / config_file_name
         self.logger = logger.getChild('cfg')
