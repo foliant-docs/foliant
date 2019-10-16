@@ -100,8 +100,16 @@ class BaseBackend(object):
         )
 
         if self.config.get('escape_code', False):
+            if isinstance(self.config['escape_code'], dict):
+                escapecode_preprocessor = {
+                    'escapecode': self.config['escape_code'].get('options', {})
+                }
+
+            else:
+                escapecode_preprocessor = 'escapecode'
+
             preprocessors = (
-                'escapecode',
+                escapecode_preprocessor,
                 *common_preprocessors,
                 'unescapecode'
             )

@@ -97,7 +97,7 @@ class Cli(BaseCli):
     ) -> dict:
         with spinner('Parsing config', self.logger, quiet, debug):
             try:
-                config = Parser(project_path, config_file_name, self.logger).parse()
+                config = Parser(project_path, config_file_name, self.logger, quiet).parse()
 
             except FileNotFoundError as exception:
                 config = None
