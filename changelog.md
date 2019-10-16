@@ -1,3 +1,8 @@
+# 1.0.11
+
+-   Allow to specify custom options for EscapeCode preprocessor as the `escape_code.options` config parameter value.
+-   Pass the `quiet` flag to `BaseParser()` as an optional argument for using in config extensions.
+
 # 1.0.10
 
 -   Add `escape_code` config option. To use it, escapecode and unescapecode preprocessors must be installed.
