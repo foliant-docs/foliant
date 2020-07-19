@@ -19,7 +19,7 @@ prompt_toolkit = "^2.0"
 [tool.poetry.dev-dependencies]
 pytest = "^3.6"
 pytest-datadir = "^1.0"
-pylint = "^1.8"
+pylint = "^2.5"
 pytest-cov = "^2.5"
 codecov = "^2.0"
 
