@@ -1,3 +1,7 @@
+# 1.0.12 (will be released in a few days)
+
+-   Add the `disable_implicit_unescape` option. Remove warning when `escape_code` is not set.
+
 # 1.0.11
 
 -   Allow to specify custom options for EscapeCode preprocessor as the `escape_code.options` config parameter value.

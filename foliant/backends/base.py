@@ -114,6 +114,9 @@ class BaseBackend(object):
                 'unescapecode'
             )
 
+        elif self.config.get('disable_implicit_unescape', False):
+            preprocessors = common_preprocessors
+
         else:
             preprocessors = (
                 *common_preprocessors,
