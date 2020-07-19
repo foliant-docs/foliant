@@ -107,7 +107,7 @@ def output(text: str, quiet=False):
     '''
 
     if not quiet:
-        print(text)
+        print(text, flush=True)
 
 
 @contextmanager
@@ -126,12 +126,12 @@ def spinner(text: str, logger: Logger, quiet=False, debug=False):
         logger.info(text)
 
         if not quiet:
-            print(text, end='... ')
+            print(text, end='... ', flush=True)
 
         yield
 
         if not quiet:
-            print('Done')
+            print('Done', flush=True)
 
     except Exception as exception:
         exception_traceback = format_exc()
