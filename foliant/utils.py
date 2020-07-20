@@ -1,5 +1,6 @@
 '''Various utilities used here and there in the Foliant code.'''
 
+import pkg_resources
 from contextlib import contextmanager
 from pkgutil import iter_modules
 from importlib import import_module
@@ -7,7 +8,7 @@ from shutil import rmtree
 from traceback import format_exc
 from pathlib import Path
 from logging import Logger
-from typing import Dict, Tuple, Type, Set
+from typing import List, Dict, Tuple, Type, Set
 
 
 def get_available_tags() -> Set[str]:
@@ -98,6 +99,29 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
         result[modname] = importer.find_module(modname).load_module(modname).Backend.targets
 
     return result
+
+
+def get_foliant_packages() -> List[str]:
+        '''Get the list of installed Foliant-related packages with their versions.
+
+        :returns: List of names and versions of the packages of Foliant core and extensions
+        '''
+        foliant_packages = []
+        all_packages = pkg_resources.working_set
+
+        for package in all_packages:
+            if package.key == 'foliant':
+                foliant_core_version = package.version
+
+            elif package.key.startswith('foliantcontrib.'):
+                foliant_packages.append(
+                    f'{package.key.replace("foliantcontrib.", "", 1)} {package.version}'
+                )
+
+        foliant_packages = sorted(foliant_packages)
+        foliant_packages.insert(0, f'foliant {foliant_core_version}')
+
+        return foliant_packages
 
 
 def output(text: str, quiet=False):

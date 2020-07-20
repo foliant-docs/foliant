@@ -12,7 +12,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
 from foliant.config import Parser
-from foliant.utils import spinner, get_available_backends, tmp
+from foliant.utils import spinner, get_available_backends, get_foliant_packages, tmp
 from foliant.cli.base import BaseCli
 
 
@@ -154,7 +154,9 @@ class Cli(BaseCli):
         if logs_dir:
             super().__init__(logs_dir)
 
-        self.logger.info('Build started.')
+        self.logger.info('Build started')
+
+        self.logger.debug(f'Installed Foliant-related packages: {get_foliant_packages()}')
 
         available_backends = get_available_backends()
 

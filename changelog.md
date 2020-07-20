@@ -1,5 +1,6 @@
 # 1.0.12 (will be released in a few days)
 
+-   Get and log the names and versions of all installed Foliant-related packages.
 -   Support the `!env` YAML tag to use environment variables in the project config.
 -   Allow to specify custom directory to store logs with the `--logs|-l` command line option.
 -   Flush output to STDOUT in progress status messages and in the `foliant.utils.output()` method.
