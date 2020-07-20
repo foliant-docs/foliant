@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from importlib import import_module
+from time import time
 from logging import DEBUG, WARNING
 from typing import List, Dict, Tuple
 
@@ -112,7 +113,14 @@ class Cli(BaseCli):
 
         return config
 
-    @set_arg_map({'backend': 'with', 'project_path': 'path', 'config_file_name': 'config'})
+    @set_arg_map(
+        {
+            'backend': 'with',
+            'project_path': 'path',
+            'config_file_name': 'config',
+            'logs_dir': 'logs'
+        }
+    )
     @set_metavars({'target': 'TARGET', 'backend': 'BACKEND'})
     @set_help(
         {
@@ -120,6 +128,7 @@ class Cli(BaseCli):
             'backend': 'Backend to make the target with: Pandoc, MkDocs, etc.',
             'project_path': 'Path to the Foliant project.',
             'config_file_name': 'Name of config file of the Foliant project.',
+            'logs_dir': 'Path to the directory to store logs, defaults to project path.',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
@@ -131,6 +140,7 @@ class Cli(BaseCli):
             backend='',
             project_path=Path('.'),
             config_file_name='foliant.yml',
+            logs_dir='',
             quiet=False,
             keep_tmp=False,
             debug=False
@@ -140,6 +150,9 @@ class Cli(BaseCli):
         # pylint: disable=too-many-arguments
 
         self.logger.setLevel(DEBUG if debug else WARNING)
+
+        if logs_dir:
+            super().__init__(logs_dir)
 
         self.logger.info('Build started.')
 

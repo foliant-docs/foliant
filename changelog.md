@@ -1,5 +1,6 @@
 # 1.0.12 (will be released in a few days)
 
+-   Allow to specify custom directory to store logs with the `--logs|-l` command line option.
 -   Flush output to STDOUT in progress status messages and in the `foliant.utils.output()` method.
 -   Add the `disable_implicit_unescape` option. Remove warning when `escape_code` is not set.
 
