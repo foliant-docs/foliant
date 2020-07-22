@@ -1,4 +1,4 @@
-# 1.0.12 (will be released in a few days)
+# 1.0.12
 
 -   Add the `disable_implicit_unescape` option. Remove warning when `escape_code` is not set.
 -   Support the `!env` YAML tag to use environment variables in the project config.
