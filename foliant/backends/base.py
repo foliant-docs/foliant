@@ -6,7 +6,7 @@ from logging import Logger
 from foliant.utils import spinner
 
 
-class BaseBackend(object):
+class BaseBackend():
     '''Base backend. All backends must inherit from this one.'''
 
     targets = ()
@@ -57,10 +57,10 @@ class BaseBackend(object):
             (preprocessor_name, preprocessor_options), = (*preprocessor.items(),)
 
         with spinner(
-            f'Applying preprocessor {preprocessor_name}',
-            self.logger,
-            self.quiet,
-            self.debug
+                f'Applying preprocessor {preprocessor_name}',
+                self.logger,
+                self.quiet,
+                self.debug
         ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')
@@ -76,7 +76,7 @@ class BaseBackend(object):
                 raise ModuleNotFoundError(f'Preprocessor {preprocessor_name} is not installed')
 
             except Exception as exception:
-                raise type(exception)(
+                raise RuntimeError(
                     f'Failed to apply preprocessor {preprocessor_name}: {exception}'
                 )
 
@@ -113,6 +113,9 @@ class BaseBackend(object):
                 *common_preprocessors,
                 'unescapecode'
             )
+
+        elif self.config.get('disable_implicit_unescape', False):
+            preprocessors = common_preprocessors
 
         else:
             preprocessors = (

@@ -1,3 +1,12 @@
+# 1.0.12
+
+-   Add the `disable_implicit_unescape` option. Remove warning when `escape_code` is not set.
+-   Support the `!env` YAML tag to use environment variables in the project config.
+-   Allow to specify custom directory to store logs with the `--logs|-l` command line option.
+-   Flush output to STDOUT in progress status messages and in the `foliant.utils.output()` method.
+-   Get and log the names and versions of all installed Foliant-related packages.
+-   Do not raise exception of the same type that is raised by a preprocessor, raise `RuntimeError` instead because some exceptions take more arguments than one.
+
 # 1.0.11
 
 -   Allow to specify custom options for EscapeCode preprocessor as the `escape_code.options` config parameter value.

@@ -7,7 +7,8 @@ from shutil import rmtree
 from traceback import format_exc
 from pathlib import Path
 from logging import Logger
-from typing import Dict, Tuple, Type, Set
+from typing import List, Dict, Tuple, Type, Set
+import pkg_resources
 
 
 def get_available_tags() -> Set[str]:
@@ -100,6 +101,32 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
     return result
 
 
+def get_foliant_packages() -> List[str]:
+    '''Get the list of installed Foliant-related packages with their versions.
+
+    :returns: List of names and versions of the packages of Foliant core and extensions
+    '''
+
+    # pylint: disable=not-an-iterable
+
+    foliant_packages = []
+    all_packages = pkg_resources.working_set
+
+    for package in all_packages:
+        if package.key == 'foliant':
+            foliant_core_version = package.version
+
+        elif package.key.startswith('foliantcontrib.'):
+            foliant_packages.append(
+                f'{package.key.replace("foliantcontrib.", "", 1)} {package.version}'
+            )
+
+    foliant_packages = sorted(foliant_packages)
+    foliant_packages.insert(0, f'foliant {foliant_core_version}')
+
+    return foliant_packages
+
+
 def output(text: str, quiet=False):
     '''Outputs the text to STDOUT in non-quiet mode
 
@@ -107,7 +134,7 @@ def output(text: str, quiet=False):
     '''
 
     if not quiet:
-        print(text)
+        print(text, flush=True)
 
 
 @contextmanager
@@ -126,12 +153,12 @@ def spinner(text: str, logger: Logger, quiet=False, debug=False):
         logger.info(text)
 
         if not quiet:
-            print(text, end='... ')
+            print(text, end='... ', flush=True)
 
         yield
 
         if not quiet:
-            print('Done')
+            print('Done', flush=True)
 
     except Exception as exception:
         exception_traceback = format_exc()

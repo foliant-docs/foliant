@@ -11,7 +11,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.validation import Validator, ValidationError
 
 from foliant.config import Parser
-from foliant.utils import spinner, get_available_backends, tmp
+from foliant.utils import spinner, get_available_backends, get_foliant_packages, tmp
 from foliant.cli.base import BaseCli
 
 
@@ -105,14 +105,21 @@ class Cli(BaseCli):
 
             except Exception as exception:
                 config = None
-                raise type(exception)(f'Invalid config: {exception}')
+                raise RuntimeError(f'Invalid config: {exception}')
 
         if config is None:
             raise ConfigError('Config parsing failed.')
 
         return config
 
-    @set_arg_map({'backend': 'with', 'project_path': 'path', 'config_file_name': 'config'})
+    @set_arg_map(
+        {
+            'backend': 'with',
+            'project_path': 'path',
+            'config_file_name': 'config',
+            'logs_dir': 'logs'
+        }
+    )
     @set_metavars({'target': 'TARGET', 'backend': 'BACKEND'})
     @set_help(
         {
@@ -120,6 +127,7 @@ class Cli(BaseCli):
             'backend': 'Backend to make the target with: Pandoc, MkDocs, etc.',
             'project_path': 'Path to the Foliant project.',
             'config_file_name': 'Name of config file of the Foliant project.',
+            'logs_dir': 'Path to the directory to store logs, defaults to project path.',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
@@ -131,6 +139,7 @@ class Cli(BaseCli):
             backend='',
             project_path=Path('.'),
             config_file_name='foliant.yml',
+            logs_dir='',
             quiet=False,
             keep_tmp=False,
             debug=False
@@ -138,10 +147,17 @@ class Cli(BaseCli):
         '''Make TARGET with BACKEND.'''
 
         # pylint: disable=too-many-arguments
+        # pylint: disable=logging-fstring-interpolation
+        # pylint: disable=consider-using-sys-exit
 
         self.logger.setLevel(DEBUG if debug else WARNING)
 
-        self.logger.info('Build started.')
+        if logs_dir:
+            super().__init__(logs_dir)
+
+        self.logger.info('Build started')
+
+        self.logger.debug(f'Installed Foliant-related packages: {get_foliant_packages()}')
 
         available_backends = get_available_backends()
 

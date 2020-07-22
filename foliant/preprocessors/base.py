@@ -5,7 +5,7 @@ import yaml
 OptionValue = int or float or bool or str
 
 
-class BasePreprocessor(object):
+class BasePreprocessor():
     '''Base preprocessor. All preprocessors must inherit from this one.'''
 
     # pylint: disable=too-many-instance-attributes
@@ -52,8 +52,8 @@ class BasePreprocessor(object):
         if self.tags:
             self.pattern = re.compile(
                 rf'(?<!\<)\<(?P<tag>{"|".join(self.tags)})' +
-                rf'(\s(?P<options>[^\<\>]*))?\>' +
-                rf'(?P<body>.*?)\<\/(?P=tag)\>',
+                r'(\s(?P<options>[^\<\>]*))?\>' +
+                r'(?P<body>.*?)\<\/(?P=tag)\>',
                 flags=re.DOTALL
             )
 

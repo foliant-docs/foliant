@@ -8,9 +8,9 @@ class Preprocessor(BasePreprocessor):
         super().__init__(*args, **kwargs)
 
         self.pattern = re.compile(
-            rf'\<\<(?P<tag>[^\<\>\s]+)' +
-            rf'(\s(?P<options>[^\<\>]*))?\>' +
-            rf'(?P<body>.*?)\<\/(?P=tag)\>',
+            r'\<\<(?P<tag>[^\<\>\s]+)' +
+            r'(\s(?P<options>[^\<\>]*))?\>' +
+            r'(?P<body>.*?)\<\/(?P=tag)\>',
             flags=re.DOTALL
         )
 

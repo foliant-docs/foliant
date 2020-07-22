@@ -4,7 +4,7 @@ from logging import Logger
 from yaml import load, Loader
 
 
-class BaseParser(object):
+class BaseParser():
     _defaults = {
         'src_dir': Path('./src'),
         'tmp_dir': Path('./__folianttmp__')
@@ -32,7 +32,7 @@ class BaseParser(object):
         :returns: Dictionary representing the YAML tree
         '''
 
-        self.logger.info('Parsing started.')
+        self.logger.info('Parsing started')
 
         with open(self.config_path, encoding='utf8') as config_file:
             config = {**self._defaults, **load(config_file, Loader)}
@@ -40,14 +40,8 @@ class BaseParser(object):
             config['src_dir'] = Path(config['src_dir']).expanduser()
             config['tmp_dir'] = Path(config['tmp_dir']).expanduser()
 
-            self.logger.info(f'Parsing completed.')
+            self.logger.info('Parsing completed')
 
             self.logger.debug(f'Config: {config}')
-
-            if not config.get('escape_code', False):
-                self.logger.warning(
-                    'Working in backward compatibility mode. ' +
-                    'To get rid of this warning, enable the escape_code config option'
-                )
 
             return config

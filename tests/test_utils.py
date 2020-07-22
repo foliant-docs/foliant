@@ -14,7 +14,7 @@ def test_get_available_config_parsers():
 
     parsers = utils.get_available_config_parsers()
 
-    assert set(parsers.keys()) == {'path', 'include'}
+    assert set(parsers.keys()) == {'env', 'path', 'include'}
 
     for parser_class in parsers.values():
         assert issubclass(parser_class, foliant.config.base.BaseParser)
