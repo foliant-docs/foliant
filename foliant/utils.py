@@ -102,26 +102,26 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
 
 
 def get_foliant_packages() -> List[str]:
-        '''Get the list of installed Foliant-related packages with their versions.
+    '''Get the list of installed Foliant-related packages with their versions.
 
-        :returns: List of names and versions of the packages of Foliant core and extensions
-        '''
-        foliant_packages = []
-        all_packages = pkg_resources.working_set
+    :returns: List of names and versions of the packages of Foliant core and extensions
+    '''
+    foliant_packages = []
+    all_packages = pkg_resources.working_set
 
-        for package in all_packages:
-            if package.key == 'foliant':
-                foliant_core_version = package.version
+    for package in all_packages:
+        if package.key == 'foliant':
+            foliant_core_version = package.version
 
-            elif package.key.startswith('foliantcontrib.'):
-                foliant_packages.append(
-                    f'{package.key.replace("foliantcontrib.", "", 1)} {package.version}'
-                )
+        elif package.key.startswith('foliantcontrib.'):
+            foliant_packages.append(
+                f'{package.key.replace("foliantcontrib.", "", 1)} {package.version}'
+            )
 
-        foliant_packages = sorted(foliant_packages)
-        foliant_packages.insert(0, f'foliant {foliant_core_version}')
+    foliant_packages = sorted(foliant_packages)
+    foliant_packages.insert(0, f'foliant {foliant_core_version}')
 
-        return foliant_packages
+    return foliant_packages
 
 
 def output(text: str, quiet=False):
