@@ -76,7 +76,7 @@ class BaseBackend(object):
                 raise ModuleNotFoundError(f'Preprocessor {preprocessor_name} is not installed')
 
             except Exception as exception:
-                raise type(exception)(
+                raise RuntimeError(
                     f'Failed to apply preprocessor {preprocessor_name}: {exception}'
                 )
 
