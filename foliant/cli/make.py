@@ -106,7 +106,7 @@ class Cli(BaseCli):
 
             except Exception as exception:
                 config = None
-                raise type(exception)(f'Invalid config: {exception}')
+                raise RuntimeError(f'Invalid config: {exception}')
 
         if config is None:
             raise ConfigError('Config parsing failed.')
