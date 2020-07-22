@@ -1,6 +1,5 @@
 '''Various utilities used here and there in the Foliant code.'''
 
-import pkg_resources
 from contextlib import contextmanager
 from pkgutil import iter_modules
 from importlib import import_module
@@ -9,6 +8,7 @@ from traceback import format_exc
 from pathlib import Path
 from logging import Logger
 from typing import List, Dict, Tuple, Type, Set
+import pkg_resources
 
 
 def get_available_tags() -> Set[str]:

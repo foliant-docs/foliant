@@ -5,7 +5,8 @@ from foliant.config.base import BaseParser
 
 
 class Parser(BaseParser):
-    def _resolve_env_tag(self, _, node) -> str:
+    @staticmethod
+    def _resolve_env_tag(self, _, node) -> str or int or bool or dict or list or None:
         '''Replace value after ``!env`` with the value of referenced environment variable.'''
 
         return load(getenv(node.value, default='null'), Loader)

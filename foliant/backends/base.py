@@ -6,7 +6,7 @@ from logging import Logger
 from foliant.utils import spinner
 
 
-class BaseBackend(object):
+class BaseBackend():
     '''Base backend. All backends must inherit from this one.'''
 
     targets = ()
@@ -57,10 +57,10 @@ class BaseBackend(object):
             (preprocessor_name, preprocessor_options), = (*preprocessor.items(),)
 
         with spinner(
-            f'Applying preprocessor {preprocessor_name}',
-            self.logger,
-            self.quiet,
-            self.debug
+                f'Applying preprocessor {preprocessor_name}',
+                self.logger,
+                self.quiet,
+                self.debug
         ):
             try:
                 preprocessor_module = import_module(f'foliant.preprocessors.{preprocessor_name}')

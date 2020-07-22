@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from importlib import import_module
-from time import time
 from logging import DEBUG, WARNING
 from typing import List, Dict, Tuple
 
@@ -148,6 +147,8 @@ class Cli(BaseCli):
         '''Make TARGET with BACKEND.'''
 
         # pylint: disable=too-many-arguments
+        # pylint: disable=logging-fstring-interpolation
+        # pylint: disable=consider-using-sys-exit
 
         self.logger.setLevel(DEBUG if debug else WARNING)
 
