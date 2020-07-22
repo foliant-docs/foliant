@@ -106,6 +106,9 @@ def get_foliant_packages() -> List[str]:
 
     :returns: List of names and versions of the packages of Foliant core and extensions
     '''
+
+    # pylint: disable=not-an-iterable
+
     foliant_packages = []
     all_packages = pkg_resources.working_set
 
