@@ -16,19 +16,19 @@ Foliant is written in Python and requires Python 3.6.
 
 To install Foliant, use pip:
 
-```shell
+```console
 $ pip install foliant
 ```
 
 Backends, extensions, and preprocessors are installed with pip as well. For the Quickstart, you'll need the [MkDocs backend]() and [init CLI extension]():
 
-```shell
+```console
 $ pip install foliantcontrib.mkdocs foliantcontrib.init
 ```
 
 To build pdf and docx, install the [Pandoc backend]():
 
-```shell
+```console
 $ pip install foliantcontrib.pandoc
 ```
 
@@ -37,56 +37,56 @@ $ pip install foliantcontrib.pandoc
 
 1. Create a new project:
 
-```shell
-$ foliant init
-Enter the project name: Hello Foliant
-✓ Generating Foliant project
-─────────────────────
-Project "Hello Foliant" created in /path/to/hello-foliant
-```
+    ```console
+    $ foliant init
+    Enter the project name: Hello Foliant
+    ✓ Generating Foliant project
+    ─────────────────────
+    Project "Hello Foliant" created in /path/to/hello-foliant
+    ```
 
-This command creates a basic Foliant project:
+    This command creates a basic Foliant project:
 
-```
-hello-foliant/
-├── foliant.yml
-└── src
-    └── index.md
+    ```
+    hello-foliant/
+    ├── foliant.yml
+    └── src
+        └── index.md
 
-1 directory, 2 files
-```
+    1 directory, 2 files
+    ```
 
-`foliant.yml` is the project config file, `src` is the directory that contains the project source files (initially, just one file `index.md`).
+    `foliant.yml` is the project config file, `src` is the directory that contains the project source files (initially, just one file `index.md`).
 
 2. Build a website from the newly created project:
 
-```shell
-$ foliant make site -p hello-foliant/
-✓ Parsing config
-✓ Applying preprocessor mkdocs
-✓ Making site with MkDocs
-─────────────────────
-Result: Hello_Foliant-0.1.0-2017-11-24.mkdocs
-```
+    ```console
+    $ foliant make site -p hello-foliant/
+    ✓ Parsing config
+    ✓ Applying preprocessor mkdocs
+    ✓ Making site with MkDocs
+    ─────────────────────
+    Result: Hello_Foliant-0.1.0-2017-11-24.mkdocs
+    ```
 
 3. Run a local webserver in the site directory and see the site in your browser:
 
-```shell
-$ cd Hello_Foliant-0.1.0-2017-11-24.mkdocs
-$ python -m http.server
-Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
-```
+    ```console
+    $ cd Hello_Foliant-0.1.0-2017-11-24.mkdocs
+    $ python -m http.server
+    Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+    ```
 
 4. Build a standalone pdf document from the project:
 
-```shell
-$ foliant make pdf -p hello-foliant/
-✓ Parsing config
-✓ Applying preprocessor mkdocs
-✓ Making pdf with Pandoc
-─────────────────────
-Result: Hello_Foliant-0.1.0-2017-11-24.pdf
-```
+    ```console
+    $ foliant make pdf -p hello-foliant/
+    ✓ Parsing config
+    ✓ Applying preprocessor mkdocs
+    ✓ Making pdf with Pandoc
+    ─────────────────────
+    Result: Hello_Foliant-0.1.0-2017-11-24.pdf
+    ```
 
 > **Important**
 >
