@@ -97,3 +97,5 @@ Result: Hello_Foliant-0.1.0-2017-11-24.pdf
 > -   [MacTeX](http://tug.org/mactex/) for macOS
 > -   [MikTeX](https://miktex.org/) for Windows
 > -   [TeXLive](https://tug.org/texlive/) for Linux
+
+[Documentation](https://foliant-docs.github.io/docs/).
