@@ -6,11 +6,15 @@
 
 # Foliant
 
-Foliant is a all-in-one documentation authoring tool. It lets you produce standalone documents in pdf and docx, as well as websites, from single Markdown source.
+Foliant is an all-in-one single-source documentation authoring tool. It lets you produce standalone documents in **pdf** and **docx**, build **static websites** and upload pages to **Confluence**, all from single Markdown source.
 
-Foliant is a *higher order* tool, which means that it uses other programs to do its job. For pdf and docx, it uses [Pandoc](http://pandoc.org/), for websites it uses [MkDocs](http://www.mkdocs.org/).
+Foliant is a higher order tool, which means it uses other programs to do its job. For building pdf and docx, it can use [Pandoc](https://pandoc.org/) or [md-to-pdf](https://github.com/simonhaenisch/md-to-pdf), for websites [MkDocs](https://www.mkdocs.org/), [Aglio](https://github.com/danielgtaylor/aglio) or [Slate](https://github.com/slatedocs/slate).
 
-Foliant preprocessors let you include parts of documents in other documents, show and hide content with flags, render diagrams from text, and more.
+Foliant preprocessors let you reuse parts of your documents, show and hide content with flags, render diagrams from text, and much more.
+
+Foliant is highly extensible, so if it lacks some functions or output formats you can always make a plugin for it or request one from our team.
+
+[Foliant Documentation](https://foliant-docs.github.io/docs/) website.
 
 ## Installation
 
@@ -97,5 +101,3 @@ Result: Hello_Foliant-0.1.0-2017-11-24.pdf
 > -   [MacTeX](http://tug.org/mactex/) for macOS
 > -   [MikTeX](https://miktex.org/) for Windows
 > -   [TeXLive](https://tug.org/texlive/) for Linux
-
-[Documentation](https://foliant-docs.github.io/docs/).
