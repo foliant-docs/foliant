@@ -2,13 +2,19 @@
 [![Travis](https://img.shields.io/travis/foliant-docs/foliant.svg)](https://travis-ci.org/foliant-docs/foliant)
 [![codecov](https://codecov.io/gh/foliant-docs/foliant/branch/develop/graph/badge.svg)](https://codecov.io/gh/foliant-docs/foliant)
 
+![](img/foliant.gif)
+
 # Foliant
 
-Foliant is a all-in-one documentation authoring tool. It lets you produce standalone documents in pdf and docx, as well as websites, from single Markdown source.
+Foliant is an all-in-one single-source documentation authoring tool. It lets you produce standalone documents in **pdf** and **docx**, build **static websites** and upload pages to **Confluence**, all from single Markdown source.
 
-Foliant is a *higher order* tool, which means that it uses other programs to do its job. For pdf and docx, it uses [Pandoc](http://pandoc.org/), for websites it uses [MkDocs](http://www.mkdocs.org/).
+Foliant is a higher order tool, which means it uses other programs to do its job. For building pdf and docx, it can use [Pandoc](https://pandoc.org/) or [md-to-pdf](https://github.com/simonhaenisch/md-to-pdf), for websites [MkDocs](https://www.mkdocs.org/), [Aglio](https://github.com/danielgtaylor/aglio) or [Slate](https://github.com/slatedocs/slate).
 
-Foliant preprocessors let you include parts of documents in other documents, show and hide content with flags, render diagrams from text, and more.
+Foliant preprocessors let you reuse parts of your documents, show and hide content with flags, render diagrams from text, and much more.
+
+Foliant is highly extensible, so if it lacks some functions or output formats you can always make a plugin for it or request one from our team.
+
+[Foliant Documentation](https://foliant-docs.github.io/docs/) website.
 
 ## Installation
 
