@@ -26,13 +26,13 @@ To install Foliant, use pip:
 $ pip install foliant
 ```
 
-Backends, extensions, and preprocessors are installed with pip as well. For the Quickstart, you'll need the [MkDocs backend]() and [init CLI extension]():
+Backends, extensions, and preprocessors are installed with pip as well. For the Quickstart, you'll need the [MkDocs backend](https://github.com/foliant-docs/foliantcontrib.mkdocs) and [init CLI extension](https://github.com/foliant-docs/foliantcontrib.init):
 
 ```shell
 $ pip install foliantcontrib.mkdocs foliantcontrib.init
 ```
 
-To build pdf and docx, install the [Pandoc backend]():
+To build pdf and docx, install the [Pandoc backend](https://github.com/foliant-docs/foliantcontrib.pandoc):
 
 ```shell
 $ pip install foliantcontrib.pandoc
