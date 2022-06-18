@@ -1,14 +1,20 @@
 '''Various utilities used here and there in the Foliant code.'''
 
+import pkg_resources
+import time
+
 from contextlib import contextmanager
-from pkgutil import iter_modules
 from importlib import import_module
+from logging import Logger
+from pathlib import Path
+from pkgutil import iter_modules
 from shutil import rmtree
 from traceback import format_exc
-from pathlib import Path
-from logging import Logger
-from typing import List, Dict, Tuple, Type, Set
-import pkg_resources
+from typing import Dict
+from typing import List
+from typing import Set
+from typing import Tuple
+from typing import Type
 
 
 def get_available_tags() -> Set[str]:
@@ -150,6 +156,7 @@ def spinner(text: str, logger: Logger, quiet=False, debug=False):
     # pylint: disable=broad-except
 
     try:
+        starttime = time.time()
         logger.info(text)
 
         if not quiet:
@@ -158,7 +165,8 @@ def spinner(text: str, logger: Logger, quiet=False, debug=False):
         yield
 
         if not quiet:
-            print('Done', flush=True)
+            elapsed = round(time.time() - starttime, 3)
+            print(f'Done in {elapsed}s', flush=True)
 
     except Exception as exception:
         exception_traceback = format_exc()
