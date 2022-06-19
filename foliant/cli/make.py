@@ -1,5 +1,5 @@
 '''Main CLI repsonsible for the ``make`` command.'''
-
+import os.path
 from pathlib import Path
 from importlib import import_module
 from logging import DEBUG, WARNING
@@ -87,6 +87,15 @@ class Cli(BaseCli):
         except KeyboardInterrupt:
             raise BackendError('No backend specified')
 
+    def clean_registry(self, project_path):
+        multiprojectcache_dir = os.path.join(project_path, '.multiprojectcache')
+        if os.path.isdir(multiprojectcache_dir):
+            self.logger.debug(f'Cleaning registry in {multiprojectcache_dir} ')
+            for item in os.listdir(multiprojectcache_dir):
+                if item.endswith(".apirefregistry"):
+                    self.logger.debug(f'deleting {item}')
+                    os.remove(os.path.join(multiprojectcache_dir, item))
+
     @ignore
     def get_config(
             self,
@@ -97,6 +106,8 @@ class Cli(BaseCli):
     ) -> dict:
         with spinner('Parsing config', self.logger, quiet, debug):
             try:
+                self.clean_registry(project_path)
+
                 config = Parser(project_path, config_file_name, self.logger, quiet).parse()
 
             except FileNotFoundError as exception:
