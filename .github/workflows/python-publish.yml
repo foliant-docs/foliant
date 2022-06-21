@@ -92,7 +92,7 @@ jobs:
           with:
             context: .
             push: true
-            tags: foliant/foliant:slim, foliant/foliant:$FOLIANT_VERSION-slim
+            tags: foliant/foliant:slim, foliant/foliant:{{tag}}-slim
             build-args: VERSION=$FOLIANT_VERSION
             file: "{ context }/Dockerfile-slim"
         - name: Build and push default
@@ -100,7 +100,7 @@ jobs:
           with:
             context: .
             push: true
-            tags: foliant/foliant, foliant/foliant:$FOLIANT_VERSION
+            tags: foliant/foliant, foliant/foliant:{{tag}}
             file: "{ context }/Dockerfile"
 
         - name: Build and push pandoc
@@ -108,5 +108,5 @@ jobs:
           with:
             context: .
             push: true
-            tags: foliant/foliant:pandoc, foliant/foliant:$FOLIANT_VERSION-pandoc
+            tags: foliant/foliant:pandoc, foliant/foliant:{{tag}}-pandoc
             file: "{ context }/Dockerfile-pandoc"
