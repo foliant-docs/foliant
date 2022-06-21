@@ -76,7 +76,7 @@ jobs:
 
 
   after_deploy:
-#       needs: publish
+      needs: validate
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@master
