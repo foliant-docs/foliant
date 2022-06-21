@@ -14,13 +14,13 @@ class Parser(BaseParser):
         if len(parts) == 1:
             path = Path(parts[0]).expanduser()
 
-            with open(self.project_path/path) as include_file:
+            with open(self.project_path/path, encoding="utf-8") as include_file:
                 return load(include_file, Loader)
 
         elif len(parts) == 2:
             path, section = Path(parts[0]).expanduser(), parts[1]
 
-            with open(self.project_path/path) as include_file:
+            with open(self.project_path/path, encoding="utf-8") as include_file:
                 return load(include_file, Loader)[section]
 
         else:
