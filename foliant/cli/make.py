@@ -90,7 +90,7 @@ class Cli(BaseCli):
     def clean_registry(self, project_path):
         multiprojectcache_dir = os.path.join(project_path, '.multiprojectcache')
         if os.path.isdir(multiprojectcache_dir):
-            self.logger.debug(f'Cleaning registry in {multiprojectcache_dir} ')
+            self.logger.debug(f'Cleaning registry in {os.path.abspath(multiprojectcache_dir)} ')
             for item in os.listdir(multiprojectcache_dir):
                 if item.endswith(".apirefregistry"):
                     self.logger.debug(f'deleting {item}')
@@ -106,7 +106,6 @@ class Cli(BaseCli):
     ) -> dict:
         with spinner('Parsing config', self.logger, quiet, debug):
             try:
-                self.clean_registry(project_path)
 
                 config = Parser(project_path, config_file_name, self.logger, quiet).parse()
 
@@ -171,6 +170,8 @@ class Cli(BaseCli):
         self.logger.debug(f'Installed Foliant-related packages: {get_foliant_packages()}')
 
         available_backends = get_available_backends()
+
+        self.clean_registry(project_path)
 
         try:
             if backend:
