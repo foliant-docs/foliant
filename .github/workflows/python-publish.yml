@@ -1,0 +1,102 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.8", "3.9" ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Install library
+        run: poetry install --no-interaction
+      - name: Lint and test with poetry
+        run: |
+          poetry run pytest --cov=foliant
+          poetry run codecov
+          poetry run pylint foliant
+
+  publish:
+      needs: validate
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Build and publish to pypi
+          uses: JRubics/poetry-publish@v1.11
+          with:
+            pypi_token: ${{ secrets.PYPI_TOKEN }}
+
+  after_deploy:
+      needs: publish
+      runs-on: ubuntu-latest
+      steps:
+        - name: Add version to environment vars
+          run: |
+            FOLIANT_VERSION=$(poetry version --short)
+            echo "FOLIANT_VERSION=$FOLIANT_VERSION" >> $GITHUB_ENV
+        - name: Check if tag version matches project version
+          run: |
+            TAG=$(git describe HEAD --tags --abbrev=0)
+            echo $TAG
+            echo $FOLIANT_VERSION
+            if [[ "$TAG" != "v$FOLIANT_VERSION" ]]; then exit 1; fi
+        - uses: actions/checkout@master
+          with:
+            name: foliant-docs/docker
+            ref: master
+        - name: Login to DockerHub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        - name: Build and push slim
+          uses: docker/build-push-action@v3
+          with:
+            context: .
+            push: true
+            tags: foliant/foliant:slim, foliant/foliant:$FOLIANT_VERSION-slim
+            build-args: VERSION=$FOLIANT_VERSION
+            file: { context }/Dockerfile-slim
+
+        - name: Build and push default
+          uses: docker/build-push-action@v3
+          with:
+            context: .
+            push: true
+            tags: foliant/foliant, foliant/foliant:$FOLIANT_VERSION
+            file: { context }/Dockerfile
+
+        - name: Build and push pandoc
+          uses: docker/build-push-action@v3
+          with:
+            context: .
+            push: true
+            tags: foliant/foliant:pandoc, foliant/foliant:$FOLIANT_VERSION-pandoc
+            file: { context }/Dockerfile-pandoc
