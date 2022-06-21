@@ -72,13 +72,15 @@ class BaseBackend():
                     preprocessor_options
                 ).apply()
 
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError(f'Preprocessor {preprocessor_name} is not installed')
+            except ModuleNotFoundError as module_not_found:
+                raise ModuleNotFoundError(
+                    f'Preprocessor {preprocessor_name} is not installed'
+                ) from module_not_found
 
             except Exception as exception:
                 raise RuntimeError(
                     f'Failed to apply preprocessor {preprocessor_name}: {exception}'
-                )
+                ) from exception
 
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,
