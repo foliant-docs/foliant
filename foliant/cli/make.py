@@ -84,8 +84,8 @@ class Cli(BaseCli):
                 completer=WordCompleter(matching_backends),
                 validator=BackendValidator(matching_backends)
             )
-        except KeyboardInterrupt:
-            raise BackendError('No backend specified')
+        except KeyboardInterrupt as kbd_interrupt:
+            raise BackendError('No backend specified') from kbd_interrupt
 
     @ignore
     def get_config(
@@ -101,11 +101,11 @@ class Cli(BaseCli):
 
             except FileNotFoundError as exception:
                 config = None
-                raise FileNotFoundError(f'{exception} not found')
+                raise FileNotFoundError(f'{exception} not found') from  exception
 
             except Exception as exception:
                 config = None
-                raise RuntimeError(f'Invalid config: {exception}')
+                raise RuntimeError(f'Invalid config: {exception}') from exception
 
         if config is None:
             raise ConfigError('Config parsing failed.')
