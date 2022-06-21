@@ -83,15 +83,14 @@ jobs:
             push: true
             tags: foliant/foliant:slim, foliant/foliant:$FOLIANT_VERSION-slim
             build-args: VERSION=$FOLIANT_VERSION
-            file: { context }/Dockerfile-slim
-
+            file: "{ context }/Dockerfile-slim"
         - name: Build and push default
           uses: docker/build-push-action@v3
           with:
             context: .
             push: true
             tags: foliant/foliant, foliant/foliant:$FOLIANT_VERSION
-            file: { context }/Dockerfile
+            file: "{ context }/Dockerfile"
 
         - name: Build and push pandoc
           uses: docker/build-push-action@v3
@@ -99,4 +98,4 @@ jobs:
             context: .
             push: true
             tags: foliant/foliant:pandoc, foliant/foliant:$FOLIANT_VERSION-pandoc
-            file: { context }/Dockerfile-pandoc
+            file: "{ context }/Dockerfile-pandoc"
