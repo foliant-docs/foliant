@@ -96,7 +96,7 @@ jobs:
               foliant/foliant:slim
               foliant/foliant:${{ github.event.release.tag_name }}-slim
             build-args: VERSION=$FOLIANT_VERSION
-            file: ${{ context }}/Dockerfile-slim
+            file: "./Dockerfile-slim"
         - name: Build and push default
           uses: docker/build-push-action@v3
           with:
@@ -105,7 +105,7 @@ jobs:
             tags: |
               foliant/foliant
               foliant/foliant:${{ github.event.release.tag_name }}
-            file: ${{ context }}/Dockerfile
+            file: "./Dockerfile"
 
         - name: Build and push pandoc
           uses: docker/build-push-action@v3
@@ -115,4 +115,4 @@ jobs:
             tags: |
               foliant/foliant:pandoc
               foliant/foliant:${{ github.event.release.tag_name }}-pandoc
-            file: ${{ context }}/Dockerfile-pandoc
+            file: "./Dockerfile-pandoc"
