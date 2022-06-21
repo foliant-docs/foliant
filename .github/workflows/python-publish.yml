@@ -57,15 +57,15 @@ jobs:
             echo $TAG
             echo $FOLIANT_VERSION
             if [[ "$TAG" != "v$FOLIANT_VERSION" ]]; then exit 1; fi
-        - uses: actions/checkout@v2
-        - name: Build and publish to pypi
-          uses: JRubics/poetry-publish@v1.11
-          with:
-            pypi_token: ${{ secrets.PYPI_TOKEN }}
+#         - uses: actions/checkout@v2
+#         - name: Build and publish to pypi
+#           uses: JRubics/poetry-publish@v1.11
+#           with:
+#             pypi_token: ${{ secrets.PYPI_TOKEN }}
 
 
   after_deploy:
-#       needs: publish
+      needs: publish
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@master
