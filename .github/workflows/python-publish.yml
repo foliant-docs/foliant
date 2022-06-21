@@ -42,7 +42,6 @@ jobs:
           poetry run pytest --cov=foliant
           poetry run codecov
           poetry run pylint foliant
-            steps:
       - name: Add version to environment vars
         run: |
           FOLIANT_VERSION=$(poetry version --short)
