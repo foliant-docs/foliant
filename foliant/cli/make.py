@@ -90,10 +90,10 @@ class Cli(BaseCli):
     def clean_registry(self, project_path):
         multiprojectcache_dir = os.path.join(project_path, '.multiprojectcache')
         if os.path.isdir(multiprojectcache_dir):
-            self.logger.debug(f'Cleaning registry in {os.path.abspath(multiprojectcache_dir)} ')
+            self.logger.debug('Cleaning registry in %s', {os.path.abspath(multiprojectcache_dir)})
             for item in os.listdir(multiprojectcache_dir):
                 if item.endswith(".apirefregistry"):
-                    self.logger.debug(f'deleting {item}')
+                    self.logger.debug('deleting %s', {item})
                     os.remove(os.path.join(multiprojectcache_dir, item))
 
     @ignore
