@@ -1,3 +1,8 @@
+# 1.0.13
+
+- Add the `clean_registry` function to `make`.
+  This function checks if multiproject and removes `.apirefregistry` files in  `.multiprojectache`.
+
 # 1.0.12
 
 -   Add the `disable_implicit_unescape` option. Remove warning when `escape_code` is not set.
