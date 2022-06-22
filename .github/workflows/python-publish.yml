@@ -57,16 +57,6 @@ jobs:
       needs: validate
       runs-on: ubuntu-latest
       steps:
-        - name: Add version to environment vars
-          run: |
-            FOLIANT_VERSION=$(poetry version --short)
-            echo "FOLIANT_VERSION=$FOLIANT_VERSION" >> $GITHUB_ENV
-        - name: Check if tag version matches project version
-          run: |
-            TAG=$(git describe HEAD --tags --abbrev=0)
-            echo $TAG
-            echo $FOLIANT_VERSION
-            if [[ "$TAG" != "v$FOLIANT_VERSION" ]]; then exit 1; fi
         - uses: actions/checkout@v2
         - name: Build and publish to pypi
           uses: JRubics/poetry-publish@v1.11
