@@ -23,6 +23,9 @@ class Backend(BaseBackend):
 
     def make(self, target: str) -> str:
         rmtree(self._preprocessed_dir_name, ignore_errors=True)
-        copytree(self.working_dir, self._preprocessed_dir_name)
+        if self.context['only_partial']:
+            self.partial_copy(self.working_dir / self.context['only_partial'], self._preprocessed_dir_name)
+        else:
+            copytree(self.working_dir, self._preprocessed_dir_name)
 
         return self._preprocessed_dir_name

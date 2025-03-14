@@ -140,6 +140,7 @@ class Cli(BaseCli):
             'logs_dir': 'Path to the directory to store logs, defaults to project path.',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
+            'only_partial': 'using only a partial list of files',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
         }
     )
@@ -152,6 +153,7 @@ class Cli(BaseCli):
             logs_dir='',
             quiet=False,
             keep_tmp=False,
+            only_partial='',
             debug=False
         ):
         '''Make TARGET with BACKEND.'''
@@ -189,7 +191,9 @@ class Cli(BaseCli):
             'project_path': project_path,
             'config': config,
             'target': target,
-            'backend': backend
+            'backend': backend,
+            'keep_tmp': keep_tmp,
+            'only_partial': only_partial
         }
 
         backend_module = import_module(f'foliant.backends.{backend}')
