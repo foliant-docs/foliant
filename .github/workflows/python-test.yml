@@ -21,6 +21,7 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
+          version: 1.0.0
       - name: Install library
         run: poetry install --no-interaction
       - name: Lint and test with poetry
