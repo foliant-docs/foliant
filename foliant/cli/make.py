@@ -163,6 +163,7 @@ class Cli(BaseCli):
         # pylint: disable=consider-using-sys-exit
 
         self.logger.setLevel(DEBUG if debug else WARNING)
+        result = None
 
         if logs_dir:
             super().__init__(logs_dir)

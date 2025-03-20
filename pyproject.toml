@@ -11,7 +11,7 @@ documentation = "https://foliant-docs.github.io/docs/"
 keywords = ["documentation", "markdown", "html", "docx", "pdf"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.8"
 pyyaml = "^5.1.1"
 cliar = "^1.3.2"
 prompt_toolkit = "^2.0"

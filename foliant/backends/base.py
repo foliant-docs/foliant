@@ -6,8 +6,8 @@ from pathlib import Path
 from datetime import date
 from logging import Logger
 from glob import glob
+from typing import Union, List, Set
 from foliant.utils import spinner
-from typing import Union, List
 
 class BaseBackend():
     '''Base backend. All backends must inherit from this one.'''
@@ -92,26 +92,42 @@ class BaseBackend():
         root: Union[str, Path]
     ) -> None:
         """
-        Copies files, a list of files, or files matching a glob pattern to the specified folder.
+        Copies files, a list of files,
+        or files matching a glob pattern to the specified folder.
         Creates all necessary directories if they don't exist.
-
-        :param source: A file path, a list of file paths, or a glob pattern (as a string or Path object).
-        :param destination: Target folder (as a string or Path object).
-        :param root: Base folder to calculate relative paths (optional). If not provided, the parent directory of the source is used.
         """
-        # Convert destination to a Path object
         destination_path = Path(destination)
+        root_path = Path(root)
+        image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
+        image_pattern = re.compile(r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', re.IGNORECASE)
+        include_statement_pattern = re.compile(
+            r'(?<!\<)\<(?:include)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
+            flags=re.DOTALL
+        )
 
-        def extract_first_header(file_path):
+        def _extract_first_header(file_path):
             """Extracts the first first-level header from the Markdown file."""
             with open(file_path, 'r', encoding='utf-8') as file:
                 for line in file:
                     match = re.match(r'^#\s+(.*)', line)
                     if match:
-                        return match.group(0)  # Returns the header
-            return None  # If the header is not found
+                        return match.group(0)
+            return None
 
-        def copy_files_without_content(src_dir, dst_dir):
+        def _find_referenced_images(file_path: Path) -> Set[Path]:
+            """Finds all image files referenced in the given file."""
+            image_paths = set()
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                for match in image_pattern.findall(content):
+                    for group in match:
+                        if group:
+                            image_path = Path(file_path).parent / Path(group)
+                            if image_path.suffix.lower() in image_extensions:
+                                image_paths.add(image_path)
+            return image_paths
+
+        def _copy_files_without_content(src_dir: str, dst_dir: str):
             """Copies files, leaving only the first-level header."""
             if not os.path.exists(dst_dir):
                 os.makedirs(dst_dir)
@@ -123,17 +139,54 @@ class BaseBackend():
                     dst_file_path = Path(os.path.join(dst_dir, dirs, file_name))
                     dst_file_path.parent.mkdir(parents=True, exist_ok=True)
                     if file_name.endswith('.md'):
-                        header = extract_first_header(src_file_path)
+                        header = _extract_first_header(src_file_path)
                         if header:
                             with open(dst_file_path, 'w', encoding='utf-8') as dst_file:
                                 dst_file.write(header + '\n')
                     else:
-                        copy(src_file_path, dst_file_path)
+                        if Path(src_file_path).suffix.lower() not in image_extensions:
+                            copy(src_file_path, dst_file_path)
 
-        copy_files_without_content(root, destination)
-        # Handle case where source is a list of files
+        def _copy_files_recursive(files_to_copy: List):
+            """Recursively copies files and their dependencies."""
+            referenced_images = set()
+
+            for file_path in files_to_copy:
+                relative_path = file_path.relative_to(root_path)
+                destination_file_path = destination_path / relative_path
+                destination_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+                # Find and copy includes
+                include_paths = []
+                match_includes = re.findall(include_statement_pattern,
+                                            file_path.read_text(encoding='utf-8'))
+                for path in match_includes:
+                    _path = Path(path)
+                    if not _path.exists():
+                        _path = relative_path / path
+                    if _path.exists():
+                        include_paths.append(_path)
+                    _copy_files_recursive(include_paths)
+
+                # Find referenced images
+                referenced_images.update(_find_referenced_images(file_path))
+
+                # Copy the file
+                copy(file_path, destination_file_path)
+
+            # Copy referenced images
+            for image_path in referenced_images:
+                src_image_path = Path(image_path).relative_to(root_path)
+                dst_image_path = destination_path / src_image_path
+                dst_image_path.parent.mkdir(parents=True, exist_ok=True)
+
+                if Path(image_path).exists():
+                    copy(image_path, dst_image_path)
+
+        # Basic logic
+        _copy_files_without_content(root_path, destination_path)
+
         if isinstance(source, str) and ',' in source:
-            print( source)
             source = source.split(',')
         if isinstance(source, list):
             files_to_copy = []
@@ -143,38 +196,19 @@ class BaseBackend():
                     raise FileNotFoundError(f"Source '{item}' not found.")
                 files_to_copy.append(item_path)
         else:
-            # Convert source to a Path object if it's a string
             if isinstance(source, str):
                 source_path = Path(source)
             else:
                 source_path = source
 
-            # Check if the source is a glob pattern
             if isinstance(source, str) and ('*' in source or '?' in source or '[' in source):
-                # Use glob to find files matching the pattern
                 files_to_copy = [Path(file) for file in glob(source, recursive=True)]
             else:
-                # Check if the source file or directory exists
                 if not source_path.exists():
                     raise FileNotFoundError(f"Source '{source_path}' not found.")
                 files_to_copy = [source_path]
 
-        # Determine the root directory for calculating relative paths
-        root = Path(root)
-
-        # Copy each file
-        for file_path in files_to_copy:
-            # Calculate the relative path
-            relative_path = file_path.relative_to(root)
-
-            # Full path to the destination file
-            destination_file_path = destination_path / relative_path
-
-            # Create directories if they don't exist
-            destination_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-            # Copy the file
-            copy(file_path, destination_file_path)
+        _copy_files_recursive(files_to_copy)
 
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,

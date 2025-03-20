@@ -24,8 +24,9 @@ jobs:
           version: 1.0.0
       - name: Install library
         run: poetry install --no-interaction
-      - name: Lint and test with poetry
+      - name: Lint with poetry
+        run: poetry run pylint foliant
+      - name: Test with poetry
         run: |
           poetry run pytest --cov=foliant
           poetry run codecov
-          poetry run pylint foliant

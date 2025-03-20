@@ -4,4 +4,6 @@
 poetry install --no-interaction
 
 # run tests
-poetry run pytest --cov=foliant -v
+poetry run pylint foliant && \
+poetry run pytest --cov=foliant && \
+poetry run codecov

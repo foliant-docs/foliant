@@ -156,3 +156,23 @@ class TestBackendCopyFiles(TestCase):
         # Check if the file was copied with the directory structure
         self.assertTrue((self.destination_dir / "subfolder" / "file3.md").exists())
         self.assertEqual((self.destination_dir / "subfolder" / "file3.md").read_text(), "# Another Header\nMore content")
+
+    def test_copy_referenced_images(self):
+        # Create a Markdown file with image references
+        md_content = "# Header\n![Image 1](images/image1.png)\n![Image 2](images/image2.jpg)"
+        (self.source_dir / "file1.md").write_text(md_content)
+
+        # Create referenced images
+        (self.source_dir / "images").mkdir()
+        (self.source_dir / "images" / "image1.png").write_text("Fake PNG content")
+        (self.source_dir / "images" / "image2.jpg").write_text("Fake JPG content")
+
+        # Copy files
+        BaseBackend.partial_copy(str(self.source_dir / "file1.md"), self.destination_dir, root=self.source_dir)
+
+        # Check if the Markdown file was copied
+        self.assertTrue((self.destination_dir / "file1.md").exists())
+
+        # Check if referenced images were copied
+        self.assertTrue((self.destination_dir / "images" / "image1.png").exists())
+        self.assertTrue((self.destination_dir / "images" / "image2.jpg").exists())

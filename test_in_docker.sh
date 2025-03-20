@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Write Dockerfile
+# # Write Dockerfile
 echo "FROM python:3.9.21-alpine3.20" > Dockerfile
 echo "RUN apk add --no-cache --upgrade bash  && \
 pip install poetry==1 && \
