@@ -53,6 +53,8 @@ class BaseBackend():
 
         :param preprocessor: Preprocessor name or a dict of the preprocessor name and its options
         '''
+        preprocessor_name = None
+        preprocessor_options = {}
 
         if isinstance(preprocessor, str):
             preprocessor_name, preprocessor_options = preprocessor, {}

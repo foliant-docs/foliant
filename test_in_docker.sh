@@ -3,8 +3,9 @@
 # # Write Dockerfile
 echo "FROM python:3.9.21-alpine3.20" > Dockerfile
 echo "RUN apk add --no-cache --upgrade bash  && \
-pip install poetry==1 && \
-pip install --no-build-isolation pyyaml==5.4.1" >> Dockerfile
+pip install poetry==2.1.1 && \
+apk add git" >> Dockerfile
+echo "RUN git config --global --add safe.directory /app" >> Dockerfile
 
 # Run tests in docker
 docker build . -t test-foliant:latest
