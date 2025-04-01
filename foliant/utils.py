@@ -26,7 +26,9 @@ def get_available_tags() -> Set[str]:
         if modname == 'base':
             continue
 
-        result.update(importer.find_module(modname).load_module(modname).Preprocessor.tags)
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result.update(module.Preprocessor.tags)
 
     return result
 
@@ -49,7 +51,9 @@ def get_available_config_parsers() -> Dict[str, Type]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Parser
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Parser
 
     return result
 
@@ -72,7 +76,9 @@ def get_available_clis() -> Dict[str, Type]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Cli
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Cli
 
     return result
 
@@ -96,7 +102,9 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Backend.targets
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Backend.targets
 
     return result
 

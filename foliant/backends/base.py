@@ -154,27 +154,28 @@ class BaseBackend():
             referenced_images = set()
 
             for file_path in files_to_copy:
-                relative_path = file_path.relative_to(root_path)
-                destination_file_path = destination_path / relative_path
-                destination_file_path.parent.mkdir(parents=True, exist_ok=True)
+                if file_path.is_relative_to(root_path):
+                    relative_path = file_path.relative_to(root_path)
+                    destination_file_path = destination_path / relative_path
+                    destination_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-                # Find and copy includes
-                include_paths = []
-                match_includes = re.findall(include_statement_pattern,
-                                            file_path.read_text(encoding='utf-8'))
-                for path in match_includes:
-                    _path = Path(path)
-                    if not _path.exists():
-                        _path = relative_path / path
-                    if _path.exists():
-                        include_paths.append(_path)
-                    _copy_files_recursive(include_paths)
+                    # Find and copy includes
+                    include_paths = []
+                    match_includes = re.findall(include_statement_pattern,
+                                                file_path.read_text(encoding='utf-8'))
+                    for path in match_includes:
+                        _path = Path(path)
+                        if not _path.exists():
+                            _path = relative_path / path
+                        if _path.exists():
+                            include_paths.append(_path)
+                        _copy_files_recursive(include_paths)
 
-                # Find referenced images
-                referenced_images.update(_find_referenced_images(file_path))
+                    # Find referenced images
+                    referenced_images.update(_find_referenced_images(file_path))
 
-                # Copy the file
-                copy(file_path, destination_file_path)
+                    # Copy the file
+                    copy(file_path, destination_file_path)
 
             # Copy referenced images
             for image_path in referenced_images:
