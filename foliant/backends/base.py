@@ -1,5 +1,6 @@
 import re
 import os
+import frontmatter
 from importlib import import_module
 from shutil import copytree, copy
 from pathlib import Path
@@ -90,8 +91,9 @@ class BaseBackend():
     @staticmethod
     def partial_copy(
         source: Union[str, Path, List[Union[str, Path]]],
+        project_path: Union[str, Path],
+        root: Union[str, Path],
         destination: Union[str, Path],
-        root: Union[str, Path]
     ) -> None:
         """
         Copies files, a list of files,
@@ -115,6 +117,97 @@ class BaseBackend():
                     if match:
                         return match.group(0)
             return None
+
+        def _modify_markdown_file(
+            file_path: Union[str, Path],
+            dst_file_path: Union[str, Path],
+            not_build: bool = True,
+            remove_content: bool = True,
+            keep_first_header: bool = True,
+            create_frontmatter: bool = True,
+            dry_run: bool = False,
+        ):
+            """
+            Modify a Markdown file's frontmatter and content according to specified parameters.
+            Uses python-frontmatter package for reliable frontmatter handling.
+
+            Args:
+                file_path: Path to the Markdown file
+                not_build: Value for not_build field (None means don't modify)
+                remove_content: Whether to remove the content body
+                keep_first_header: Keep first H1 when removing content
+                create_frontmatter: Create frontmatter if missing
+                dry_run: Preview changes without writing
+
+            Returns:
+                Tuple of (modified: bool, new_content: str)
+
+            Examples:
+                # Basic usage - add not_build: true
+                modified, content = modify_markdown_file("post.md")
+
+                # Remove content but keep first header
+                modify_markdown_file("post.md", remove_content=True, keep_first_header=True)
+
+                # Dry run to preview changes
+                modified, new_content = modify_markdown_file("post.md", dry_run=True)
+            """
+            try:
+                file_path = Path(file_path)
+                content = file_path.read_text(encoding='utf-8')
+
+                # Parse document with python-frontmatter
+                post = frontmatter.loads(content)
+                original_content = post.content
+                changes_made = False
+
+                # Modify frontmatter if requested
+                if not_build is not None:
+                    if post.get('not_build') != not_build:
+                        post['not_build'] = not_build
+                        changes_made = True
+
+                # Handle content modifications
+                if remove_content and original_content.strip():
+                    new_content = ''
+                    if keep_first_header:
+                        # Find first H1 header using regex
+                        h1_match = re.search(r'^#\s+.+$', original_content, flags=re.MULTILINE)
+                        if h1_match:
+                            new_content = h1_match.group(0) + '\n'
+
+                    if post.content != new_content:
+                        post.content = new_content
+                        changes_made = True
+
+                # Create frontmatter if missing and requested
+                if not has_frontmatter(post) and create_frontmatter and (not_build is not None or changes_made):
+                    changes_made = True  # Adding frontmatter counts as a change
+
+                # Return original if no changes
+                if not changes_made:
+                    return (False, content)
+
+                # Serialize back to text
+                output = frontmatter.dumps(post)
+                if not has_frontmatter(post) and create_frontmatter:
+                    output = f"---\n{output}"  # Ensure proper YAML fences
+
+                # Dry run check
+                if dry_run:
+                    return (True, output)
+
+                # Write changes
+                dst_file_path.write_text(output, encoding='utf-8')
+                return (True, output)
+
+            except Exception as e:
+                print(f"Error processing {file_path}: {str(e)}")
+                return (False, content)
+
+        def has_frontmatter(post: frontmatter.Post) -> bool:
+            """Check if post has existing frontmatter using python-frontmatter internals"""
+            return hasattr(post, 'metadata') and (post.metadata or hasattr(post, 'fm'))
 
         def _find_referenced_images(file_path: Path) -> Set[Path]:
             """Finds all image files referenced in the given file."""
@@ -141,13 +234,10 @@ class BaseBackend():
                     dst_file_path = Path(os.path.join(dst_dir, dirs, file_name))
                     dst_file_path.parent.mkdir(parents=True, exist_ok=True)
                     if file_name.endswith('.md'):
-                        header = _extract_first_header(src_file_path)
-                        if header:
-                            with open(dst_file_path, 'w', encoding='utf-8') as dst_file:
-                                dst_file.write(header + '\n')
-                    else:
-                        if Path(src_file_path).suffix.lower() not in image_extensions:
-                            copy(src_file_path, dst_file_path)
+                        _modify_markdown_file(src_file_path, dst_file_path)
+                    # else:
+                    #     if Path(src_file_path).suffix.lower() not in image_extensions:
+                    #         copy(src_file_path, dst_file_path)
 
         def _copy_files_recursive(files_to_copy: List):
             """Recursively copies files and their dependencies."""
@@ -188,16 +278,14 @@ class BaseBackend():
 
         # Basic logic
         _copy_files_without_content(root_path, destination_path)
-
         if isinstance(source, str) and ',' in source:
             source = source.split(',')
         if isinstance(source, list):
             files_to_copy = []
             for item in source:
-                item_path = Path(item)
-                if not item_path.exists():
-                    raise FileNotFoundError(f"Source '{item}' not found.")
-                files_to_copy.append(item_path)
+                item_path = Path(project_path, item)
+                if item_path.exists():
+                    files_to_copy.append(item_path)
         else:
             if isinstance(source, str):
                 source_path = Path(source)
@@ -207,10 +295,8 @@ class BaseBackend():
             if isinstance(source, str) and ('*' in source or '?' in source or '[' in source):
                 files_to_copy = [Path(file) for file in glob(source, recursive=True)]
             else:
-                if not source_path.exists():
-                    raise FileNotFoundError(f"Source '{source_path}' not found.")
-                files_to_copy = [source_path]
-
+                if source_path.exists():
+                    files_to_copy = [source_path]
         _copy_files_recursive(files_to_copy)
 
     def preprocess_and_make(self, target: str) -> str:
@@ -223,10 +309,11 @@ class BaseBackend():
         '''
 
         src_path = self.project_path / self.config['src_dir']
-        multiprojectcache_dir = os.path.join(self.project_path, '.multiprojectcache')
+        # multiprojectcache_dir = os.path.join(self.project_path, '.multiprojectcache')
 
-        if self.context['only_partial'] and not os.path.isdir(multiprojectcache_dir):
-            self.partial_copy(self.context['only_partial'], self.working_dir, src_path)
+        if self.context['only_partial']:
+            # if os.path.isdir(multiprojectcache_dir) and target == "pre":
+            self.partial_copy(self.context['only_partial'],  self.project_path, src_path, self.working_dir)
         else:
             copytree(src_path, self.working_dir)
 
