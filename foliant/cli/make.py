@@ -4,6 +4,7 @@ from pathlib import Path
 from importlib import import_module
 from logging import DEBUG, WARNING
 from typing import List, Dict, Tuple
+from glob import glob
 
 from cliar import set_arg_map, set_metavars, set_help, ignore
 from prompt_toolkit import prompt
@@ -187,6 +188,28 @@ class Cli(BaseCli):
         except (BackendError, ConfigError) as exception:
             self.logger.critical(str(exception))
             exit(str(exception))
+
+        if only_partial != '':
+            if isinstance(only_partial, str) and ',' in only_partial:
+                only_partial = only_partial.split(',')
+            if isinstance(only_partial, list):
+                files_to_copy = []
+                for item in only_partial:
+                    item_path = Path(project_path, item)
+                    if item_path.exists():
+                        files_to_copy.append(item_path)
+            else:
+                if isinstance(only_partial, str):
+                    source_path = Path(only_partial)
+                else:
+                    source_path = only_partial
+
+                if isinstance(only_partial, str) and ('*' in only_partial or '?' in only_partial or '[' in only_partial):
+                    files_to_copy = [Path(file) for file in glob(only_partial, recursive=True)]
+                else:
+                    if source_path.exists():
+                        files_to_copy = [source_path]
+            only_partial = files_to_copy
 
         context = {
             'project_path': project_path,

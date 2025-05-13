@@ -90,7 +90,7 @@ class BaseBackend():
 
     @staticmethod
     def partial_copy(
-        source: Union[str, Path, List[Union[str, Path]]],
+        source: List[Union[str, Path]],
         project_path: Union[str, Path],
         root: Union[str, Path],
         destination: Union[str, Path],
@@ -109,14 +109,14 @@ class BaseBackend():
             flags=re.DOTALL
         )
 
-        def _extract_first_header(file_path):
-            """Extracts the first first-level header from the Markdown file."""
-            with open(file_path, 'r', encoding='utf-8') as file:
-                for line in file:
-                    match = re.match(r'^#\s+(.*)', line)
-                    if match:
-                        return match.group(0)
-            return None
+        # def _extract_first_header(file_path):
+        #     """Extracts the first first-level header from the Markdown file."""
+        #     with open(file_path, 'r', encoding='utf-8') as file:
+        #         for line in file:
+        #             match = re.match(r'^#\s+(.*)', line)
+        #             if match:
+        #                 return match.group(0)
+        #     return None
 
         def _modify_markdown_file(
             file_path: Union[str, Path],
@@ -278,26 +278,7 @@ class BaseBackend():
 
         # Basic logic
         _copy_files_without_content(root_path, destination_path)
-        if isinstance(source, str) and ',' in source:
-            source = source.split(',')
-        if isinstance(source, list):
-            files_to_copy = []
-            for item in source:
-                item_path = Path(project_path, item)
-                if item_path.exists():
-                    files_to_copy.append(item_path)
-        else:
-            if isinstance(source, str):
-                source_path = Path(source)
-            else:
-                source_path = source
-
-            if isinstance(source, str) and ('*' in source or '?' in source or '[' in source):
-                files_to_copy = [Path(file) for file in glob(source, recursive=True)]
-            else:
-                if source_path.exists():
-                    files_to_copy = [source_path]
-        _copy_files_recursive(files_to_copy)
+        _copy_files_recursive(source)
 
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,
