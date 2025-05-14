@@ -101,6 +101,9 @@ class BaseBackend():
         or files matching a glob pattern to the specified folder.
         Creates all necessary directories if they don't exist.
         """
+
+        print(f"Partial build is processing...\nList of files: {source}")
+
         destination_path = Path(destination)
         root_path = Path(root)
         image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
