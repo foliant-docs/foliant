@@ -289,21 +289,18 @@ class BaseBackend():
 
         files_to_copy = []
         if isinstance(source, str) and ',' in source:
-            source = source.split(',')
+            source = [item.strip() for item in source.split(',')]
+
         if isinstance(source, list):
             for item in source:
-                item_path = Path(project_path, item)
+                item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
                 if item_path.exists():
                     files_to_copy.append(item_path)
+        elif isinstance(source, str) and any(char in source for char in '*?['):
+            files_to_copy = [Path(file) for file in glob(source, recursive=True)]
         else:
-            if isinstance(source, str):
-                source_path = Path(source)
-            else:
-                source_path = source
-
-            if isinstance(source, str) and ('*' in source or '?' in source or '[' in source):
-                files_to_copy = [Path(file) for file in glob(source, recursive=True)]
-            else:
+            if isinstance(source, (str, Path)):
+                source_path = Path(source) if isinstance(source, str) else source
                 if source_path.exists():
                     files_to_copy.append(source_path)
         _copy_files_recursive(files_to_copy)
