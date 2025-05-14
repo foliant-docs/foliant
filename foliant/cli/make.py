@@ -190,25 +190,17 @@ class Cli(BaseCli):
             exit(str(exception))
 
         if only_partial != '':
+            files_to_copy = []
             if isinstance(only_partial, str) and ',' in only_partial:
-                only_partial = only_partial.split(',')
-            if isinstance(only_partial, list):
-                files_to_copy = []
-                for item in only_partial:
-                    item_path = Path(project_path, item)
-                    if item_path.exists():
-                        files_to_copy.append(item_path)
-            else:
-                if isinstance(only_partial, str):
-                    source_path = Path(only_partial)
-                else:
-                    source_path = only_partial
-
-                if isinstance(only_partial, str) and ('*' in only_partial or '?' in only_partial or '[' in only_partial):
-                    files_to_copy = [Path(file) for file in glob(only_partial, recursive=True)]
-                else:
-                    if source_path.exists():
-                        files_to_copy = [source_path]
+                files_to_copy = only_partial.split(',')
+            elif isinstance(
+                only_partial, str
+                ) and (
+                '*' in only_partial or '?' in only_partial or '[' in only_partial
+                ):
+                files_to_copy = list(glob(only_partial, recursive=True))
+            elif isinstance(only_partial, Path):
+                files_to_copy.append(only_partial)
             only_partial = files_to_copy
 
         context = {

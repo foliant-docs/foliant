@@ -1,13 +1,14 @@
-import re
 import os
-import frontmatter
-from importlib import import_module
-from shutil import copytree, copy
-from pathlib import Path
+import re
 from datetime import date
-from logging import Logger
 from glob import glob
+from importlib import import_module
+from logging import Logger
+from pathlib import Path
+from shutil import copytree, copy
 from typing import Union, List, Set
+
+import frontmatter
 from foliant.utils import spinner
 
 class BaseBackend():
@@ -118,7 +119,7 @@ class BaseBackend():
         #                 return match.group(0)
         #     return None
 
-        def _modify_markdown_file(
+        def _modify_markdown_file( # pylint: disable=too-many-arguments
             file_path: Union[str, Path],
             dst_file_path: Union[str, Path],
             not_build: bool = True,
@@ -181,7 +182,11 @@ class BaseBackend():
                         changes_made = True
 
                 # Create frontmatter if missing and requested
-                if not has_frontmatter(post) and create_frontmatter and (not_build is not None or changes_made):
+                if not has_frontmatter(
+                    post
+                    ) and create_frontmatter and (
+                    not_build is not None or changes_made
+                    ):
                     changes_made = True  # Adding frontmatter counts as a change
 
                 # Return original if no changes
@@ -192,7 +197,7 @@ class BaseBackend():
                 output = frontmatter.dumps(post)
                 if not has_frontmatter(post) and create_frontmatter:
                     output = f"---\n{output}"  # Ensure proper YAML fences
-
+                output = output + '\n'
                 # Dry run check
                 if dry_run:
                     return (True, output)
@@ -201,7 +206,7 @@ class BaseBackend():
                 dst_file_path.write_text(output, encoding='utf-8')
                 return (True, output)
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 print(f"Error processing {file_path}: {str(e)}")
                 return (False, content)
 
@@ -278,7 +283,27 @@ class BaseBackend():
 
         # Basic logic
         _copy_files_without_content(root_path, destination_path)
-        _copy_files_recursive(source)
+
+        files_to_copy = []
+        if isinstance(source, str) and ',' in source:
+            source = source.split(',')
+        if isinstance(source, list):
+            for item in source:
+                item_path = Path(project_path, item)
+                if item_path.exists():
+                    files_to_copy.append(item_path)
+        else:
+            if isinstance(source, str):
+                source_path = Path(source)
+            else:
+                source_path = source
+
+            if isinstance(source, str) and ('*' in source or '?' in source or '[' in source):
+                files_to_copy = [Path(file) for file in glob(source, recursive=True)]
+            else:
+                if source_path.exists():
+                    files_to_copy.append(source_path)
+        _copy_files_recursive(files_to_copy)
 
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,
@@ -294,7 +319,8 @@ class BaseBackend():
 
         if self.context['only_partial']:
             # if os.path.isdir(multiprojectcache_dir) and target == "pre":
-            self.partial_copy(self.context['only_partial'],  self.project_path, src_path, self.working_dir)
+            self.partial_copy(self.context['only_partial'],
+                               self.project_path, src_path, self.working_dir)
         else:
             copytree(src_path, self.working_dir)
 
