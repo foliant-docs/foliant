@@ -92,7 +92,7 @@ class BaseBackend():
     @staticmethod
     def partial_copy(
         source: Union[str, Path, List[Union[str, Path]]],
-        project_path: Union[str, Path],
+        # project_path: Union[str, Path],
         root: Union[str, Path],
         destination: Union[str, Path],
     ) -> None:
@@ -101,25 +101,6 @@ class BaseBackend():
         or files matching a glob pattern to the specified folder.
         Creates all necessary directories if they don't exist.
         """
-
-        files_to_copy = []
-        if isinstance(source, str):
-            if ',' in source:
-                source = [item.strip() for item in source.split(',')]
-            elif any(char in source for char in '*?['):
-                files_to_copy = [Path(file) for file in glob(source, recursive=True)]
-            else:
-                source = [Path(source.strip())]
-
-        if isinstance(source, list):
-            for item in source:
-                item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
-                if item_path.exists():
-                    files_to_copy.append(item_path)
-        elif isinstance(source, (str, Path)):
-            source_path = Path(source) if isinstance(source, str) else source
-            if source_path.exists():
-                files_to_copy.append(source_path)
 
         print(f"Partial build is processing...\nList of files: {source}")
 
@@ -305,7 +286,7 @@ class BaseBackend():
 
         # Basic logic
         _copy_files_without_content(root_path, destination_path)
-        _copy_files_recursive(files_to_copy)
+        _copy_files_recursive(source)
 
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,
@@ -318,11 +299,9 @@ class BaseBackend():
 
         src_path = self.project_path / self.config['src_dir']
         # multiprojectcache_dir = os.path.join(self.project_path, '.multiprojectcache')
-        print(self.context['only_partial'])
         if self.context['only_partial'] != "":
             # if os.path.isdir(multiprojectcache_dir) and target == "pre":
-            self.partial_copy(self.context['only_partial'],
-                               self.project_path, src_path, self.working_dir)
+            self.partial_copy(self.context['only_partial'], src_path, self.working_dir)
         else:
             copytree(src_path, self.working_dir)
 
