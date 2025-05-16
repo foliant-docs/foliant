@@ -189,20 +189,6 @@ class Cli(BaseCli):
             self.logger.critical(str(exception))
             exit(str(exception))
 
-        if only_partial != '':
-            files_to_copy = []
-            if isinstance(only_partial, str) and ',' in only_partial:
-                files_to_copy = only_partial.split(',')
-            elif isinstance(
-                only_partial, str
-                ) and (
-                '*' in only_partial or '?' in only_partial or '[' in only_partial
-                ):
-                files_to_copy = list(glob(only_partial, recursive=True))
-            elif isinstance(only_partial, Path):
-                files_to_copy.append(only_partial)
-            only_partial = files_to_copy
-
         context = {
             'project_path': project_path,
             'config': config,
