@@ -88,6 +88,29 @@ class Cli(BaseCli):
         except KeyboardInterrupt as kbd_interrupt:
             raise BackendError('No backend specified') from kbd_interrupt
 
+    @staticmethod
+    def prepare_list_of_file(only_partial, project_path):
+        list_of_files = []
+        if isinstance(only_partial, str):
+            if ',' in only_partial:
+                only_partial = [item.strip() for item in only_partial.split(',')]
+            elif any(char in only_partial for char in '*?['):
+                list_of_files = [Path(file) for file in glob(only_partial, recursive=True)]
+            else:
+                only_partial = [Path(only_partial.strip())]
+
+        if isinstance(only_partial, list):
+            for item in only_partial:
+                item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
+                if item_path.exists():
+                    list_of_files.append(item_path)
+        elif isinstance(only_partial, (str, Path)):
+            only_partial_path = Path(only_partial) if isinstance(only_partial,
+                                                                str) else only_partial
+            if only_partial_path.exists():
+                list_of_files.append(only_partial_path)
+        return list_of_files
+
     def clean_registry(self, project_path):
         multiprojectcache_dir = os.path.join(project_path, '.multiprojectcache')
         if os.path.isdir(multiprojectcache_dir):
@@ -178,25 +201,7 @@ class Cli(BaseCli):
         self.clean_registry(project_path)
 
         if only_partial != "":
-            list_of_files = []
-            if isinstance(only_partial, str):
-                if ',' in only_partial:
-                    only_partial = [item.strip() for item in only_partial.split(',')]
-                elif any(char in only_partial for char in '*?['):
-                    list_of_files = [Path(file) for file in glob(only_partial, recursive=True)]
-                else:
-                    only_partial = [Path(only_partial.strip())]
-
-            if isinstance(only_partial, list):
-                for item in only_partial:
-                    item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
-                    if item_path.exists():
-                        list_of_files.append(item_path)
-            elif isinstance(only_partial, (str, Path)):
-                only_partial_path = Path(only_partial) if isinstance(only_partial, str) else only_partial
-                if only_partial_path.exists():
-                    list_of_files.append(only_partial_path)
-            only_partial = list_of_files
+            only_partial = self.prepare_list_of_file(only_partial, project_path)
 
         try:
             if backend:
