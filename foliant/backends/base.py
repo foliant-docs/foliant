@@ -112,15 +112,6 @@ class BaseBackend():
             flags=re.DOTALL
         )
 
-        # def _extract_first_header(file_path):
-        #     """Extracts the first first-level header from the Markdown file."""
-        #     with open(file_path, 'r', encoding='utf-8') as file:
-        #         for line in file:
-        #             match = re.match(r'^#\s+(.*)', line)
-        #             if match:
-        #                 return match.group(0)
-        #     return None
-
         def _modify_markdown_file( # pylint: disable=too-many-arguments
             file_path: Union[str, Path],
             dst_file_path: Union[str, Path],
@@ -242,9 +233,6 @@ class BaseBackend():
                     dst_file_path.parent.mkdir(parents=True, exist_ok=True)
                     if file_name.endswith('.md'):
                         _modify_markdown_file(src_file_path, dst_file_path)
-                    # else:
-                    #     if Path(src_file_path).suffix.lower() not in image_extensions:
-                    #         copy(src_file_path, dst_file_path)
 
         def _copy_files_recursive(files_to_copy: List):
             """Recursively copies files and their dependencies."""
@@ -258,15 +246,23 @@ class BaseBackend():
 
                     # Find and copy includes
                     include_paths = []
-                    match_includes = re.findall(include_statement_pattern,
+                    match_includes = re.finditer(include_statement_pattern,
                                                 file_path.read_text(encoding='utf-8'))
                     for path in match_includes:
-                        _path = Path(path)
-                        if not _path.exists():
-                            _path = relative_path / path
-                        if _path.exists():
-                            include_paths.append(_path)
-                        _copy_files_recursive(include_paths)
+                        l = []
+                        groups = path.groupdict()
+                        if groups["path"]:
+                            l.append(groups["path"])
+                        if groups["src"]:
+                            l.append(groups["src"])
+
+                        for _path in l:
+                            p = Path(_path)
+                            if not p.exists():
+                                p = relative_path / p
+                            if p.exists():
+                                include_paths.append(p)
+                            _copy_files_recursive(include_paths)
 
                     # Find referenced images
                     referenced_images.update(_find_referenced_images(file_path))
