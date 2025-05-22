@@ -108,7 +108,7 @@ class BaseBackend():
         image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
         image_pattern = re.compile(r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', re.IGNORECASE)
         include_statement_pattern = re.compile(
-            r'(?<!\<)\<(?:include)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
+            r'(?<!\<)\<(?:include)(\s*(src=\")(?P<src>.*?)(\")|)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
             flags=re.DOTALL
         )
 
