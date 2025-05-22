@@ -240,8 +240,8 @@ class BaseBackend():
 
             for file_path in files_to_copy:
                 if file_path.is_relative_to(root_path):
-                    relative_path = file_path.relative_to(root_path)
-                    destination_file_path = destination_path / relative_path
+                    relative_path_root = file_path.relative_to(root_path)
+                    destination_file_path = destination_path / relative_path_root
                     destination_file_path.parent.mkdir(parents=True, exist_ok=True)
 
                     # Find and copy includes
@@ -256,13 +256,17 @@ class BaseBackend():
                         if groups["src"]:
                             l.append(groups["src"])
 
-                        for _path in l:
-                            p = Path(_path)
-                            if not p.exists():
-                                p = relative_path / p
-                            if p.exists():
-                                include_paths.append(p)
-                            _copy_files_recursive(include_paths)
+                        for p in l:
+                            _path = Path(p)
+                            if isinstance(file_path, Path):
+                                rel_path = file_path.parent / _path
+                                if rel_path.exists():
+                                    _path = rel_path
+                            if not _path.exists():
+                                _path = relative_path_root / _path
+                            if _path.exists():
+                                include_paths.append(_path)
+                    _copy_files_recursive(include_paths)
 
                     # Find referenced images
                     referenced_images.update(_find_referenced_images(file_path))
