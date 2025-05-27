@@ -108,7 +108,7 @@ class BaseBackend():
         image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
         image_pattern = re.compile(r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', re.IGNORECASE)
         include_statement_pattern = re.compile(
-            r'(?<!\<)\<(?:include)(\s*(src=\")(?P<src>.*?)(\")|)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
+            r'(?<!\<)\<(?:include)(\s*(src=\")(?P<src>.*?)(\")|)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>', # pylint: disable=C0301
             flags=re.DOTALL
         )
 
@@ -234,6 +234,30 @@ class BaseBackend():
                     if file_name.endswith('.md'):
                         _modify_markdown_file(src_file_path, dst_file_path)
 
+        def _prepare_paths_list(file_path, relative_path_root) -> List:
+            include_paths = []
+            match_includes = re.finditer(include_statement_pattern,
+                                        file_path.read_text(encoding='utf-8'))
+            for path in match_includes:
+                l = []
+                groups = path.groupdict()
+                if groups["path"]:
+                    l.append(groups["path"])
+                if groups["src"]:
+                    l.append(groups["src"])
+
+                for p in l:
+                    _path = Path(p)
+                    if isinstance(file_path, Path):
+                        rel_path = file_path.parent / _path
+                        if rel_path.exists():
+                            _path = rel_path
+                    if not _path.exists():
+                        _path = relative_path_root / _path
+                    if _path.exists():
+                        include_paths.append(_path)
+            return include_paths
+
         def _copy_files_recursive(files_to_copy: List):
             """Recursively copies files and their dependencies."""
             referenced_images = set()
@@ -245,27 +269,7 @@ class BaseBackend():
                     destination_file_path.parent.mkdir(parents=True, exist_ok=True)
 
                     # Find and copy includes
-                    include_paths = []
-                    match_includes = re.finditer(include_statement_pattern,
-                                                file_path.read_text(encoding='utf-8'))
-                    for path in match_includes:
-                        l = []
-                        groups = path.groupdict()
-                        if groups["path"]:
-                            l.append(groups["path"])
-                        if groups["src"]:
-                            l.append(groups["src"])
-
-                        for p in l:
-                            _path = Path(p)
-                            if isinstance(file_path, Path):
-                                rel_path = file_path.parent / _path
-                                if rel_path.exists():
-                                    _path = rel_path
-                            if not _path.exists():
-                                _path = relative_path_root / _path
-                            if _path.exists():
-                                include_paths.append(_path)
+                    include_paths = _prepare_paths_list(file_path, relative_path_root)
                     _copy_files_recursive(include_paths)
 
                     # Find referenced images
