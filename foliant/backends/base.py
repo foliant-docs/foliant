@@ -268,15 +268,19 @@ class BaseBackend():
                     destination_file_path = destination_path / relative_path_root
                     destination_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-                    # Find and copy includes
-                    include_paths = _prepare_paths_list(file_path, relative_path_root)
-                    _copy_files_recursive(include_paths)
+                    if file_path.exists():
+                        # Find and copy includes
+                        include_paths = _prepare_paths_list(file_path, relative_path_root)
+                        _copy_files_recursive(include_paths)
 
-                    # Find referenced images
-                    referenced_images.update(_find_referenced_images(file_path))
+                        # Find referenced images
+                        referenced_images.update(_find_referenced_images(file_path))
 
                     # Copy the file
-                    copy(file_path, destination_file_path)
+                    try:
+                        copy(file_path, destination_file_path)
+                    except FileNotFoundError as e:
+                        print(f"File not found: {e}")
 
             # Copy referenced images
             for image_path in referenced_images:
