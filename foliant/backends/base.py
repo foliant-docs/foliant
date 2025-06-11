@@ -284,11 +284,14 @@ class BaseBackend():
 
             # Copy referenced images
             for image_path in referenced_images:
-                src_image_path = Path(image_path).relative_to(root_path)
+                if Path(image_path).is_relative_to(root_path):
+                    src_image_path = Path(image_path).relative_to(root_path)
+                else:
+                    src_image_path = Path(image_path)
                 dst_image_path = destination_path / src_image_path
                 dst_image_path.parent.mkdir(parents=True, exist_ok=True)
 
-                if Path(image_path).exists():
+                if Path(image_path).exists() and image_path != dst_image_path:
                     copy(image_path, dst_image_path)
 
         # Basic logic
