@@ -23,7 +23,6 @@ class PartialCopy:
         Creates all necessary directories if they don't exist.
         """
 
-        # Convert source to string representation for display
         if isinstance(source, list):
             source_display = [str(item) for item in source]
         else:
@@ -34,18 +33,21 @@ class PartialCopy:
         destination_path = Path(destination)
         root_path = Path(root)
         image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
-        image_pattern = re.compile(r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', re.IGNORECASE)
+        image_pattern = re.compile(
+            r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', 
+            re.IGNORECASE
+        )
         include_statement_pattern = re.compile(
-            r'(?<!\<)\<(?:include)(\s*(src=\")(?P<src>.*?)(\")|)(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
+            r'(?<!\<)\<(?:include)(\s*(src=\")(?P<src>.*?)(\")|)'
+            r'(?:\s[^\<\>]*)?\>(?P<path>.*?)\<\/(?:include)\>',
             flags=re.DOTALL
         )
 
-        # Counters for verification
         copied_files_count = 0
-        processed_files = set()  # Track already processed files
-        max_recursion_depth = 10  # Protection against infinite recursion
+        processed_files = set()
+        max_recursion_depth = 10
 
-        def _modify_markdown_file(  # pylint: disable=too-many-arguments
+        def _modify_markdown_file( # pylint: disable=too-many-arguments
             file_path: Union[str, Path],
             dst_file_path: Union[str, Path],
             not_build: bool = True,
@@ -54,62 +56,36 @@ class PartialCopy:
             create_frontmatter: bool = True,
             dry_run: bool = False,
         ):
-            """
-            Modify a Markdown file's frontmatter and content according to specified parameters.
-            """
+            """Modify a Markdown file's frontmatter and content."""
             try:
                 file_path = Path(file_path)
                 content = file_path.read_text(encoding='utf-8')
-
-                # Parse document with python-frontmatter
                 post = frontmatter.loads(content)
-                original_content = post.content
                 changes_made = False
 
-                # Modify frontmatter if requested
-                if not_build is not None:
-                    if post.get('not_build') != not_build:
-                        post['not_build'] = not_build
-                        changes_made = True
+                # Process modifications
+                changes_made = PartialCopy._process_frontmatter(post, not_build) or changes_made
+                changes_made = PartialCopy._process_content(
+                    post, remove_content, keep_first_header
+                ) or changes_made
 
-                # Handle content modifications
-                if remove_content and original_content.strip():
-                    new_content = ''
-                    if keep_first_header:
-                        # Find first H1 header using regex
-                        h1_match = re.search(r'^#\s+.+$', original_content, flags=re.MULTILINE)
-                        if h1_match:
-                            new_content = h1_match.group(0) + '\n'
-
-                    if post.content != new_content:
-                        post.content = new_content
-                        changes_made = True
-
-                # Create frontmatter if missing and requested
                 if not PartialCopy._has_frontmatter(post) and create_frontmatter and (
                     not_build is not None or changes_made
                 ):
-                    changes_made = True  # Adding frontmatter counts as a change
+                    changes_made = True
 
-                # Return original if no changes
                 if not changes_made:
                     return False, content
 
-                # Serialize back to text
-                output = frontmatter.dumps(post)
-                if not PartialCopy._has_frontmatter(post) and create_frontmatter:
-                    output = f"---\n{output}"  # Ensure proper YAML fences
-                output = output + '\n'
+                output = PartialCopy._serialize_output(post, create_frontmatter)
 
-                # Dry run check
                 if dry_run:
                     return True, output
 
-                # Write changes
                 dst_file_path.write_text(output, encoding='utf-8')
                 return True, output
 
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print(f"Error processing {file_path}: {str(e)}")
                 return False, content
 
@@ -164,7 +140,7 @@ class PartialCopy:
                         include_paths.append(_path)
             return include_paths
 
-        def _copy_files_recursive(files_to_copy: List, recursion_level: int = 0):
+        def _copy_files_recursive(files_to_copy: List, recursion_level: int = 0):  # pylint: disable=too-many-branches
             """Recursively copies files and their dependencies."""
             nonlocal copied_files_count
 
@@ -206,7 +182,7 @@ class PartialCopy:
                         print(f"Copied: {file_path} -> {destination_file_path}")
                     except FileNotFoundError as e:
                         print(f"File not found: {e}")
-                    except Exception as e:
+                    except Exception as e:  # pylint: disable=broad-exception-caught
                         print(f"Error copying {file_path}: {e}")
 
             # Copy referenced images
@@ -230,7 +206,7 @@ class PartialCopy:
                             copy(image_path, dst_image_path)
                             copied_files_count += 1
                             print(f"Copied image: {image_path} -> {dst_image_path}")
-                        except Exception as e:
+                        except Exception as e:  # pylint: disable=broad-exception-caught
                             print(f"Error copying image {image_path}: {e}")
 
         # Main logic with verification
@@ -257,13 +233,46 @@ class PartialCopy:
             if copied_files_count == 0:
                 print("Warning: No files were copied!")
             elif copied_files_count < len(files_to_copy):
-                print(f"Warning: Only {copied_files_count} out of {len(files_to_copy)} files were copied")
+                print(f"Warning: Only {copied_files_count} out of {len(files_to_copy)} files were copied") # pylint: disable=line-too-long
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Error during copy operation: {e}")
             raise
 
     @staticmethod
+    def _process_frontmatter(post, not_build: bool) -> bool:
+        """Process frontmatter modifications."""
+        if not_build is not None and post.get('not_build') != not_build:
+            post['not_build'] = not_build
+            return True
+        return False
+
+    @staticmethod
+    def _process_content(post, remove_content: bool, keep_first_header: bool) -> bool:
+        """Process content modifications."""
+        if remove_content and post.content.strip():
+            new_content = PartialCopy._extract_first_header(
+                post.content) if keep_first_header else ''
+            if post.content != new_content:
+                post.content = new_content
+                return True
+        return False
+
+    @staticmethod
+    def _extract_first_header(content: str) -> str:
+        """Extract first H1 header from content."""
+        h1_match = re.search(r'^#\s+.+$', content, flags=re.MULTILINE)
+        return h1_match.group(0) + '\n' if h1_match else ''
+
+    @staticmethod
+    def _serialize_output(post, create_frontmatter: bool) -> str:
+        """Serialize post to text with proper formatting."""
+        output = frontmatter.dumps(post)
+        if not PartialCopy._has_frontmatter(post) and create_frontmatter:
+            output = f"---\n{output}"
+        return output + '\n'
+
+    @staticmethod
     def _has_frontmatter(post: frontmatter.Post) -> bool:
-        """Check if post has existing frontmatter using python-frontmatter internals"""
+        """Check if post has existing frontmatter."""
         return hasattr(post, 'metadata') and (post.metadata or hasattr(post, 'fm'))
