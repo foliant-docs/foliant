@@ -24,7 +24,7 @@ class PartialCopy:
         """
 
         if isinstance(source, list):
-            source_display = [str(item) for item in source]
+            source_display = "\n- ".join([str(item) for item in source])
         else:
             source_display = str(source)
 
@@ -179,7 +179,6 @@ class PartialCopy:
                     try:
                         copy(file_path, destination_file_path)
                         copied_files_count += 1
-                        print(f"Copied: {file_path} -> {destination_file_path}")
                     except FileNotFoundError as e:
                         print(f"File not found: {e}")
                     except Exception as e:  # pylint: disable=broad-exception-caught
@@ -205,7 +204,6 @@ class PartialCopy:
                         try:
                             copy(image_path, dst_image_path)
                             copied_files_count += 1
-                            print(f"Copied image: {image_path} -> {dst_image_path}")
                         except Exception as e:  # pylint: disable=broad-exception-caught
                             print(f"Error copying image {image_path}: {e}")
 
