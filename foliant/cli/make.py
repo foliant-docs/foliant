@@ -103,14 +103,10 @@ class Cli(BaseCli):
             for item in only_partial:
                 item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
                 list_of_files.append(item_path)
-                # if item_path.exists():
-                #     list_of_files.append(item_path)
         elif isinstance(only_partial, (str, Path)):
             only_partial_path = Path(only_partial) if isinstance(only_partial,
                                                                 str) else only_partial
             list_of_files.append(only_partial_path)
-            # if only_partial_path.exists():
-            #     list_of_files.append(only_partial_path)
         return list_of_files
 
     def clean_registry(self, project_path):

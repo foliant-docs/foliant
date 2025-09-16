@@ -107,9 +107,7 @@ class BaseBackend():
         '''
 
         src_path = self.project_path / self.config['src_dir']
-        # multiprojectcache_dir = os.path.join(self.project_path, '.multiprojectcache')
         if self.context['only_partial'] != "":
-            # if os.path.isdir(multiprojectcache_dir) and target == "pre":
             self.partial_copy(self.context['only_partial'], src_path, self.working_dir)
         else:
             copytree(src_path, self.working_dir)
