@@ -59,8 +59,8 @@ disable=missing-docstring,
       too-few-public-methods,
       too-many-statements,
       unreachable,
-      duplicate-code, # TODO: fix duplicate code in backends.base and preprocessors.base
       too-many-positional-arguments
+#      duplicate-code # TODO: fix duplicate code in backends.base and preprocessors.base
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

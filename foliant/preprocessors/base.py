@@ -2,7 +2,6 @@ import re
 from logging import Logger
 from typing import Dict
 import yaml
-
 OptionValue = int or float or bool or str
 
 
@@ -39,6 +38,7 @@ class BasePreprocessor():
     def __init__(self, context: dict, logger: Logger, quiet=False, debug=False, options={}):
         # pylint: disable=dangerous-default-value
         # pylint: disable=too-many-arguments
+        # pylint: disable=duplicate-code
 
         self.project_path = context['project_path']
         self.config = context['config']
