@@ -24,7 +24,7 @@ class PartialCopy:
         """
 
         if isinstance(source, list):
-            source_display = "\n- ".join([str(item) for item in source])
+            source_display = "\n- " + "\n- ".join([str(item) for item in source])
         else:
             source_display = str(source)
 
