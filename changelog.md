@@ -1,3 +1,8 @@
+# 1.0.14
+
+- Add the `--only-partial` argument for to limit the list of files that the foliant must process.
+  This function allows you to build a website from a single file, a list of files, or a glob mask.
+
 # 1.0.13
 
 - Add the `clean_registry` function to `make`.
