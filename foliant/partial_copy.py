@@ -34,7 +34,7 @@ class PartialCopy:
         root_path = Path(root)
         image_extensions = {'.jpg', '.jpeg', '.png', '.svg', '.gif', '.bmp', '.webp'}
         image_pattern = re.compile(
-            r'!\[.*?\]\((.*?)\)|<img.*?src=["\'](.*?)["\']', 
+            r'!\[.*?\]\((.*?)( \"(.+)\"|)\)|<img.*?src=[\"\'](.*?)[\"\']',
             re.IGNORECASE
         )
         include_statement_pattern = re.compile(
