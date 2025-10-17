@@ -191,6 +191,26 @@ class TestPartialCopy(TestCase):
         self.assertTrue((self.destination_dir / "images" / "image1.png").exists())
         self.assertTrue((self.destination_dir / "images" / "image2.jpg").exists())
 
+    def test_copy_referenced_images_with_annotation(self):
+        # Create a Markdown file with image references
+        md_content = "# Header\n![Image 1](images/image1.png \"annotation\")\n![Image 2](images/image2.jpg)"
+        (self.source_dir / "file1.md").write_text(md_content)
+
+        # Create referenced images
+        (self.source_dir / "images").mkdir()
+        (self.source_dir / "images" / "image1.png").write_text("Fake PNG content")
+        (self.source_dir / "images" / "image2.jpg").write_text("Fake JPG content")
+
+        # Copy files
+        PartialCopy.partial_copy(str(self.source_dir / "file1.md"), self.source_dir, self.destination_dir)
+
+        # Check if the Markdown file was copied
+        self.assertTrue((self.destination_dir / "file1.md").exists())
+
+        # Check if referenced images were copied
+        self.assertTrue((self.destination_dir / "images" / "image1.png").exists())
+        self.assertTrue((self.destination_dir / "images" / "image2.jpg").exists())
+
     def test_copy_with_string_paths(self):
         # Test copying with string paths instead of Path objects
         source_path = str(self.source_dir / "file1.txt")
