@@ -115,23 +115,25 @@ def get_foliant_packages() -> List[str]:
     :returns: List of names and versions of the packages of Foliant core and extensions
     '''
 
-    # pylint: disable=not-an-iterable
-
     foliant_packages = []
+    foliant_core_version = None
+
     all_packages = distributions()
 
     for package in all_packages:
-        foliant_core_version = None
-        if package.metadata["Name"] == 'foliant':
+        package_name = package.metadata["Name"]
+
+        if package_name == 'foliant':
             foliant_core_version = package.version
 
-        elif package.metadata["Name"].startswith('foliantcontrib.'):
-            foliant_packages.append(
-                f'{package.metadata["Name"].replace("foliantcontrib.", "", 1)} {package.version}'
-            )
+        elif package_name.startswith('foliantcontrib.'):
+            display_name = package_name.replace('foliantcontrib.', '', 1)
+            foliant_packages.append(f'{display_name} {package.version}')
 
-    foliant_packages = sorted(foliant_packages)
-    foliant_packages.insert(0, f'foliant {foliant_core_version}')
+    foliant_packages.sort()
+
+    if foliant_core_version:
+        foliant_packages.insert(0, f'foliant {foliant_core_version}')
 
     return foliant_packages
 
