@@ -86,7 +86,7 @@ class PartialCopy:
                 return True, output
 
             except Exception as e:  # pylint: disable=broad-exception-caught
-                print(f"Error processing {file_path}: {str(e)}")
+                print(f"ERROR: processing {file_path}: {str(e)}")
                 return False, content
 
         def _find_referenced_images(file_path: Path) -> Set[Path]:
@@ -145,7 +145,7 @@ class PartialCopy:
             nonlocal copied_files_count
 
             if recursion_level > max_recursion_depth:
-                print(f"Warning: Maximum recursion depth ({max_recursion_depth}) exceeded")
+                print(f"WARNING: Maximum recursion depth ({max_recursion_depth}) exceeded")
                 return
 
             referenced_images = set()
@@ -159,7 +159,7 @@ class PartialCopy:
                 processed_files.add(file_path)
 
                 if not file_path.exists():
-                    print(f"Warning: File {file_path} does not exist, skipping")
+                    print(f"WARNING: File {file_path} does not exist, skipping")
                     continue
 
                 if file_path.is_relative_to(root_path):
@@ -180,9 +180,9 @@ class PartialCopy:
                         copy(file_path, destination_file_path)
                         copied_files_count += 1
                     except FileNotFoundError as e:
-                        print(f"File not found: {e}")
+                        print(f"ERROR: File not found: {e}")
                     except Exception as e:  # pylint: disable=broad-exception-caught
-                        print(f"Error copying {file_path}: {e}")
+                        print(f"ERROR: copying {file_path}: {e}")
 
             # Copy referenced images
             for image_path in referenced_images:
@@ -205,7 +205,7 @@ class PartialCopy:
                             copy(image_path, dst_image_path)
                             copied_files_count += 1
                         except Exception as e:  # pylint: disable=broad-exception-caught
-                            print(f"Error copying image {image_path}: {e}")
+                            print(f"ERROR: copying image {image_path}: {e}")
 
         # Main logic with verification
         try:
@@ -229,12 +229,12 @@ class PartialCopy:
             _copy_files_recursive(files_to_copy)
 
             if copied_files_count == 0:
-                print("Warning: No files were copied!")
+                print("WARNING: No files were copied!")
             elif copied_files_count < len(files_to_copy):
-                print(f"Warning: Only {copied_files_count} out of {len(files_to_copy)} files were copied") # pylint: disable=line-too-long
+                print(f"WARNING: Only {copied_files_count} out of {len(files_to_copy)} files were copied") # pylint: disable=line-too-long
 
         except Exception as e:  # pylint: disable=broad-exception-caught
-            print(f"Error during copy operation: {e}")
+            print(f"ERROR: during copy operation: {e}")
             raise
 
     @staticmethod
