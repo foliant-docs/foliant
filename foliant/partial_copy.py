@@ -249,8 +249,16 @@ class PartialCopy:
     def _process_content(post, remove_content: bool, keep_first_header: bool) -> bool:
         """Process content modifications."""
         if remove_content and post.content.strip():
-            new_content = PartialCopy._extract_first_header(
-                post.content) if keep_first_header else ''
+            # Always keep the first line
+            lines = post.content.strip().splitlines()
+            new_content = lines[0] if lines else ''
+
+            # If keep_first_header is True, try to find header and add it after first line
+            if keep_first_header:
+                header = PartialCopy._extract_first_header(post.content)
+                if header and header.strip() != new_content.strip():
+                    new_content = new_content.strip() + '\n' + header.strip()
+
             if post.content != new_content:
                 post.content = new_content
                 return True
