@@ -266,9 +266,12 @@ class PartialCopy:
 
     @staticmethod
     def _extract_first_header(content: str) -> str:
-        """Extract first H1 header from content."""
-        h1_match = re.search(r'^#\s+.+$', content, flags=re.MULTILINE)
-        return h1_match.group(0) + '\n' if h1_match else ''
+        """Extract first header (H1-H6) from content."""
+        # Search for headers from H1 to H6
+        header_match = re.search(r'^(#{1,6})\s+(.+)$', content, flags=re.MULTILINE)
+        if header_match:
+            return header_match.group(0) + '\n'
+        return ''
 
     @staticmethod
     def _serialize_output(post, create_frontmatter: bool) -> str:
