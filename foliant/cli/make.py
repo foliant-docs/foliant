@@ -4,6 +4,7 @@ from pathlib import Path
 from importlib import import_module
 from logging import DEBUG, WARNING
 from typing import List, Dict, Tuple
+from glob import glob
 
 from cliar import set_arg_map, set_metavars, set_help, ignore
 from prompt_toolkit import prompt
@@ -87,6 +88,27 @@ class Cli(BaseCli):
         except KeyboardInterrupt as kbd_interrupt:
             raise BackendError('No backend specified') from kbd_interrupt
 
+    @staticmethod
+    def prepare_list_of_file(only_partial, project_path):
+        list_of_files = []
+        if isinstance(only_partial, str):
+            if ',' in only_partial:
+                only_partial = [item.strip() for item in only_partial.split(',')]
+            elif any(char in only_partial for char in '*?['):
+                list_of_files = [Path(file) for file in glob(only_partial, recursive=True)]
+            else:
+                only_partial = [Path(only_partial.strip())]
+
+        if isinstance(only_partial, list):
+            for item in only_partial:
+                item_path = Path(item) if Path(item).is_absolute() else Path(project_path, item)
+                list_of_files.append(item_path)
+        elif isinstance(only_partial, (str, Path)):
+            only_partial_path = Path(only_partial) if isinstance(only_partial,
+                                                                str) else only_partial
+            list_of_files.append(only_partial_path)
+        return list_of_files
+
     def clean_registry(self, project_path):
         multiprojectcache_dir = os.path.join(project_path, '.multiprojectcache')
         if os.path.isdir(multiprojectcache_dir):
@@ -140,6 +162,7 @@ class Cli(BaseCli):
             'logs_dir': 'Path to the directory to store logs, defaults to project path.',
             'quiet': 'Hide all output accept for the result. Useful for piping.',
             'keep_tmp': 'Keep the tmp directory after the build.',
+            'only_partial': 'using only a partial list of files',
             'debug': 'Log all events during build. If not set, only warnings and errors are logged.'
         }
     )
@@ -152,6 +175,7 @@ class Cli(BaseCli):
             logs_dir='',
             quiet=False,
             keep_tmp=False,
+            only_partial='',
             debug=False
         ):
         '''Make TARGET with BACKEND.'''
@@ -161,6 +185,7 @@ class Cli(BaseCli):
         # pylint: disable=consider-using-sys-exit
 
         self.logger.setLevel(DEBUG if debug else WARNING)
+        result = None
 
         if logs_dir:
             super().__init__(logs_dir)
@@ -172,6 +197,9 @@ class Cli(BaseCli):
         available_backends = get_available_backends()
 
         self.clean_registry(project_path)
+
+        if only_partial != "":
+            only_partial = self.prepare_list_of_file(only_partial, project_path)
 
         try:
             if backend:
@@ -189,7 +217,9 @@ class Cli(BaseCli):
             'project_path': project_path,
             'config': config,
             'target': target,
-            'backend': backend
+            'backend': backend,
+            'keep_tmp': keep_tmp,
+            'only_partial': only_partial
         }
 
         backend_module = import_module(f'foliant.backends.{backend}')

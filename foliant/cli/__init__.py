@@ -12,7 +12,6 @@ class Foliant(*get_available_clis().values()):
 
     @set_help({'version': 'show version and exit'})
     def _root(self, version=False):
-        # pylint: disable=no-self-use
 
         if version:
             print(f'Foliant v.{foliant_version}')

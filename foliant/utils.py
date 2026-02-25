@@ -1,14 +1,14 @@
 '''Various utilities used here and there in the Foliant code.'''
 
 from contextlib import contextmanager
-from pkgutil import iter_modules
 from importlib import import_module
+from importlib.metadata import distributions
+from logging import Logger
+from pathlib import Path
+from pkgutil import iter_modules
 from shutil import rmtree
 from traceback import format_exc
-from pathlib import Path
-from logging import Logger
-from typing import List, Dict, Tuple, Type, Set
-import pkg_resources
+from typing import Dict, List, Set, Tuple, Type
 
 
 def get_available_tags() -> Set[str]:
@@ -26,7 +26,9 @@ def get_available_tags() -> Set[str]:
         if modname == 'base':
             continue
 
-        result.update(importer.find_module(modname).load_module(modname).Preprocessor.tags)
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result.update(module.Preprocessor.tags)
 
     return result
 
@@ -49,7 +51,9 @@ def get_available_config_parsers() -> Dict[str, Type]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Parser
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Parser
 
     return result
 
@@ -72,7 +76,9 @@ def get_available_clis() -> Dict[str, Type]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Cli
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Cli
 
     return result
 
@@ -96,7 +102,9 @@ def get_available_backends() -> Dict[str, Tuple[str]]:
         if modname == 'base':
             continue
 
-        result[modname] = importer.find_module(modname).load_module(modname).Backend.targets
+        spec = importer.find_spec(modname)
+        module = spec.loader.load_module()
+        result[modname] = module.Backend.targets
 
     return result
 
@@ -110,15 +118,16 @@ def get_foliant_packages() -> List[str]:
     # pylint: disable=not-an-iterable
 
     foliant_packages = []
-    all_packages = pkg_resources.working_set
+    all_packages = distributions()
 
     for package in all_packages:
-        if package.key == 'foliant':
+        foliant_core_version = None
+        if package.metadata["Name"] == 'foliant':
             foliant_core_version = package.version
 
-        elif package.key.startswith('foliantcontrib.'):
+        elif package.metadata["Name"].startswith('foliantcontrib.'):
             foliant_packages.append(
-                f'{package.key.replace("foliantcontrib.", "", 1)} {package.version}'
+                f'{package.metadata["Name"].replace("foliantcontrib.", "", 1)} {package.version}'
             )
 
     foliant_packages = sorted(foliant_packages)

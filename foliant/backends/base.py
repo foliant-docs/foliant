@@ -1,10 +1,12 @@
-from importlib import import_module
-from shutil import copytree
 from datetime import date
+from importlib import import_module
 from logging import Logger
+from pathlib import Path
+from shutil import copytree
+from typing import Union, List
+from foliant.partial_copy import PartialCopy
 
 from foliant.utils import spinner
-
 
 class BaseBackend():
     '''Base backend. All backends must inherit from this one.'''
@@ -50,6 +52,8 @@ class BaseBackend():
 
         :param preprocessor: Preprocessor name or a dict of the preprocessor name and its options
         '''
+        preprocessor_name = None
+        preprocessor_options = {}
 
         if isinstance(preprocessor, str):
             preprocessor_name, preprocessor_options = preprocessor, {}
@@ -82,6 +86,17 @@ class BaseBackend():
                     f'Failed to apply preprocessor {preprocessor_name}: {exception}'
                 ) from exception
 
+    @staticmethod
+    def partial_copy(
+        source: Union[str, Path, List[Union[str, Path]]],
+        root: Union[str, Path],
+        destination: Union[str, Path],
+    ) -> None:
+        """
+        Delegates to the PartialCopy class for file copying operations.
+        """
+        PartialCopy.partial_copy(source, root, destination)
+
     def preprocess_and_make(self, target: str) -> str:
         '''Apply preprocessors required by the selected backend and defined in the config file,
         then run the ``make`` method.
@@ -92,8 +107,10 @@ class BaseBackend():
         '''
 
         src_path = self.project_path / self.config['src_dir']
-
-        copytree(src_path, self.working_dir)
+        if self.context['only_partial'] != "":
+            self.partial_copy(self.context['only_partial'], src_path, self.working_dir)
+        else:
+            copytree(src_path, self.working_dir)
 
         common_preprocessors = (
             *self.required_preprocessors_before,
