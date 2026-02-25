@@ -32,6 +32,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
+          version: 2.1.1
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
@@ -61,6 +62,7 @@ jobs:
         - name: Build and publish to pypi
           uses: JRubics/poetry-publish@v1.11
           with:
+            poetry_version: 2.1.1
             pypi_token: ${{ secrets.PYPI_TOKEN }}
 
 
