@@ -2,17 +2,15 @@
 from YouTrack to markdown files.
 '''
 
-import json
 from logging import Logger
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from foliant.preprocessors.youtrack import (
     Preprocessor,
     YouTrackAPI,
-    YouTrackAPIError,
 )
 
 

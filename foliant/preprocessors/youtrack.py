@@ -172,7 +172,14 @@ class Preprocessor(BasePreprocessor):
 
         self.logger = self.logger.getChild('youtrack')
 
-        self.logger.debug(f'Preprocessor inited: {self.__dict__}')
+        self.logger.debug(
+            'Preprocessor inited: youtrack_url=%s, project_id=%s, '
+            'resource_type=%s, filename=%s',
+            self.options.get('youtrack_url'),
+            self.options.get('project_id'),
+            self.options.get('resource_type'),
+            self.options.get('filename'),
+        )
 
         self._youtrack_url = self.options['youtrack_url']
         self._youtrack_token = self.options['youtrack_token']
